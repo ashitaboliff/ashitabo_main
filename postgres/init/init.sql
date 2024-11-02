@@ -56,6 +56,8 @@ CREATE TABLE "booking" (
 -- Create Profiles table
 CREATE TABLE "profile" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+  "name" TEXT,
+  "student_id" TEXT UNIQUE,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),
   "expected" INT NOT NULL,

@@ -22,7 +22,6 @@
 		"@hookform/resolvers": "^3.6.0",
 		"@line/liff": "^2.23.2",
 		"@line/liff-inspector": "^1.0.2",
-		"@next/font": "^14.2.14",
 		"@next/third-parties": "^15.0.0-canary.87",
 		"@prisma/client": "^5.15.0",
 		"@types/bcryptjs": "^2.4.6",

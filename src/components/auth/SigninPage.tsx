@@ -24,7 +24,7 @@ const SigninPage = () => {
 				className="btn btn-primary"
 				onClick={() =>
 					signIn('line', {
-						redirectTo: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/signin`,
+						redirectTo: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/signin/setting`,
 					})
 				}
 			>

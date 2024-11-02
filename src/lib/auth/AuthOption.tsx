@@ -56,14 +56,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	callbacks: {
 		async jwt({ token, user, profile }) {
 			if (user) {
+				token.id = user.id
 				token.user_id = user.user_id
 			}
+			console.log('token:', token)
 			return token
 		},
 		async session({ session, token }) {
+			session.id = token.id as string
 			session.user_id = token.user_id as string
 			session.name = token.name as string
 			session.image = token.image as string
+			session.is_profile = false
+
+			const profile = await prisma.profile.findFirst({
+				where: {
+					id: session.user_id,
+				},
+			})
+
+			if (profile) {
+				session.is_profile = true
+				session.full_name = profile.name
+				session.part = profile.part
+				session.role = profile.role
+			}
+			console.log('session:', session)
+
 			return session
 		},
 	},

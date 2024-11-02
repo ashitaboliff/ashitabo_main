@@ -1,21 +1,21 @@
-type Role = 'GRADUATE' | 'STUDENT'
+export type Role = 'GRADUATE' | 'STUDENT'
 
 type RoleEnum = '卒業生' | '現役生'
 
 type Part =
-	| 'BASS'
-	| 'DRUMS'
 	| 'BACKING_GUITER'
 	| 'LEAD_GUITER'
+	| 'BASS'
+	| 'DRUMS'
 	| 'KEYBOARD'
 	| 'VOCAL'
 	| 'OTHER'
 
 type PartEnum =
-	| 'ベース'
-	| 'ドラム'
 	| 'バッキングギター'
 	| 'リードギター'
+	| 'ベース'
+	| 'ドラム'
 	| 'キーボード'
 	| 'ボーカル'
 	| 'その他'
@@ -26,10 +26,10 @@ export const RoleMap: Record<Role, RoleEnum> = {
 }
 
 export const PartMap: Record<Part, PartEnum> = {
-	BASS: 'ベース',
-	DRUMS: 'ドラム',
 	BACKING_GUITER: 'バッキングギター',
 	LEAD_GUITER: 'リードギター',
+	BASS: 'ベース',
+	DRUMS: 'ドラム',
 	KEYBOARD: 'キーボード',
 	VOCAL: 'ボーカル',
 	OTHER: 'その他',
@@ -37,6 +37,8 @@ export const PartMap: Record<Part, PartEnum> = {
 
 export interface Profile {
 	id: string
+	name: string
+	student_id: string
 	expected: string
 	role: Role
 	part: Part

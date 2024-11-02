@@ -55,6 +55,8 @@ model User {
 
 model Profile {
   id         String   @id @default(uuid()) // UserのIDを外部キーとして利用
+  name       String
+  student_id String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   expected   String                           // 卒業予定年度
@@ -62,7 +64,7 @@ model Profile {
   part       Part[]
   is_deleted Boolean  @default(false)
 
-  user User @relation(fields: [id], references: [id]) // Userと1対1のリレーション
+  user User @relation(fields: [id], references: [user_id]) // Userと1対1のリレーション
   @@map("profile")
 }
 
