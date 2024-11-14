@@ -25,19 +25,34 @@ async function main() {
 	console.log('Seeding data...')
 
 	// ユーザーを作成する例
-	await prisma.user.createMany({
-		data: [
-			{
-				id: 'admin',
-			},
-		],
-	})
+	// await prisma.user.create({
+	// 	data:
+	// 		{
+	// 			user_id: 'admin',
+	// 		}
+	// })
 
 	await prisma.padLock.createMany({
 		data: [
 			{
 				name: 'test',
 				password: hashSync('1234', 5),
+			},
+		],
+	})
+
+	const admin = await prisma.user.findFirst({
+		where: {
+			user_id: 'admin',
+		},
+	})
+
+	await prisma.profile.createMany({
+		data: [
+			{
+				id: 'cm3hjkwwf00006se2u119ke1i',
+				role: 'STUDENT',
+				part: ['BASS'],
 			},
 		],
 	})
@@ -49,7 +64,7 @@ async function main() {
 				booking_time: 0,
 				regist_name: 'サンプルバンド',
 				name: 'サンプルユーザー',
-				user_id: 'admin',
+				user_id: admin.id,
 				password: hashSync('pass', 5),
 			},
 			{
@@ -57,7 +72,7 @@ async function main() {
 				booking_time: 1,
 				regist_name: 'サンプルバンド',
 				name: 'サンプルユーザー',
-				user_id: 'admin',
+				user_id: admin.id,
 				password: hashSync('pass', 5),
 			},
 			{
@@ -66,7 +81,7 @@ async function main() {
 				regist_name:
 					'長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル',
 				name: '長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル',
-				user_id: 'admin',
+				user_id: admin.id,
 				password: hashSync('pass', 5),
 			},
 			{
@@ -74,7 +89,7 @@ async function main() {
 				booking_time: 1,
 				regist_name: 'わたべサンプルバンド',
 				name: 'わたべサンプルユーザー',
-				user_id: 'admin',
+				user_id: admin.id,
 				password: hashSync('pass', 5),
 			},
 		],

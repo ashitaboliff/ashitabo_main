@@ -60,8 +60,9 @@ CREATE TABLE "profile" (
   "student_id" TEXT UNIQUE,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),
-  "expected" INT NOT NULL,
-  "role" "Role" NOT NULL,
+  "expected" INT,
+  "role" "Role",
+  "part" "Part"[],
   "is_deleted" BOOLEAN DEFAULT FALSE,
   FOREIGN KEY ("id") REFERENCES "user" ("id") ON DELETE CASCADE
 );

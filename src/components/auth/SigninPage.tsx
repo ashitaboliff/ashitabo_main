@@ -13,13 +13,10 @@ const SigninPage = () => {
 		return <Loading />
 	}
 
-	if (session) {
-		console.log('a:', session)
-	}
-
 	return (
 		<div>
 			<div>新規アカウント作成</div>
+			<span>{session.status}</span>
 			<div
 				className="btn btn-primary"
 				onClick={() =>
@@ -28,8 +25,6 @@ const SigninPage = () => {
 					})
 				}
 			>
-				{' '}
-				{/*{redirectTo: `${process.env.NEXTAUTH_URL}/signin/setting`}*/}
 				LINEでログイン
 			</div>
 		</div>
