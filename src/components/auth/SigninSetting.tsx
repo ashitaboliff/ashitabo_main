@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -64,6 +65,7 @@ const schema = yup.object().shape({
 
 const SigninSetting = () => {
 	const session = useSession()
+	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isError, setIsError] = useState<boolean>(false)
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
@@ -85,33 +87,85 @@ const SigninSetting = () => {
 
 	const onSubmit = async (data: any) => {
 		setIsLoading(true)
-		console.log('data:', data)
-		try {
-			const response = await fetch('/api/profile', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
-			})
-			if (response.ok) {
-				setPopupOpen(true)
-			} else {
+		const isSession = await sessionCheck(session)
+		if (isSession === 'no-session') {
+			setIsError(true)
+		} else if (isSession === 'profile') {
+			setIsError(true)
+		} else {
+			const userId = session.data?.user.id
+			try {
+				const response = await fetch(`/api/auth/profile/new?userId=${userId}`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(data),
+				})
+				if (response.ok) {
+					setPopupOpen(true)
+				} else {
+					setIsError(true)
+				}
+			} catch (error) {
 				setIsError(true)
 			}
-		} catch (error) {
-			setIsError(true)
 		}
 		setIsLoading(false)
+	}
+
+	const sessionCheck = async (session: any) => {
+		// セッション、またはプロフィールが存在するか確認
+		let isSession: 'session' | 'no-session' | 'profile' = 'no-session'
+		if (!session.data.user) {
+			isSession = 'no-session'
+		} else {
+			const userId = session.data.user.id
+			const isProfile = await isProfileExist(userId)
+			if (isProfile) {
+				isSession = 'profile'
+			} else {
+				isSession = 'session'
+			}
+		}
+
+		return isSession
+	}
+
+	const isProfileExist = async (userId: string) => {
+		const response = await fetch(`/api/auth/profile/detail?userId=${userId}`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+		if (response.ok) {
+			const data = await response.json()
+			if (data.status === 200) {
+				return true
+			} else {
+				return false
+			}
+		} else {
+			return false
+		}
 	}
 
 	if (isLoading) {
 		return <Loading />
 	}
 
-	if (session) {
-		console.log('a:', session)
-	}
+	useEffect(() => {
+		(async () => {
+			const isSession = await sessionCheck(session)
+			if (isSession === 'no-session') {
+				router.push('/auth/signin')
+			}
+			if (isSession === 'profile') {
+				router.push('/')
+			}
+		})()
+	}, [session])
 
 	return (
 		<div className="flex flex-col items-center justify-center p-4">

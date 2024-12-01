@@ -9,7 +9,10 @@ const prisma = new PrismaClient()
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
 	debug: true,
-	session: { strategy: 'jwt' },
+	session: {
+		strategy: 'database',
+		maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
+	},
 	secret: process.env.AUTH_SECRET,
 	...authConfig,
 	pages: {
