@@ -34,7 +34,7 @@ model Booking {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id
   name          String?
   user_id       String?   @unique
   password      String?
@@ -55,7 +55,8 @@ model User {
 }
 
 model Profile {
-  id         String   @id // UserのIDを外部キーとして利用
+  id         String   @id @default(uuid())
+  user_id    String   @unique // UserのIDを外部キーとして利用
   name       String?
   student_id String?  @unique
   created_at DateTime @default(now())
@@ -65,7 +66,7 @@ model Profile {
   part       Part[]
   is_deleted Boolean  @default(false)
 
-  user User @relation(fields: [id], references: [id]) // Userのidと1対1のリレーション
+  user User @relation(fields: [user_id], references: [id]) // Userのidと1対1のリレーション
   @@map("profile")
 }
 

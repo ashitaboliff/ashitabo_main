@@ -26,7 +26,7 @@ END$$;
 
 -- Create Users table
 CREATE TABLE "user" (
-  "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+  "id" TEXT PRIMARY KEY,
   "name" TEXT,
   "user_id" TEXT UNIQUE,
   "password" TEXT,
@@ -56,6 +56,7 @@ CREATE TABLE "booking" (
 -- Create Profiles table
 CREATE TABLE "profile" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+  "user_id" TEXT UNIQUE,
   "name" TEXT,
   "student_id" TEXT UNIQUE,
   "created_at" TIMESTAMP DEFAULT NOW(),
@@ -64,7 +65,7 @@ CREATE TABLE "profile" (
   "role" "Role",
   "part" "Part"[],
   "is_deleted" BOOLEAN DEFAULT FALSE,
-  FOREIGN KEY ("id") REFERENCES "user" ("id") ON DELETE CASCADE
+  FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );
 
 -- Create Accounts table

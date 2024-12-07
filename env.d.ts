@@ -13,5 +13,6 @@ declare namespace NodeJS {
 		ADMIN_PASSWORD: string
 		TEST_ID: string
 		TEST_PASSWORD: string
+		MAINTENANCE: string
 	}
 }

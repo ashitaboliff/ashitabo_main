@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Loading from '@/components/atoms/Loading'
+import { padLockAction } from './actions'
 
 const PasswordSchema = yup.object().shape({
 	digit1: yup
@@ -74,27 +75,18 @@ const AuthPadLock = () => {
 		digit4: number
 	}) => {
 		setLoading(true)
-		const password = {
-			password: `${data.digit1}${data.digit2}${data.digit3}${data.digit4}`,
-		}
+		const password = `${data.digit1}${data.digit2}${data.digit3}${data.digit4}`
 		try {
-			const res = await fetch('/api/auth/padlock', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(password),
-			})
-			if (res.ok) {
+			const res = await padLockAction(password)
+			if (res.status === 200) {
 				router.push('/auth/signin')
 			} else {
-				const error = await res.json()
-				console.log(error)
-				setError(error.error)
-				setLoading(false)
+				setError(res.response)
 			}
-		} catch (error: any) {
-			setError(error.message)
-			setLoading(false)
+		} catch (error) {
+			setError('エラーが発生しました')
 		}
+		setLoading(false)
 	}
 
 	return (

@@ -19,10 +19,6 @@ declare module 'next-auth' {
 		user_id: string
 		name: string
 		image: string
-		full_name: string
-		part: string[]
-		role: string
-		is_profile: boolean
 	}
 }
 

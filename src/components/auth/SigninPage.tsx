@@ -8,6 +8,7 @@ import Popup, { PopupRef } from '@/components/molecules/Popup'
 
 const SigninPage = () => {
 	const session = useSession()
+	console.log(session)
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)

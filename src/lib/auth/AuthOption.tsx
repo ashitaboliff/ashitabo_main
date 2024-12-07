@@ -10,7 +10,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma),
 	debug: true,
 	session: {
-		strategy: 'database',
+		strategy: 'jwt',
 		maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
 	},
 	secret: process.env.AUTH_SECRET,
@@ -21,12 +21,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	},
 	callbacks: {
 		async session({ session, token, user }) {
+			// token なんも入ってないなんこいつ
 			return {
 				...session,
 				...token,
 				user: {
 					...session.user,
-					...user,
+					id: token.sub,
 				},
 			}
 		},
