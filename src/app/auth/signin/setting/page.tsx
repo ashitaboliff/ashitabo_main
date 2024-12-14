@@ -6,7 +6,6 @@ import { redirect } from 'next/navigation'
 
 const Signin = async () => {
 	const session = await getSession()
-	console.log(session)
 	const isSession = await sessionCheck(session)
 
 	if (isSession === 'no-session') {

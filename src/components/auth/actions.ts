@@ -46,32 +46,6 @@ export async function padLockAction(
 	}
 }
 
-export async function getProfileAction(
-	user_id: string,
-): Promise<ApiResponse<Profile | string>> {
-	try {
-		const user = await getUser(user_id)
-		if (!user)
-			return {
-				status: StatusCode.NOT_FOUND,
-				response: 'このidのユーザは存在しません',
-			}
-		const profile = await getProfile(user_id)
-		return profile
-			? { status: StatusCode.OK, response: profile }
-			: {
-					status: StatusCode.NOT_FOUND,
-					response: 'このユーザはプロフィールが設定されていません',
-				}
-	} catch (error) {
-		console.error(error)
-		return {
-			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
-		}
-	}
-}
-
 export async function getUserAction(
 	user_id: string,
 ): Promise<ApiResponse<string | User>> {

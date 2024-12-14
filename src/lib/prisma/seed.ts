@@ -50,7 +50,8 @@ async function main() {
 	await prisma.profile.createMany({
 		data: [
 			{
-				id: 'cm3hjkwwf00006se2u119ke1i',
+				id: admin.id,
+				user_id: 'admin',
 				role: 'STUDENT',
 				part: ['BASS'],
 			},

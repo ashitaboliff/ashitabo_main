@@ -2,7 +2,7 @@ export type Role = 'GRADUATE' | 'STUDENT'
 
 type RoleEnum = '卒業生' | '現役生'
 
-type Part =
+export type Part =
 	| 'BACKING_GUITER'
 	| 'LEAD_GUITER'
 	| 'BASS'

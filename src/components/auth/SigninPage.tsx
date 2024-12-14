@@ -8,7 +8,6 @@ import Popup, { PopupRef } from '@/components/molecules/Popup'
 
 const SigninPage = () => {
 	const session = useSession()
-	console.log(session)
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
@@ -27,7 +26,7 @@ const SigninPage = () => {
 	return (
 		<>
 			<div className="flex flex-col items-center justify-center p-4">
-				<div className="text-2xl font-bold">新規アカウント登録</div>
+				<div className="text-2xl font-bold">ログイン</div>
 				<div
 					className="btn btn-primary"
 					onClick={() =>
@@ -36,7 +35,7 @@ const SigninPage = () => {
 						})
 					}
 				>
-					LINEでアカウント登録
+					LINEでログイン
 				</div>
 			</div>
 			<Popup
