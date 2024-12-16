@@ -6,8 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  engineType = "library"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
+  binaryTargets = ["debian-openssl-3.0.x", "linux-musl"]
 }
 
 datasource db {
@@ -34,7 +33,7 @@ model Booking {
 }
 
 model User {
-  id            String    @id
+  id            String    @id @default(uuid())
   name          String?
   user_id       String?   @unique
   password      String?

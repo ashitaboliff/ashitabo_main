@@ -28,7 +28,7 @@ export const getMaxWidth = (
 
 	if (width < 768) {
 		device = 'mobile'
-		defaultSize = 'max-w-xs'
+		defaultSize = 'max-w-sm'
 	} else if (width < 1024) {
 		device = 'tablet'
 		defaultSize = 'max-w-md'

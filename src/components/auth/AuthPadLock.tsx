@@ -81,7 +81,7 @@ const AuthPadLock = () => {
 			if (res.status === 200) {
 				router.push('/auth/signin')
 			} else {
-				setError(res.response)
+				setError(res.response as string)
 			}
 		} catch (error) {
 			setError('エラーが発生しました')
