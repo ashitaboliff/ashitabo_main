@@ -33,7 +33,7 @@ model Booking {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String    @id
   name          String?
   user_id       String?   @unique
   password      String?

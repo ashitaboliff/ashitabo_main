@@ -104,8 +104,9 @@ const SelectField = ({
 					className="select select-bordered w-full max-w-xs"
 					{...register}
 					{...props}
+					defaultValue=""
 				>
-					<option value="" disabled selected>
+					<option value="" disabled hidden>
 						選択してください
 					</option>
 					{Object.entries(options).map(([key, value]) => (

@@ -31,7 +31,8 @@ const SigninPage = () => {
 					className="btn btn-primary"
 					onClick={() =>
 						signIn('line', {
-							redirectTo: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/signin/setting`,
+							redirectTo: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/auth/callback/line`,
+							maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
 						})
 					}
 				>

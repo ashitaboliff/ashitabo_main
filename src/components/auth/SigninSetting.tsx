@@ -99,7 +99,7 @@ const SigninSetting = () => {
 			const userId = session.data?.user.id || ''
 			try {
 				const res = await createProfileAction(userId, data)
-				if (res.status === 200) {
+				if (res.status === 201) {
 					setPopupOpen(true)
 				} else {
 					console.error(res)

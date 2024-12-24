@@ -89,3 +89,27 @@ export const createProfile = async (id: string, body: Omit<Profile, 'id'>) => {
 		throw new Error('Database query failed')
 	}
 }
+
+/**
+ * プロフィールを更新する関数
+ */
+export const updateProfile = async (id: string, body: Omit<Profile, 'id'>) => {
+	try {
+		await prisma.profile.update({
+			where: {
+				user_id: id,
+			},
+			data: {
+				name: body.name,
+				student_id: body.student_id,
+				expected: body.expected,
+				role: body.role,
+				part: body.part,
+				updated_at: new Date(),
+			},
+		})
+	} catch (error) {
+		console.error(error)
+		throw new Error('Database query failed')
+	}
+}

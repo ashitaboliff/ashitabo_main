@@ -11,11 +11,9 @@ export const config = {
 class MiddlewareApp {
 	private request: NextRequest
 	private isMaintenanceMode: boolean = process.env.MAINTENANCE_MODE == 'true'
-	private session: any
 
-	constructor({ request, session }: { request: NextRequest; session: any }) {
+	constructor(request: NextRequest) {
 		this.request = request
-		this.session = session
 	}
 
 	private startWith = (path: string) => {
@@ -34,6 +32,10 @@ class MiddlewareApp {
 		return NextResponse.redirect(new URL(path, this.request.url), {
 			status: 301,
 		})
+	}
+
+	private match = (path: string) => {
+		return this.request.nextUrl.pathname === path
 	}
 
 	private getIpAdress = () => {
@@ -75,15 +77,24 @@ class MiddlewareApp {
 				})
 			}
 		}
+
+		// / でのアクセスは、/home にリダイレクト
+		if (this.match('/')) {
+			return this.redirect('/home')
+		}
+
+		// /auth でのアクセスは、/auth/padlock にリダイレクト
+		if (this.match('/auth')) {
+			return this.redirect('/auth/padlock')
+		}
 	}
 }
 
 export default auth(async function middleware(request: NextRequest) {
 	const headers = request.headers
-	const session = await auth()
 	console.log(
 		`ip: ${headers.get('X-Forwarded-For')}, ua: ${headers.get('user-agent')}`,
 	)
-	const app = new MiddlewareApp({ request, session })
+	const app = new MiddlewareApp(request)
 	return app.run()
 })
