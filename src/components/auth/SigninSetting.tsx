@@ -67,7 +67,7 @@ const schema = yup.object().shape({
 const SigninSetting = () => {
 	const session = useSession()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [isError, setIsError] = useState<boolean>(false)
+	const [error, setIsError] = useState<string>('')
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
 
@@ -92,9 +92,9 @@ const SigninSetting = () => {
 		setIsLoading(true)
 		const isSession = await sessionCheck(session.data)
 		if (isSession === 'no-session') {
-			setIsError(true)
+			setIsError('ログイン情報がありません')
 		} else if (isSession === 'profile') {
-			setIsError(true)
+			setIsError('プロフィールが既に設定されています')
 		} else {
 			const userId = session.data?.user.id || ''
 			try {
@@ -103,14 +103,16 @@ const SigninSetting = () => {
 					setPopupOpen(true)
 				} else {
 					console.error(res)
-					setIsError(true)
+					setIsError(`${res.response}`)
 				}
 			} catch (error) {
 				console.error(error)
-				setIsError(true)
+				setIsError(
+					'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
+				)
 			}
-			setIsLoading(false)
 		}
+		setIsLoading(false)
 	}
 
 	if (isLoading) {
@@ -235,9 +237,9 @@ const SigninSetting = () => {
 					保存
 				</button>
 			</form>
-			{isError && (
+			{error !== '' && (
 				<InfoMessage
-					message="エラーが発生しました"
+					message={`${error}`}
 					messageType="error"
 					IconColor="bg-white"
 				/>

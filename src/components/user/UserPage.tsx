@@ -2,9 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Session } from 'next-auth'
+import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import { Profile, RoleMap } from '@/types/UserTypes'
-import { Session } from 'next-auth'
+
 import InstIcon from '@/components/atoms/InstIcon'
 
 const UserPage = ({
@@ -32,14 +34,19 @@ const UserPage = ({
 					<InstIcon part={profile.part} size={30} />
 				</div>
 			</div>
-			<div className="mt-5 text-2xl text-center">---以下開発中---</div>
-			<div className="flex flex-row justify-around">
+			<div className="flex flex-row justify-around mt-5">
 				<div
 					className="btn btn-success btn-outline"
 					onClick={() => router.push('/user/edit')}
 				>
 					プロフィールを編集
 				</div>
+				<div className="btn btn-error" onClick={async () => await signOut()}>
+					ログアウト
+				</div>
+			</div>
+			<div className="mt-5 text-2xl text-center">---以下開発中---</div>
+			<div className="flex flex-row justify-around">
 				<div className="btn btn-error">アカウントを削除</div>
 			</div>
 		</div>

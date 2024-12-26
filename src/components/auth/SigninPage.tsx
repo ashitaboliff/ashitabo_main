@@ -29,8 +29,8 @@ const SigninPage = () => {
 				<div className="text-2xl font-bold">ログイン</div>
 				<div
 					className="btn btn-primary"
-					onClick={() =>
-						signIn('line', {
+					onClick={async () =>
+						await signIn('line', {
 							redirectTo: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/auth/signin/setting`,
 							maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
 						})

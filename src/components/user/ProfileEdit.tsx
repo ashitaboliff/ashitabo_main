@@ -69,7 +69,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	const session = useSession()
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [isError, setIsError] = useState<boolean>(false)
+	const [error, setIsError] = useState<string>('')
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
 
@@ -103,7 +103,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 		setIsLoading(true)
 		const isSession = await sessionCheck(session.data)
 		if (isSession === 'no-session') {
-			setIsError(true)
+			setIsError('ログイン情報がありません')
 		} else {
 			const userId = session.data?.user.id || ''
 			console.log(data)
@@ -114,14 +114,16 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					setPopupOpen(true)
 				} else {
 					console.error(res)
-					setIsError(true)
+					setIsError(`${res.response}`)
 				}
 			} catch (error) {
 				console.error(error)
-				setIsError(true)
+				setIsError(
+					'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
+				)
 			}
-			setIsLoading(false)
 		}
+		setIsLoading(false)
 	}
 
 	if (isLoading) {
@@ -246,12 +248,8 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					更新
 				</button>
 			</form>
-			{isError && (
-				<InfoMessage
-					message="エラーが発生しました"
-					messageType="error"
-					IconColor="bg-white"
-				/>
+			{error && (
+				<InfoMessage message={error} messageType="error" IconColor="bg-white" />
 			)}
 			<Popup
 				ref={popupRef}

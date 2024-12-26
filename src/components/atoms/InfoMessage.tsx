@@ -35,7 +35,7 @@ const InfoMessage = ({ messageType, message, IconColor }: Message) => {
 			break
 	}
 	return (
-		<div className={className}>
+		<div className={`${className} flex flex-row`}>
 			{IconFactory.getIcon({ color: IconColor, type: messageType })}
 			<span className="text-sm text-text-light">{message}</span>
 		</div>
