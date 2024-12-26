@@ -1,13 +1,35 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { useSession } from 'next-auth/react'
+import { getUserAction } from '@/components/auth/actions'
+import { User } from '@/types/UserTypes'
+
 import { LuMenu, LuUserCircle2 } from 'react-icons/lu'
 import { RxCountdownTimer } from 'react-icons/rx'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 
 const Layout = ({ className }: { className: string }) => {
-	const [isOpen, setIsOpen] = useState(false)
+	const session = useSession()
+	const [isOpen, setIsOpen] = useState<boolean>(false)
+	const [user, setUser] = useState<User | undefined>(undefined)
+
+	useEffect(() => {
+		const main = async () => {
+			if (!session.data?.user.id) {
+				return
+			}
+			const user = await getUserAction(session.data?.user.id)
+			if (user.status === 200) {
+				setUser(user.response as User)
+			} else {
+				setUser(undefined)
+			}
+		}
+		main()
+	}, [session])
 
 	const handleMenuOpen = () => {
 		setIsOpen(true)
@@ -39,7 +61,19 @@ const Layout = ({ className }: { className: string }) => {
 				</div>
 				<div className="navbar-end">
 					<button className="btn btn-square btn-ghost text-3xl">
-						<LuUserCircle2 />
+						<Link href="/user">
+							{user ? (
+								<Image
+									src={user.image as string}
+									alt="user icon"
+									width={40}
+									height={40}
+									className="rounded-full"
+								/>
+							) : (
+								<LuUserCircle2 />
+							)}
+						</Link>
 					</button>
 				</div>
 			</div>

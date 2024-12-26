@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Profile, RoleMap } from '@/types/UserTypes'
 import { Session } from 'next-auth'
@@ -13,6 +14,8 @@ const UserPage = ({
 	profile: Profile
 	session: Session
 }) => {
+	const router = useRouter()
+
 	return (
 		<div className="flex flex-col justify-center">
 			<div className="flex flex-row justify-around">
@@ -31,7 +34,12 @@ const UserPage = ({
 			</div>
 			<div className="mt-5 text-2xl text-center">---以下開発中---</div>
 			<div className="flex flex-row justify-around">
-				<div className="btn btn-success btn-outline ">プロフィールを編集</div>
+				<div
+					className="btn btn-success btn-outline"
+					onClick={() => router.push('/user/edit')}
+				>
+					プロフィールを編集
+				</div>
 				<div className="btn btn-error">アカウントを削除</div>
 			</div>
 		</div>

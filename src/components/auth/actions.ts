@@ -1,7 +1,13 @@
 'use server'
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
-import { getProfile, checkPadLock, getUser, createProfile } from '@/db/Auth'
+import {
+	getProfile,
+	checkPadLock,
+	getUser,
+	createProfile,
+	updateProfile,
+} from '@/db/Auth'
 import { cookies } from 'next/headers'
 import { Profile, User } from '@/types/UserTypes'
 
@@ -97,6 +103,34 @@ export async function createProfileAction(
 			}
 		await createProfile(user_id, body)
 		return { status: StatusCode.CREATED, response: 'success' }
+	} catch (error) {
+		console.error(error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function putProfileAction(
+	user_id: string,
+	body: Omit<Profile, 'id'>,
+): Promise<ApiResponse<string>> {
+	try {
+		const user = await getUser(user_id)
+		if (!user)
+			return {
+				status: StatusCode.NOT_FOUND,
+				response: 'このidのユーザは存在しません',
+			}
+		const profile = await getProfile(user_id)
+		if (!profile)
+			return {
+				status: StatusCode.BAD_REQUEST,
+				response: 'このユーザはプロフィールが設定されていません',
+			}
+		await updateProfile(user_id, body)
+		return { status: StatusCode.OK, response: 'success' }
 	} catch (error) {
 		console.error(error)
 		return {

@@ -42,10 +42,12 @@ export default function RootLayout({
 							'<!-- てことでソースコードはこちらからhttps://github.com/watabegg/k_on_line -->',
 					}}
 				/>
-				<Header className={myFont.variable} />
-				<LiffProvider liffId={process.env.LIFF_ID ?? ''}>
-					<NextAuthProvider>{children}</NextAuthProvider>
-				</LiffProvider>
+				<NextAuthProvider>
+					<Header className={myFont.variable} />
+					<LiffProvider liffId={process.env.LIFF_ID ?? ''}>
+						{children}
+					</LiffProvider>
+				</NextAuthProvider>
 			</body>
 			<GoogleAnalytics gaId={process.env.GA_ID ?? ''} />
 		</html>

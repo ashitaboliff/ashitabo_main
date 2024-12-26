@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
-import IconFactory from '@/svg/IconFactory'
+import LabelInputField from '@/components/atoms/LabelInputField'
 
 /**
  * テキスト入力フィールド
@@ -25,19 +25,7 @@ const TextInputField = ({
 }) => {
 	return (
 		<div>
-			<label className="label flex flex-row justify-start gap-2">
-				{label}
-				{infoDropdown && (
-					<div className="dropdown dropdown-right">
-						<div tabIndex={0} role="button">
-							{IconFactory.getIcon({ color: 'info', type: 'info', size: 4 })}
-						</div>
-						<div className="card dropdown-content compact w-48 bg-bg-white shadow rounded-box p-2 ">
-							<p className="text-sm">{infoDropdown}</p>
-						</div>
-					</div>
-				)}
-			</label>
+			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
 			<input
 				type={type}
 				placeholder={placeholder}

@@ -38,11 +38,7 @@ export const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 			{Array.from({ length: rows }).map((_, rowIndex) => (
 				<div key={rowIndex} className="flex flex-row mb-2">
 					{sortedParts.slice(rowIndex * 4, (rowIndex + 1) * 4).map((p) => (
-						<div
-							key={p}
-							className="tooltip tooltip-info mr-1"
-							data-tip={PartMap[p as Part]}
-						>
+						<div key={p} className="tooltip mr-1" data-tip={PartMap[p as Part]}>
 							<div className="btn btn-sm btn-ghost no-animation btn-circle">
 								{icons[p as Part]}
 							</div>

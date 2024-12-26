@@ -132,6 +132,7 @@ const config: Config = {
 			...colorPalette,
 			...daisyLight,
 			'bg-white': colorPalette['bg']['white'],
+			white: colorPalette['bg']['white'],
 		},
 		screens,
 	},
