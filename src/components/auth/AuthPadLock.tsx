@@ -78,9 +78,7 @@ const AuthPadLock = () => {
 		const password = `${data.digit1}${data.digit2}${data.digit3}${data.digit4}`
 		try {
 			const res = await padLockAction(password)
-			if (res.status === 200) {
-				router.push('/auth/signin')
-			} else {
+			if (res.status !== 200) {
 				setError(res.response as string)
 			}
 		} catch (error) {

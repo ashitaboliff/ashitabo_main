@@ -87,6 +87,12 @@ class MiddlewareApp {
 		if (this.match('/auth')) {
 			return this.redirect('/auth/padlock')
 		}
+
+		if (this.request.nextUrl.searchParams.has('redirectFrom')) {
+			alert(
+				`${this.request.nextUrl.searchParams.get('redirectFrom')}からリダイレクトされました`,
+			)
+		}
 	}
 }
 

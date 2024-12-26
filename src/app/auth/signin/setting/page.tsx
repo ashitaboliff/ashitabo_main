@@ -1,21 +1,23 @@
 'use server'
 
 import SigninSetting from '@/components/auth/SigninSetting'
-import { getSession, sessionCheck } from '@/app/actions'
-import { redirect } from 'next/navigation'
+import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
+import { padLockCookieAction } from '@/components/auth/actions'
 
 const Signin = async () => {
 	const session = await getSession()
-	console.log(session)
 	const isSession = await sessionCheck(session)
 
 	if (isSession === 'no-session') {
-		console.log('no-session')
-		redirect('/auth/signin')
+		await redirectFrom('/auth/signin', '/auth/signin/setting')
 	} else if (isSession === 'profile') {
-		redirect('/user')
+		await redirectFrom('/user', '/auth/signin/setting')
 	} else {
-		return <SigninSetting />
+		if ((await padLockCookieAction()) === 'unlocked') {
+			return <SigninSetting />
+		} else {
+			await redirectFrom('/auth/padlock', '/auth/signin/setting')
+		}
 	}
 }
 

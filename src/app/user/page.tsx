@@ -1,6 +1,6 @@
 'use server'
 
-import { redirect } from 'next/navigation'
+import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
 import { getProfileAction } from '@/app/actions'
 import { Profile } from '@/types/UserTypes'
@@ -11,9 +11,9 @@ const userPage = () => {
 		const session = await getSession()
 		const isSession = await sessionCheck(session)
 		if (isSession === 'no-session' || !session) {
-			redirect('/auth/signin')
+			await redirectFrom('/auth/signin', '/user')
 		} else if (isSession === 'session') {
-			redirect('/auth/signin/setting')
+			await redirectFrom('/auth/signin/setting', '/user')
 		} else {
 			const profile = await getProfileAction(session.user.id)
 			if (profile.status === 200) {
@@ -21,7 +21,7 @@ const userPage = () => {
 					<UserPage profile={profile.response as Profile} session={session} />
 				)
 			} else {
-				redirect('/auth/signin/setting')
+				await redirectFrom('/auth/signin/setting', '/user')
 			}
 		}
 	}

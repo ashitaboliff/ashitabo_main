@@ -57,8 +57,3 @@ export async function redirectFrom(path: string, from: string): Promise<void> {
 	const redirectPath = `${path}?from=${encodeURIComponent(from)}`
 	redirect(redirectPath)
 }
-
-export async function getRedirectPath(from: string): Promise<string> {
-	const decodedFrom = decodeURIComponent(from)
-	return decodedFrom
-}

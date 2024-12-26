@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, ReactNode } from 'react'
 import { UseFormRegisterReturn, UseFormSetValue } from 'react-hook-form'
+import IconFactory from '@/svg/IconFactory'
 
 interface SelectFieldProps
 	extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -10,6 +11,7 @@ interface SelectFieldProps
 	setValue?: UseFormSetValue<any> // react-hook-formのsetValue
 	watchValue?: any[] // 現在の選択値をwatchする
 	name: string // フォームフィールドの名前
+	infoDropdown?: ReactNode // ドロップダウンの情報
 }
 
 /**
@@ -31,6 +33,7 @@ const SelectField = ({
 	setValue,
 	watchValue = [],
 	name,
+	infoDropdown,
 	...props
 }: SelectFieldProps) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false) // メニューの開閉状態
@@ -70,7 +73,21 @@ const SelectField = ({
 
 	return (
 		<div className="form-control w-full max-w-xs" ref={dropdownRef}>
-			{label && <label className="label">{label}</label>}
+			{label && (
+				<label className="label flex flex-row justify-start gap-2">
+					{label}
+					{infoDropdown && (
+						<div className="dropdown dropdown-right">
+							<div tabIndex={0} role="button">
+								{IconFactory.getIcon({ color: 'info', type: 'info', size: 4 })}
+							</div>
+							<div className="card dropdown-content compact w-48 bg-bg-white shadow rounded-box p-2 ">
+								<p className="text-sm">{infoDropdown}</p>
+							</div>
+						</div>
+					)}
+				</label>
+			)}
 			{isMultiple ? (
 				<div className={`dropdown ${isOpen ? 'dropdown-open' : ''}`}>
 					<div

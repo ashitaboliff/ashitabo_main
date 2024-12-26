@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Profile, RoleMap } from '@/types/UserTypes'
 import { Session } from 'next-auth'

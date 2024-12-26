@@ -31,4 +31,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			}
 		},
 	},
+	cookies: {
+		state: {
+			name: 'next-auth.state',
+			options: {
+				httpOnly: true,
+				sameSite: 'lax', // "strict" にすると CSRF 保護が強化されるが問題が起こる場合もあり
+				path: '/',
+				secure: process.env.NODE_ENV === 'production',
+			},
+		},
+	},
 })

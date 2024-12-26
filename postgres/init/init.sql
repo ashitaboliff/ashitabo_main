@@ -26,7 +26,7 @@ END$$;
 
 -- Create Users table
 CREATE TABLE "user" (
-  "id" TEXT PRIMARY KEY,
+  "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" TEXT,
   "user_id" TEXT UNIQUE,
   "password" TEXT,
@@ -61,7 +61,7 @@ CREATE TABLE "profile" (
   "student_id" TEXT UNIQUE,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),
-  "expected" INT,
+  "expected" TEXT,
   "role" "Role",
   "part" "Part"[],
   "is_deleted" BOOLEAN DEFAULT FALSE,

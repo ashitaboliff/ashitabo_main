@@ -124,7 +124,12 @@ const SigninSetting = () => {
 				className="flex flex-col space-y-4 w-full max-w-xs"
 				onSubmit={handleSubmit(onSubmit)}
 			>
-				<TextInputField type="text" register={register('name')} label="本名" />
+				<TextInputField
+					type="text"
+					register={register('name')}
+					label="本名"
+					infoDropdown="アカウント管理のために本名を入力してください。"
+				/>
 				{errors.name && (
 					<InfoMessage
 						message={errors.name.message}
@@ -171,6 +176,13 @@ const SigninSetting = () => {
 					isMultiple={true}
 					setValue={setValue}
 					watchValue={watchPart}
+					infoDropdown={
+						<>
+							使用楽器を選択してください、複数選択可能です。
+							<br />
+							また、他の楽器経験があればその他を選択してください。
+						</>
+					}
 				/>
 				{errors.part && (
 					<InfoMessage
@@ -186,6 +198,11 @@ const SigninSetting = () => {
 							type="text"
 							register={register('student_id')}
 							label="学籍番号"
+							infoDropdown={
+								<>
+									信州大学および長野県立大学の学籍番号のフォーマットに対応しています。
+								</>
+							}
 						/>
 						{errors.student_id && (
 							<InfoMessage
@@ -200,6 +217,9 @@ const SigninSetting = () => {
 							register={register('expected')}
 							options={expectedYear}
 							label="卒業予定年度"
+							infoDropdown={
+								<>この値はいつでも変更できます。留年しても大丈夫！（笑）</>
+							}
 						/>
 						{errors.expected && (
 							<InfoMessage

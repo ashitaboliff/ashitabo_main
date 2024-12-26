@@ -41,60 +41,60 @@ async function main() {
 		],
 	})
 
-	const admin = await prisma.user.findFirst({
-		where: {
-			user_id: 'admin',
-		},
-	})
+	// const admin = await prisma.user.findFirst({
+	// 	where: {
+	// 		user_id: 'admin',
+	// 	},
+	// })
 
-	await prisma.profile.createMany({
-		data: [
-			{
-				id: admin.id,
-				user_id: 'admin',
-				role: 'STUDENT',
-				part: ['BASS'],
-			},
-		],
-	})
+	// await prisma.profile.createMany({
+	// 	data: [
+	// 		{
+	// 			id: admin.id,
+	// 			user_id: 'admin',
+	// 			role: 'STUDENT',
+	// 			part: ['BASS'],
+	// 		},
+	// 	],
+	// })
 
-	await prisma.booking.createMany({
-		data: [
-			{
-				booking_date: DateFormat(0),
-				booking_time: 0,
-				regist_name: 'サンプルバンド',
-				name: 'サンプルユーザー',
-				user_id: admin.id,
-				password: hashSync('pass', 5),
-			},
-			{
-				booking_date: DateFormat(1),
-				booking_time: 1,
-				regist_name: 'サンプルバンド',
-				name: 'サンプルユーザー',
-				user_id: admin.id,
-				password: hashSync('pass', 5),
-			},
-			{
-				booking_date: DateFormat(2),
-				booking_time: 2,
-				regist_name:
-					'長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル',
-				name: '長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル',
-				user_id: admin.id,
-				password: hashSync('pass', 5),
-			},
-			{
-				booking_date: DateFormat(4),
-				booking_time: 1,
-				regist_name: 'わたべサンプルバンド',
-				name: 'わたべサンプルユーザー',
-				user_id: admin.id,
-				password: hashSync('pass', 5),
-			},
-		],
-	})
+	// await prisma.booking.createMany({
+	// 	data: [
+	// 		{
+	// 			booking_date: DateFormat(0),
+	// 			booking_time: 0,
+	// 			regist_name: 'サンプルバンド',
+	// 			name: 'サンプルユーザー',
+	// 			user_id: admin.id,
+	// 			password: hashSync('pass', 5),
+	// 		},
+	// 		{
+	// 			booking_date: DateFormat(1),
+	// 			booking_time: 1,
+	// 			regist_name: 'サンプルバンド',
+	// 			name: 'サンプルユーザー',
+	// 			user_id: admin.id,
+	// 			password: hashSync('pass', 5),
+	// 		},
+	// 		{
+	// 			booking_date: DateFormat(2),
+	// 			booking_time: 2,
+	// 			regist_name:
+	// 				'長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル',
+	// 			name: '長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル',
+	// 			user_id: admin.id,
+	// 			password: hashSync('pass', 5),
+	// 		},
+	// 		{
+	// 			booking_date: DateFormat(4),
+	// 			booking_time: 1,
+	// 			regist_name: 'わたべサンプルバンド',
+	// 			name: 'わたべサンプルユーザー',
+	// 			user_id: admin.id,
+	// 			password: hashSync('pass', 5),
+	// 		},
+	// 	],
+	// })
 	console.log('Data seeding complete.')
 }
 

@@ -46,6 +46,18 @@ export async function padLockAction(
 	}
 }
 
+export async function padLockCookieAction(): Promise<
+	'locked' | 'unlocked' | 'no-cookie'
+> {
+	const cookieStore = cookies()
+	const existCookie = cookieStore.has('isLocked')
+	const isLocked = cookieStore.get('isLocked')?.value
+
+	if (!existCookie) return 'no-cookie'
+	if (isLocked === 'true') return 'locked'
+	return 'unlocked'
+}
+
 export async function getUserAction(
 	user_id: string,
 ): Promise<ApiResponse<string | User>> {
