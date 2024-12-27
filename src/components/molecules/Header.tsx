@@ -7,7 +7,8 @@ import { useSession } from 'next-auth/react'
 import { getUserAction } from '@/components/auth/actions'
 import { User } from '@/types/UserTypes'
 
-import { LuMenu, LuUserCircle2 } from 'react-icons/lu'
+import { LuMenu } from 'react-icons/lu'
+import { FaRegUserCircle } from 'react-icons/fa'
 import { RxCountdownTimer } from 'react-icons/rx'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 
@@ -71,7 +72,7 @@ const Layout = ({ className }: { className: string }) => {
 									className="rounded-full"
 								/>
 							) : (
-								<LuUserCircle2 />
+								<FaRegUserCircle />
 							)}
 						</Link>
 					</button>

@@ -33,7 +33,7 @@ CREATE TABLE "user" (
   "email" TEXT UNIQUE,
   "email_verified" TIMESTAMP,
   "image" TEXT,
-  "role" "AccountRole",
+  "role" "AccountRole" DEFAULT 'USER',
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW()
 );

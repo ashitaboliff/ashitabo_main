@@ -20,7 +20,7 @@ type PartEnum =
 	| 'ボーカル'
 	| 'その他'
 
-type AccountRole = 'ADMIN' | 'USER'
+export type AccountRole = 'ADMIN' | 'USER'
 
 export const RoleMap: Record<Role, RoleEnum> = {
 	GRADUATE: '卒業生',
