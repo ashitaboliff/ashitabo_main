@@ -17,7 +17,7 @@ const oneMonth = 60 * 60 * 24 * 30
 export async function padLockAction(
 	password: string,
 ): Promise<ApiResponse<string>> {
-	const cookieStore = cookies()
+	const cookieStore = await cookies()
 	let failCount = Number(cookieStore.get('failCount')?.value) || 0
 
 	try {
@@ -29,14 +29,14 @@ export async function padLockAction(
 			return { status: StatusCode.NO_CONTENT }
 		} else {
 			if (failCount >= 5) {
-				cookies().set('isLocked', 'true', { maxAge: oneDay }) // 一日持つ
+				cookieStore.set('isLocked', 'true', { maxAge: oneDay }) // 一日持つ
 				return {
 					status: StatusCode.FORBIDDEN,
 					response: 'パスワードを5回以上間違えたため、ログインできません',
 				}
 			} else {
 				failCount += 1
-				cookies().set('failCount', failCount.toString(), { maxAge: oneDay }) // 一日持つ
+				cookieStore.set('failCount', failCount.toString(), { maxAge: oneDay }) // 一日持つ
 				return {
 					status: StatusCode.BAD_REQUEST,
 					response: 'パスワードが違います',
@@ -55,7 +55,7 @@ export async function padLockAction(
 export async function padLockCookieAction(): Promise<
 	'locked' | 'unlocked' | 'no-cookie'
 > {
-	const cookieStore = cookies()
+	const cookieStore = await cookies()
 	const existCookie = cookieStore.has('isLocked')
 	const isLocked = cookieStore.get('isLocked')?.value
 

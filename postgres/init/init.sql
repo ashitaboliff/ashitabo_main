@@ -44,11 +44,10 @@ CREATE TABLE "booking" (
   "user_id" TEXT,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),
-  "booking_date" TIMESTAMP NOT NULL,
+  "booking_date" TEXT NOT NULL,
   "booking_time" INT NOT NULL,
   "regist_name" TEXT NOT NULL,
   "name" TEXT NOT NULL,
-  "password" TEXT NOT NULL,
   "is_deleted" BOOLEAN DEFAULT FALSE,
   FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE SET NULL
 );

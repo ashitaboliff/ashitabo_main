@@ -20,16 +20,28 @@ model Booking {
   user_id      String
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
-  booking_date DateTime
+  booking_date String
   booking_time Int
   regist_name  String
   name         String
-  password     String
   is_deleted   Boolean @default(false)
 
   user User? @relation(fields: [user_id], references: [id])
 
   @@map("booking")
+}
+
+model ExBooking { // 予約禁止日
+  id           String   @id @default(uuid())
+  start_date   String
+  start_time   Int
+  end_time     Int?
+  description  String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  is_deleted   Boolean @default(false)
+
+  @@map("ex_booking")
 }
 
 model User {
