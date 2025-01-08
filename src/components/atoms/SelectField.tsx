@@ -89,14 +89,20 @@ const SelectField = ({
 					{isOpen && (
 						<div className="dropdown-content bg-bg-white menu space-y-2 rounded-box z-[1] w-52 p-2 shadow">
 							{Object.entries(options).map(([key, value]) => (
-								<label className="flex items-center space-x-2 cursor-pointer">
+								<label
+									key={`label-${key}`}
+									className="flex items-center space-x-2 cursor-pointer"
+								>
 									<input
+										key={`input-${key}`}
 										type="checkbox"
 										checked={watchValue.includes(key)} // 現在の選択をwatch
 										onChange={() => handleCheckboxChange(key)}
 										className="checkbox checkbox-primary"
 									/>
-									<span className="label-text">{value}</span>
+									<span key={`span-${key}`} className="label-text">
+										{value}
+									</span>
 								</label>
 							))}
 						</div>

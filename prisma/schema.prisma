@@ -26,6 +26,8 @@ model Booking {
   name         String
   is_deleted   Boolean @default(false)
 
+  BuyBooking   BuyBooking?
+
   user User? @relation(fields: [user_id], references: [id])
 
   @@map("booking")
@@ -44,6 +46,22 @@ model ExBooking { // 予約禁止日
   @@map("ex_booking")
 }
 
+model BuyBooking { // 予約購入
+  id           String   @id @default(uuid())
+  booking_id   String   @unique
+  user_id      String
+  status       BuyBookingStatus
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  expire_at    DateTime
+  is_deleted   Boolean  @default(false)
+
+  user         User?    @relation(fields: [user_id], references: [id])
+  booking      Booking? @relation(fields: [booking_id], references: [id])
+
+  @@map("buy_booking")
+}
+
 model User {
   id            String    @id @default(uuid())
   name          String?
@@ -58,6 +76,7 @@ model User {
   sessions      Session[]
   profile       Profile?
   bookings      Booking[]
+  buyBookings   BuyBooking[]
 
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
@@ -141,6 +160,7 @@ enum Role {
 }
 
 enum AccountRole {
+  TOPADMIN
   ADMIN
   USER
 }
@@ -153,4 +173,11 @@ enum Part {
   DRUMS
   KEYBOARD
   OTHER
+}
+
+enum BuyBookingStatus {
+  UNPAID
+  PAID
+  CANCELED
+  EXPIRED
 }

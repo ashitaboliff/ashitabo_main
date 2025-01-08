@@ -20,7 +20,10 @@ BEGIN
             );
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'AccountRole') THEN
-        CREATE TYPE "AccountRole" AS ENUM ('ADMIN', 'USER');
+        CREATE TYPE "AccountRole" AS ENUM ('TOPADMIN', 'ADMIN', 'USER');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'BuyBookingStatus') THEN
+        CREATE TYPE "BuyBookingStatus" AS ENUM ('UNPAID', 'PAID', 'CANCELED', 'EXPIRED');
     END IF;
 END$$;
 
@@ -49,6 +52,33 @@ CREATE TABLE "booking" (
   "regist_name" TEXT NOT NULL,
   "name" TEXT NOT NULL,
   "is_deleted" BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE SET NULL
+);
+
+-- Create BanBooking table
+CREATE TABLE "ex_booking" (
+  "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+  "start_date" TEXT NOT NULL,
+  "start_time" INT NOT NULL,
+  "end_time" INT NOT NULL,
+  "description" TEXT NOT NULL,
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  "is_deleted" BOOLEAN DEFAULT FALSE
+)
+
+-- Create BuyBookings table
+CREATE TABLE "buy_booking" (
+  "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+  "booking_id" TEXT,
+  "user_id" TEXT,
+  "status" "BuyBookingStatus" DEFAULT 'UNPAID',
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  "expire_at" TIMESTAMP,
+  "is_deleted" BOOLEAN DEFAULT FALSE,
+
+  FOREIGN KEY ("booking_id") REFERENCES "booking" ("id") ON DELETE SET NULL,
   FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE SET NULL
 );
 

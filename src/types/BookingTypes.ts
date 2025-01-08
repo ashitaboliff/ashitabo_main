@@ -12,8 +12,8 @@ export interface Booking {
 
 export type BanBooking = {
 	id: string
-	createdAt: string
-	updatedAt: string
+	createdAt: Date
+	updatedAt: Date
 	startDate: string
 	startTime: number
 	endTime: number | null

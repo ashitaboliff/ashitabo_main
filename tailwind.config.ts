@@ -95,7 +95,7 @@ const daisyDark = {
 }
 
 const screens = {
-	sm: '600px',
+	sm: '620px',
 	md: '768px',
 	lg: '900px',
 	xl: '1280px',
@@ -135,6 +135,12 @@ const config: Config = {
 			white: colorPalette['bg']['white'],
 		},
 		screens,
+		maxWidth: {
+			sm: '640px',
+			md: '768px',
+			lg: '900px',
+			xl: '1280px',
+		},
 	},
 	darkMode: 'class',
 	plugins: [require('daisyui')],

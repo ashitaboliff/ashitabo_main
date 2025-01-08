@@ -11,6 +11,23 @@ export const UTCToJST = (date: Date): Date => {
 	return new Date(date.getTime() + 9 * 60 * 1000 * 60)
 }
 
+export function DateToDayISOstring(date: Date): string {
+	const utcDate = new Date(
+		Date.UTC(
+			date.getFullYear(),
+			date.getMonth(),
+			date.getDate(),
+			0, // 時間を 0 時に設定
+			0, // 分を 0 分に設定
+			0, // 秒を 0 秒に設定
+			0, // ミリ秒を 0 ミリ秒に設定
+		),
+	)
+	console.log(utcDate)
+	const ISOstring = utcDate.toISOString()
+	return ISOstring
+}
+
 /**
  * 今年から10年前まで、5年後までの "XX年度" のオブジェクトを生成する
  * @returns "XX年度"のオブジェクト

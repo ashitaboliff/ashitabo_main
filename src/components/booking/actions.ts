@@ -2,7 +2,6 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { eachDayOfInterval, formatISO } from 'date-fns'
-import { unstable_cache } from 'next/cache'
 import { Booking, BookingResponse, BanBooking } from '@/types/BookingTypes'
 import {
 	getAllBooking,
@@ -16,13 +15,11 @@ import {
 	getCalendarTime,
 } from '@/db/Booking'
 import { getUser } from '@/db/Auth'
+import { revalidateTag } from 'next/cache'
 
 export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
-	const calendarTime = unstable_cache(getCalendarTime, [], {
-		tags: ['calendarTime'],
-	})
 	try {
-		const timeList = await calendarTime()
+		const timeList = await getCalendarTime()
 		return {
 			status: StatusCode.OK,
 			response: timeList,
@@ -38,11 +35,7 @@ export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
 
 export async function getAllBookingAction(): Promise<ApiResponse<Booking[]>> {
 	try {
-		const revalidateGetAllBooking = unstable_cache(getAllBooking, [], {
-			tags: ['getAllBooking'],
-		})
-
-		const bookings = await revalidateGetAllBooking()
+		const bookings = await getAllBooking()
 
 		const transformedBookings: Booking[] = bookings.map((booking) => ({
 			id: booking.id,
@@ -83,15 +76,7 @@ export async function getBookingByDateAction({
 		const ISOstartDate = new Date(startDate).toISOString()
 		const ISOendDate = new Date(endDate).toISOString()
 
-		const revalidateGetBookingByDate = unstable_cache(
-			getBookingByDate,
-			['startDate', ISOstartDate, 'endDate', ISOendDate],
-			{
-				tags: [`getBookingByDate-${ISOstartDate}-${ISOendDate}`],
-			},
-		)
-
-		const bookings = await revalidateGetBookingByDate({
+		const bookings = await getBookingByDate({
 			startDate: ISOstartDate,
 			endDate: ISOendDate,
 		})
@@ -150,10 +135,22 @@ export async function getBookingByDateAction({
 		})
 
 		// 予約禁止データで上書き
-		banDates.forEach((banBooking) => {
-			const dateKey = banBooking.startDate.split('T')[0]
-			const startTime = banBooking.startTime
-			const endTime = banBooking.endTime ?? startTime
+		const transformedBanBookings: BanBooking[] = banDates.map((banBooking) => ({
+			id: banBooking.id,
+			createdAt: banBooking.created_at,
+			updatedAt: banBooking.updated_at,
+			startDate: banBooking.start_date,
+			startTime: banBooking.start_time,
+			endTime: banBooking.end_time,
+			description: banBooking.description,
+			isDeleted: banBooking.is_deleted,
+		}))
+
+		// 予約禁止データで上書き
+		transformedBanBookings.forEach((banBooking) => {
+			const dateKey: string = banBooking.startDate.split('T')[0]
+			const startTime: number = banBooking.startTime
+			const endTime: number = banBooking.endTime ?? startTime
 
 			for (let time = startTime; time <= endTime; time++) {
 				if (
@@ -240,7 +237,7 @@ export async function createBookingAction({
 
 		if (atBooking) {
 			return {
-				status: StatusCode.BAD_REQUEST,
+				status: StatusCode.CONFLICT,
 				response: '予約が重複しています',
 			}
 		}
@@ -375,23 +372,43 @@ export async function getBookingBanDateAction({
 		const ISOstartDate = new Date(startDate).toISOString()
 		const ISOendDate = new Date(endDate).toISOString()
 
-		const revalidateGetBookingBanDate = unstable_cache(
-			getBookingBanDate,
-			['startDate', ISOstartDate, 'endDate', ISOendDate],
-			{
-				tags: [`getBookingBanDate-${ISOstartDate}-${ISOendDate}`],
-			},
-		)
-
-		const banDates = await revalidateGetBookingBanDate({
-			startDate,
-			endDate,
+		const banDates = await getBookingBanDate({
+			startDate: ISOstartDate,
+			endDate: ISOendDate,
 		})
+
+		const transformedBanBookings: BanBooking[] = banDates.map((banBooking) => ({
+			id: banBooking.id,
+			createdAt: banBooking.created_at,
+			updatedAt: banBooking.updated_at,
+			startDate: banBooking.start_date,
+			startTime: banBooking.start_time,
+			endTime: banBooking.end_time ?? banBooking.start_time,
+			description: banBooking.description,
+			isDeleted: banBooking.is_deleted,
+		}))
 
 		return {
 			status: StatusCode.OK,
-			response: banDates,
+			response: transformedBanBookings,
 		}
+	} catch (error) {
+		console.error(error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function bookingRevalidateTagAction({
+	tag,
+}: {
+	tag: string
+}): Promise<ApiResponse<string>> {
+	try {
+		revalidateTag(tag)
+		return { status: StatusCode.OK, response: 'リビルドが完了しました' }
 	} catch (error) {
 		console.error(error)
 		return {

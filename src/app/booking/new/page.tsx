@@ -1,7 +1,7 @@
 'use client'
 
 import React, { Suspense } from 'react'
-import NewBooking from '@/components/booking/NewBooking'
+import NewBooking from '@/components/booking/BookingCreate'
 import Loading from '@/components/atoms/Loading'
 
 const Page = () => {

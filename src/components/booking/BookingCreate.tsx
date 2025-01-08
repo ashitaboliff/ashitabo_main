@@ -3,15 +3,16 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { parseDateString } from '@/lib/CommonFunction'
-import { TIME_LIST } from '@/lib/enum/BookingEnum'
-import { format } from 'date-fns'
+import { format, addDays } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { createBookingAction } from './actions'
 import Loading from '@/components/atoms/Loading'
 import TextInputField from '@/components/atoms/TextInputField'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import PasswordInputField from '@/components/molecules/PasswordInputField'
+import { Session } from 'next-auth'
 
 type PopupChildren = {
 	title: string
@@ -24,7 +25,13 @@ const schema = yup.object().shape({
 	password: yup.string().required('パスワードを入力してください'),
 })
 
-const NewBooking = () => {
+const NewBooking = ({
+	calendarTime,
+	session,
+}: {
+	calendarTime: string[]
+	session: Session
+}) => {
 	const router = useRouter()
 	const [isState, setIsState] = useState<'loading' | 'input' | 'submit'>(
 		'loading',
@@ -52,9 +59,10 @@ const NewBooking = () => {
 	})
 
 	const queryParams = useSearchParams()
-	const bookingDate =
-		queryParams.get('booking_date') ?? new Date().toISOString().split('T')[0]
-	const bookingTime = queryParams.get('booking_time') ?? '0'
+	const bookingDate = queryParams.get('date')
+		? new Date(queryParams.get('date') as string)
+		: new Date()
+	const bookingTime = queryParams.get('time') ?? '0'
 
 	useEffect(() => {
 		setIsState('input')
@@ -71,23 +79,20 @@ const NewBooking = () => {
 
 	const onSubmit = async (data: any) => {
 		const reservationData = {
-			booking_date: parseDateString(bookingDate),
-			booking_time: Number(bookingTime),
-			regist_name: data.regist_name,
+			bookingDate: DateToDayISOstring(bookingDate),
+			bookingTime: Number(bookingTime),
+			registName: data.regist_name,
 			name: data.name,
-			password: data.password,
+			isDeleted: false,
 		}
 
 		try {
-			const response = await fetch('/api/booking/new', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(reservationData),
+			const response = await createBookingAction({
+				userId: session.user.id,
+				booking: reservationData,
 			})
 
-			if (response.ok) {
+			if (response.status === 200) {
 				setPopupChildren({
 					title: '予約完了',
 					children: (
@@ -95,11 +100,11 @@ const NewBooking = () => {
 							<p>以下の内容で予約が完了しました。</p>
 							<p>
 								日付:{' '}
-								{format(parseDateString(bookingDate), 'yyyy/MM/dd(E)', {
+								{format(DateToDayISOstring(bookingDate), 'yyyy/MM/dd(E)', {
 									locale: ja,
 								})}
 							</p>
-							<p>時間: {TIME_LIST[Number(bookingTime)]}</p>
+							<p>時間: {calendarTime[Number(bookingTime)]}</p>
 							<p>バンド名: {watch('regist_name')}</p>
 							<p>責任者: {watch('name')}</p>
 							<button
@@ -118,11 +123,9 @@ const NewBooking = () => {
 				setIsState('submit')
 			} else {
 				const errorMsg =
-					response.status === 400
+					response.status === 409
 						? '予約に失敗しました。多分予約が重複してます。'
-						: response.status === 302
-							? '予約に失敗しました。多分予約可能時間の範囲外です。'
-							: '予約に失敗しました。なんのエラーかわからんので出ないことを祈ります。'
+						: '予約に失敗しました。なんのエラーかわからんので出ないことを祈ります。'
 				setPopupChildren({
 					title: 'エラー',
 					children: (
@@ -183,11 +186,11 @@ const NewBooking = () => {
 				<h2 className="text-2xl font-bold">新規予約</h2>
 				<p className="mt-4">
 					日付:{' '}
-					{format(parseDateString(bookingDate), 'yyyy/MM/dd(E)', {
+					{format(DateToDayISOstring(bookingDate), 'yyyy/MM/dd(E)', {
 						locale: ja,
 					})}
 				</p>
-				<p>時間: {TIME_LIST[Number(bookingTime)]}</p>
+				<p>時間: {calendarTime[Number(bookingTime)]}</p>
 			</div>
 
 			<div className="max-w-md mx-auto">

@@ -1,125 +1,92 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { addDays, format } from 'date-fns'
+import { useState, useEffect, useRef, memo, use, Suspense } from 'react'
+import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { TIME_LIST } from '@/lib/enum/BookingEnum'
-import { Booking, BookingResponse } from '@/types/BookingTypes' // 型のインポート
+import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
+import { useScreenSize, getMaxWidth } from '@/utils/ScreenSize'
+import { BookingResponse } from '@/types/BookingTypes'
 import BookingRule from '@/components/molecules/BookingRule'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import { BookingTableBox } from '@/components/molecules/BookingTableBox'
 import Loading from '@/components/atoms/Loading'
+import BookingCalendar from '@/components/booking/BookingCalendar'
 
-import { PiCircle } from 'react-icons/pi'
-import { HiMiniXMark } from 'react-icons/hi2'
-
-const DayMax = 7
-const YesterDate = addDays(new Date(), -1)
-
-const MainPage = () => {
-	const [today, setToday] = useState<Date>(YesterDate)
-	const [dateList, setDateList] = useState<Date[]>(
-		Array.from(
-			{ length: DayMax },
-			(_, i) =>
-				new Date(today.getFullYear(), today.getMonth(), today.getDate() + i),
-		),
-	)
-	const [bookingData, setBookingData] = useState<
-		Record<string, Record<number, Booking | null>>
-	>({}) // APIレスポンスに対応
-	const [isLoading, setIsLoading] = useState<boolean>(true)
+const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
+	const yesterDate = subDays(new Date(), 1)
+	const [viewDay, setViewday] = useState<Date>(yesterDate)
+	const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
+	const ableViewDayMax = 28 // 連続表示可能な日数
+	const ableViewDayMin = 8 // 連続表示可能な最小日数
+	const [bookingData, setBookingData] = useState<BookingResponse>()
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const ReadMePopupRef = useRef<PopupRef>(undefined)
 
 	let nextAble =
-		addDays(today, DayMax) <= addDays(YesterDate, DayMax) ? false : true
+		addDays(viewDay, viewDayMax) <= addDays(yesterDate, ableViewDayMax)
+			? false
+			: true
 	let prevAble =
-		addDays(today, -DayMax) >= addDays(YesterDate, -DayMax) ? false : true
+		subDays(viewDay, viewDayMax) >= subDays(yesterDate, ableViewDayMin)
+			? false
+			: true
 
 	const nextWeek = () => {
-		setToday(addDays(today, DayMax))
+		setViewday(addDays(viewDay, viewDayMax))
 	}
 
 	const prevWeek = () => {
-		setToday(addDays(today, -DayMax))
+		setViewday(subDays(viewDay, viewDayMax))
 	}
 
 	const getBooking = async ({
-		startDay,
-		endDay,
+		startDate, // Date
+		endDate, // Date
 		cache,
 	}: {
-		startDay: string
-		endDay: string
-		cache: RequestCache
+		startDate: Date
+		endDate: Date
+		cache?: 'no-cache'
 	}) => {
-		const res = await fetch(
-			`/api/booking?startDay=${startDay}&endDay=${endDay}`,
-			{
-				cache,
-			},
-		)
-		if (res.ok) {
-			const json = await res.json()
-			return json.response as BookingResponse['response'] // APIレスポンスの型に合わせてキャスト
+		if (cache === 'no-cache') {
+			setIsLoading(true)
+			await bookingRevalidateTagAction({ tag: 'booking' })
+		}
+		const startDay = startDate.toISOString().split('T')[0]
+		const endDay = endDate.toISOString().split('T')[0]
+		const res = await getBookingByDateAction({
+			startDate: startDay,
+			endDate: endDay,
+		})
+		console.log(res)
+		if (res.status === 200) {
+			setBookingData(res.response)
 		} else {
+			console.error('Failed to get booking data')
 			return null
 		}
-	}
-
-	const getUpdate = async ({
-		day,
-		cache,
-	}: {
-		day?: Date
-		cache?: RequestCache
-	} = {}) => {
-		cache ? setIsLoading(true) : setIsLoading(false)
-		if (!day) {
-			day = YesterDate
-		}
-		if (!cache) {
-			cache = 'force-cache'
-		}
-		const startDay = format(day, 'yyyy-MM-dd', { locale: ja })
-		const endDay = format(addDays(day, DayMax), 'yyyy-MM-dd', { locale: ja })
-		const res = await getBooking({ startDay, endDay, cache })
-		if (res) {
-			setBookingData(res) // 取得したデータを更新
-			setIsLoading(false)
-		} else {
-			alert('予約情報の取得に失敗しました')
-			setIsLoading(false)
-		}
+		setIsLoading(false)
 	}
 
 	useEffect(() => {
-		getUpdate({ day: today, cache: 'no-cache' })
-	}, [])
-
-	useEffect(() => {
-		setDateList(
-			Array.from(
-				{ length: DayMax },
-				(_, i) =>
-					new Date(today.getFullYear(), today.getMonth(), today.getDate() + i),
-			),
-		)
-		getUpdate({ day: today })
-	}, [today])
-
-	if (isLoading) {
-		return <Loading />
-	}
+		getBooking({
+			startDate: viewDay,
+			endDate: addDays(viewDay, viewDayMax - 1),
+		})
+	}, [viewDay])
 
 	return (
 		<div>
 			<div className="flex justify-center space-x-2 m-2">
 				<button
 					className="btn btn-primary"
-					onClick={() => getUpdate({ day: today, cache: 'no-cache' })}
+					onClick={() =>
+						getBooking({
+							startDate: viewDay,
+							endDate: addDays(viewDay, viewDayMax - 1),
+							cache: 'no-cache',
+						})
+					}
 				>
 					カレンダーを更新
 				</button>
@@ -130,15 +97,6 @@ const MainPage = () => {
 					使い方の表示
 				</button>
 			</div>
-			<div className="flex justify-center space-x-8">
-				<Image
-					src="/animal_music_band.png"
-					alt="logo"
-					width={150}
-					height={120}
-				/>
-				<Image src="/animal_dance.png" alt="logo" width={150} height={120} />
-			</div>
 			<div className="flex flex-col justify-center space-x-2">
 				<div className="flex justify-between items-center mb-4 m-auto">
 					<button
@@ -148,9 +106,10 @@ const MainPage = () => {
 					>
 						{'<'}
 					</button>
-					<div className="text-xl font-bold mx-2 w-72 text-center">
-						{format(dateList[0], 'M/d(E)', { locale: ja })}~
-						{format(dateList[DayMax - 1], 'M/d(E)', { locale: ja })}までのコマ表
+					<div className="text-lg font-bold mx-2 w-72 text-center">
+						{format(viewDay, 'M/d(E)', { locale: ja })}~
+						{format(addDays(viewDay, viewDayMax - 1), 'M/d(E)', { locale: ja })}
+						までのコマ表
 					</div>
 					<button
 						className="btn btn-outline"
@@ -160,91 +119,13 @@ const MainPage = () => {
 						{'>'}
 					</button>
 				</div>
-				<div className="flex justify-center">
-					{' '}
-					{/* カレンダー全体 */}
-					<table className="w-auto border border-base-200 table-pin-rows table-pin-cols bg-bg-white">
-						<thead>
-							{' '}
-							{/* 日付 */}
-							<tr>
-								<th className="border border-base-200 w-11"></th>
-								{dateList.map((day, index) => {
-									return (
-										<th
-											key={index}
-											className="border border-base-200 p-1 w-11 h-9"
-										>
-											<p className="text-xs text-base-content">
-												{format(day, 'MM/dd', { locale: ja })} <br />{' '}
-												{format(day, '(E)', { locale: ja })}
-											</p>
-										</th>
-									)
-								})}
-							</tr>
-						</thead>
-						<tbody>
-							{TIME_LIST.map((time, timeIndex) => (
-								<tr key={timeIndex}>
-									<td className="border border-base-200 p-1 w-11 h-13 break-words">
-										<p className="text-xs text-base-content break-words">
-											{time.split('~')[0]}~ <br /> {time.split('~')[1]}
-										</p>
-									</td>
-									{dateList.map((day, dateIndex) => {
-										const isThursday = day.getDay() === 4 && timeIndex > 4
-										const isBookingAvailable =
-											bookingData[day.toISOString().split('T')[0]]?.[timeIndex]
-										const booking =
-											bookingData[day.toISOString().split('T')[0]]?.[timeIndex]
-										return (
-											<td
-												key={dateIndex}
-												className="border border-base-200 p-0"
-											>
-												{isBookingAvailable ? (
-													<BookingTableBox
-														booking_date={format(day, 'MM月dd日(E)', {
-															locale: ja,
-														})}
-														booking_time={TIME_LIST[timeIndex]}
-														registName={booking?.regist_name}
-														name={booking?.name}
-														url={
-															isThursday
-																? undefined
-																: `/booking/detail?id=${booking?.id}`
-														}
-													/>
-												) : (
-													<BookingTableBox
-														booking_date={format(day, 'MM月dd日(E)', {
-															locale: ja,
-														})}
-														booking_time={TIME_LIST[timeIndex]}
-														registName={
-															isThursday ? (
-																<HiMiniXMark color="red" size={20} />
-															) : (
-																<PiCircle color="blue" size={20} />
-															)
-														}
-														url={
-															isThursday
-																? undefined
-																: `/booking/new?booking_date=${format(day, 'yyyy-MM-dd', { locale: ja })}&booking_time=${timeIndex}`
-														}
-													/>
-												)}
-											</td>
-										)
-									})}
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
+				{bookingData ? (
+					<BookingCalendar bookingDate={bookingData} timeList={calendarTime} />
+				) : (
+					<div className="flex justify-center">
+						<div className="skeleton h-96 w-96"></div>
+					</div>
+				)}
 			</div>
 			<Popup
 				ref={ReadMePopupRef}
@@ -267,5 +148,17 @@ const MainPage = () => {
 		</div>
 	)
 }
+
+const CalendarTitle = memo(({ dateList }: { dateList: string[] }) => {
+	return (
+		<div>
+			<div className="text-lg font-bold mx-2 w-72 text-center">
+				{format(dateList[0], 'M/d(E)', { locale: ja })}~
+				{format(dateList[dateList.length - 1], 'M/d(E)', { locale: ja })}
+				までのコマ表
+			</div>
+		</div>
+	)
+})
 
 export default MainPage

@@ -9,7 +9,7 @@ export default function Template({ children }: { children: ReactNode }) {
 
 	return (
 		<>
-			<div className={`container mx-auto ${defaultSize} px-4`}>{children}</div>
+			<div className={`container mx-auto ${defaultSize} px-2`}>{children}</div>
 		</>
 	)
 }
