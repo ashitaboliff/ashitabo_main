@@ -15,6 +15,7 @@ const TextInputField = ({
 	type,
 	label,
 	infoDropdown,
+	disabled,
 	...props
 }: {
 	register: UseFormRegisterReturn
@@ -22,6 +23,7 @@ const TextInputField = ({
 	type: string
 	label?: string
 	infoDropdown?: ReactNode
+	disabled?: boolean
 }) => {
 	return (
 		<div>
@@ -30,6 +32,7 @@ const TextInputField = ({
 				type={type}
 				placeholder={placeholder}
 				className="input input-bordered w-full pr-10"
+				disabled={disabled}
 				{...register}
 				{...props}
 			/>

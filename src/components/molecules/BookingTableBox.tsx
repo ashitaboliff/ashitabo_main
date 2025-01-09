@@ -10,7 +10,7 @@ interface BookingTableBoxProps {
 	index: string
 	id?: string
 	bookingDate: string
-	bookingTime: string
+	bookingTime: number
 	registName?: string // registName or ForBidden or undefined
 	name?: string // name or description or undefined
 }
@@ -70,10 +70,12 @@ export const BookingTableBox = ({
 			>
 				<div className="w-11 h-13 flex flex-col justify-center items-center text-center break-words py-1">
 					<p className="text-xxxs text-base-content bold">
-						{registName.slice(0, 20) + '...'}
+						{registName.length > 21
+							? registName.slice(0, 20) + '...'
+							: registName}
 					</p>
 					<p className="text-xxxs text-base-content">
-						{name ? name.slice(0, 13) + '...' : name}
+						{name && name.length > 14 ? name.slice(0, 13) + '...' : name}
 					</p>
 				</div>
 			</td>

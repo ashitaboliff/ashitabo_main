@@ -58,7 +58,6 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 			startDate: startDay,
 			endDate: endDay,
 		})
-		console.log(res)
 		if (res.status === 200) {
 			setBookingData(res.response)
 		} else {
@@ -148,17 +147,5 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 		</div>
 	)
 }
-
-const CalendarTitle = memo(({ dateList }: { dateList: string[] }) => {
-	return (
-		<div>
-			<div className="text-lg font-bold mx-2 w-72 text-center">
-				{format(dateList[0], 'M/d(E)', { locale: ja })}~
-				{format(dateList[dateList.length - 1], 'M/d(E)', { locale: ja })}
-				までのコマ表
-			</div>
-		</div>
-	)
-})
 
 export default MainPage

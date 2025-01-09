@@ -30,8 +30,7 @@ export const getAllBooking = async () => {
 			})
 			return bookings
 		} catch (error) {
-			console.error(error)
-			throw new Error('Database query failed')
+			throw error
 		}
 	}
 	const getAllBookingCache = unstable_cache(getAllBooking, [], {
@@ -88,8 +87,7 @@ export const getBookingByDate = async ({
 			})
 			return bookings
 		} catch (error) {
-			console.error(error)
-			throw new Error('Database query failed')
+			throw error
 		}
 	}
 	const getBookingByDateCache = unstable_cache(
@@ -105,15 +103,26 @@ export const getBookingByDate = async ({
 }
 
 /**
- * idから予約情報を取得する関数
- * @param id 予約ID
+ * あるユーザのしたある期間の予約情報を取得する関数
  */
-export const getBookingById = async (id: string) => {
+export const getBookingByUserIdAndDate = async ({
+	userId,
+	startDate,
+	endDate,
+}: {
+	userId: string
+	startDate: string
+	endDate: string
+}) => {
 	try {
-		const booking = await prisma.booking.findFirst({
+		const bookings = await prisma.booking.findMany({
 			where: {
 				AND: {
-					id: id,
+					user_id: userId,
+					booking_date: {
+						gte: startDate,
+						lte: endDate,
+					},
 					is_deleted: {
 						not: true,
 					},
@@ -130,12 +139,53 @@ export const getBookingById = async (id: string) => {
 				name: true,
 				is_deleted: true,
 			},
+			orderBy: [{ booking_date: 'asc' }, { booking_time: 'asc' }],
 		})
-		return booking
+
+		return bookings
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
+}
+
+/**
+ * idから予約情報を取得する関数
+ * @param id 予約ID
+ */
+export const getBookingById = async (id: string) => {
+	async function getBookingById(id: string) {
+		try {
+			const booking = await prisma.booking.findFirst({
+				where: {
+					AND: {
+						id: id,
+						is_deleted: {
+							not: true,
+						},
+					},
+				},
+				select: {
+					id: true,
+					user_id: true,
+					created_at: true,
+					updated_at: true,
+					booking_date: true,
+					booking_time: true,
+					regist_name: true,
+					name: true,
+					is_deleted: true,
+				},
+			})
+			return booking
+		} catch (error) {
+			throw error
+		}
+	}
+	const getBookingByIdCache = unstable_cache(getBookingById, [id], {
+		tags: [`booking-${id}`],
+	})
+	const bookingCacheData = await getBookingByIdCache(id)
+	return bookingCacheData
 }
 
 /**
@@ -163,8 +213,7 @@ export const getBookingByBooking = async ({
 		})
 		return bookingData
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 
@@ -176,39 +225,47 @@ export const getBookingByBooking = async ({
 export const createBooking = async ({
 	booking,
 	userId,
+	isPaid,
+	password,
 }: {
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
 	userId: string
+	isPaid: boolean
+	password: string
 }) => {
-	const user = await getUser(userId)
-	if (!user) {
-		throw new Error('指定したIDのユーザは存在しません')
-	}
-
-	const atBooking = await getBookingByBooking({
-		bookingDate: booking.bookingDate,
-		bookingTime: booking.bookingTime,
-	})
-
-	if (atBooking) {
-		throw new Error('予約が重複しています')
-	}
+	const bookingId = v4()
 
 	try {
 		await prisma.booking.create({
 			data: {
-				id: v4(),
+				id: bookingId,
 				user_id: userId,
 				created_at: new Date(),
 				booking_date: booking.bookingDate,
 				booking_time: booking.bookingTime,
 				regist_name: booking.registName,
 				name: booking.name,
+				password: password,
 			},
 		})
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
+	}
+
+	if (isPaid) {
+		try {
+			await prisma.buyBooking.create({
+				data: {
+					id: v4(),
+					booking_id: bookingId,
+					user_id: userId,
+					status: 'PAID',
+					expire_at: subDays(new Date(booking.bookingDate), 7),
+				},
+			})
+		} catch (error) {
+			throw error
+		}
 	}
 }
 
@@ -233,12 +290,6 @@ export const updateBooking = async ({
 	registName: string
 	name: string
 }) => {
-	const atBooking = await getBookingById(id)
-
-	if (!atBooking) {
-		throw new Error('指定したIDの予約はありません')
-	}
-
 	try {
 		await prisma.booking.update({
 			where: {
@@ -253,8 +304,7 @@ export const updateBooking = async ({
 			},
 		})
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 
@@ -263,12 +313,6 @@ export const updateBooking = async ({
  * @param id 予約ID
  */
 export const deleteBooking = async (id: string) => {
-	const atBooking = await getBookingById(id)
-
-	if (!atBooking) {
-		throw new Error('指定したIDの予約はありません')
-	}
-
 	try {
 		await prisma.booking.update({
 			where: {
@@ -280,8 +324,7 @@ export const deleteBooking = async (id: string) => {
 			},
 		})
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 
@@ -304,7 +347,6 @@ export const getBookingBanDate = async ({
 		startDate: string
 		endDate: string
 	}) {
-		console.log('banBooking', startDate, endDate)
 		try {
 			const exBookings = await prisma.exBooking.findMany({
 				where: {
@@ -347,38 +389,6 @@ export const getBookingBanDate = async ({
 	return banBookingCacheData
 }
 
-export const createBuyBooking = async ({
-	bookingId,
-	userId,
-}: {
-	bookingId: string
-	userId: string
-}) => {
-	try {
-		const user = await getUser(userId)
-		if (!user) {
-			throw new Error('指定したIDのユーザは存在しません')
-		}
-		const booking = await getBookingById(bookingId)
-		if (!booking) {
-			throw new Error('指定したIDの予約はありません')
-		}
-		const expireAt = subDays(new Date(booking.booking_date), 7)
-		await prisma.buyBooking.create({
-			data: {
-				id: v4(),
-				booking_id: bookingId,
-				user_id: userId,
-				status: 'UNPAID',
-				expire_at: expireAt,
-			},
-		})
-	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
-	}
-}
-
 export const putBuyBooking = async ({
 	bookingId,
 	userId,
@@ -407,8 +417,7 @@ export const putBuyBooking = async ({
 			},
 		})
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 

@@ -19,16 +19,16 @@ const InfoMessage = ({ messageType, message, IconColor }: Message) => {
 		messageType // 冗長だけどこうしなきゃ色が反映されない
 	) {
 		case 'info':
-			className = 'alert alert-info w-80'
+			className = 'alert alert-info w-auto'
 			break
 		case 'success':
-			className = 'alert alert-success w-80'
+			className = 'alert alert-success w-auto'
 			break
 		case 'error':
-			className = 'alert alert-error w-80'
+			className = 'alert alert-error w-auto'
 			break
 		case 'warning':
-			className = 'alert alert-warning w-80'
+			className = 'alert alert-warning w-auto'
 			break
 		default:
 			className = ''

@@ -56,8 +56,9 @@ const BookingCalendar = memo(
 										<BookingTableBox
 											key={`td-${day}-${timeIndex}`}
 											index={`booking-${day}-${timeIndex}`}
+											id={booking?.id}
 											bookingDate={day}
-											bookingTime={time}
+											bookingTime={timeIndex}
 											registName={booking?.registName}
 											name={booking?.name}
 										/>

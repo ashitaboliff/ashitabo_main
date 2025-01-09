@@ -1,18 +1,23 @@
-import { useEffect, useState, useRef, use } from 'react'
+'use client'
+
+import { useEffect, useState, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Booking } from '@/types/BookingTypes'
-import { format } from 'date-fns'
+import { format, set } from 'date-fns'
+import { getBookingByIdAction, bookingRevalidateTagAction } from './actions'
 import Loading from '@/components/atoms/Loading'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
-import { TIME_LIST } from '@/lib/enum/BookingEnum'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 
 import { FaApple, FaYahoo } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'
 
-const BookingDetail = () => {
+const BookingDetail = ({ calendarTime }: { calendarTime: string[] }) => {
 	const id = useSearchParams().get('id')
+	if (!id) {
+		return <BookingDetailNotFound />
+	}
 	const [bookingDetail, setBookingDetail] = useState<Booking | undefined>(
 		undefined,
 	)
@@ -22,37 +27,42 @@ const BookingDetail = () => {
 	const calendarAddPopupRef = useRef<PopupRef>(undefined)
 	const router = useRouter()
 
-	const fetchBookingDetail = async () => {
-		setIsLoading(true)
-		try {
-			const response = await fetch(`/api/booking/detail?id=${id}`)
-			if (response.ok) {
-				const data = await response.json()
-				setBookingDetail(data.response)
-				setIsLoading(false)
-			} else {
-				// console.error('Failed to fetch booking detail')
-				setIsLoading(false)
-			}
-		} catch (error) {
-			// console.error('Error fetching booking detail:', error)
-			setIsLoading(false)
+	const fetchBookingDetail = async ({
+		id,
+		cache,
+	}: {
+		id: string
+		cache?: 'no-cache'
+	}) => {
+		if (cache === 'no-cache') {
+			setIsLoading(true)
+			await bookingRevalidateTagAction({ tag: `booking-${id}` })
 		}
+		const res = await getBookingByIdAction(id)
+		if (res.status === 200) {
+			setBookingDetail(res.response)
+		} else if (res.status === 404) {
+			setBookingDetail(undefined)
+		} else {
+			console.error(res)
+			setBookingDetail(undefined)
+		}
+		setIsLoading(false)
 	}
 
 	useEffect(() => {
-		fetchBookingDetail()
+		fetchBookingDetail({ id, cache: 'no-cache' })
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [id])
 
 	useEffect(() => {
 		if (bookingDetail) {
-			bookingDate = TIME_LIST[Number(bookingDetail.booking_time)]
+			bookingDate = calendarTime[bookingDetail.bookingTime]
 				.split('~')
 				.map(
 					(time) =>
 						new Date(
-							new Date(bookingDetail.booking_date).setHours(
+							new Date(bookingDetail.bookingDate).setHours(
 								...(time.split(':').map(Number) as [
 									number,
 									number,
@@ -61,7 +71,7 @@ const BookingDetail = () => {
 								]),
 							),
 						),
-				) // chat GPTに作らせた激やばコード、意味はchat GPTに聞いてな
+				) // chat GPTに作らせたコードだけど難しいことしてないな、頑張って読んで
 		}
 	}, [bookingDetail, bookingDate])
 
@@ -74,12 +84,15 @@ const BookingDetail = () => {
 	}
 
 	return (
-		<div className="p-4 flex flex-col items-center justify-center">
+		<div className="flex flex-col items-center justify-center">
 			<BookingDetailBox
-				booking_date={bookingDetail.booking_date}
-				booking_time={bookingDetail.booking_time}
-				regist_name={bookingDetail.regist_name}
-				name={bookingDetail.name}
+				props={{
+					booking_date: bookingDetail.bookingDate,
+					booking_time: bookingDetail.bookingTime,
+					regist_name: bookingDetail.registName,
+					name: bookingDetail.name,
+				}}
+				calendarTime={calendarTime}
 			/>
 			<div className="flex flex-row justify-center space-x-2">
 				<button
@@ -121,7 +134,7 @@ const BookingDetail = () => {
 									open(
 										`https://www.google.com/calendar/render?
 										action=TEMPLATE&
-										text=${encodeURIComponent(bookingDetail.regist_name)}&
+										text=${encodeURIComponent(bookingDetail.registName)}&
 										dates=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}/${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&
 										details=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&
 										location=あしたぼ`,
@@ -152,7 +165,7 @@ const BookingDetail = () => {
 								onClick={() =>
 									open(
 										`https://calendar.yahoo.co.jp/?v=60&
-										title=${encodeURIComponent(bookingDetail.regist_name)}&
+										title=${encodeURIComponent(bookingDetail.registName)}&
 										st=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&
 										et=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&
 										desc=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&
@@ -169,7 +182,7 @@ const BookingDetail = () => {
 									(window.location.href = `/api/generate-ics?
 										start=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&
 										end=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&
-										summary=${encodeURIComponent(bookingDetail.regist_name)}&
+										summary=${encodeURIComponent(bookingDetail.registName)}&
 										description=${encodeURIComponent(bookingDetail.name)}&
 										openExternalBrowser=1`)
 								}

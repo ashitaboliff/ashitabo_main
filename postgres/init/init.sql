@@ -51,6 +51,7 @@ CREATE TABLE "booking" (
   "booking_time" INT NOT NULL,
   "regist_name" TEXT NOT NULL,
   "name" TEXT NOT NULL,
+  "password" TEXT NOT NULL,
   "is_deleted" BOOLEAN DEFAULT FALSE,
   FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE SET NULL
 );
@@ -65,12 +66,12 @@ CREATE TABLE "ex_booking" (
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),
   "is_deleted" BOOLEAN DEFAULT FALSE
-)
+);
 
 -- Create BuyBookings table
 CREATE TABLE "buy_booking" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-  "booking_id" TEXT,
+  "booking_id" TEXT UNIQUE,
   "user_id" TEXT,
   "status" "BuyBookingStatus" DEFAULT 'UNPAID',
   "created_at" TIMESTAMP DEFAULT NOW(),

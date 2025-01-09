@@ -24,6 +24,7 @@ model Booking {
   booking_time Int
   regist_name  String
   name         String
+  password     String
   is_deleted   Boolean @default(false)
 
   BuyBooking   BuyBooking?

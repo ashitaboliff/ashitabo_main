@@ -1,7 +1,9 @@
 'use server'
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
-import { eachDayOfInterval, formatISO } from 'date-fns'
+import { revalidateTag } from 'next/cache'
+import { addDays, eachDayOfInterval, formatISO } from 'date-fns'
+import { hashSync } from 'bcryptjs'
 import { Booking, BookingResponse, BanBooking } from '@/types/BookingTypes'
 import {
 	getAllBooking,
@@ -9,13 +11,14 @@ import {
 	getBookingById,
 	createBooking,
 	getBookingByBooking,
+	getBookingByUserIdAndDate,
 	updateBooking,
 	deleteBooking,
 	getBookingBanDate,
 	getCalendarTime,
+	putBuyBooking,
 } from '@/db/Booking'
 import { getUser } from '@/db/Auth'
-import { revalidateTag } from 'next/cache'
 
 export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
 	try {
@@ -184,7 +187,7 @@ export async function getBookingByDateAction({
 
 export async function getBookingByIdAction(
 	bookingId: string,
-): Promise<ApiResponse<Booking | string>> {
+): Promise<ApiResponse<Booking>> {
 	try {
 		const booking = await getBookingById(bookingId)
 		if (!booking)
@@ -218,9 +221,17 @@ export async function getBookingByIdAction(
 export async function createBookingAction({
 	userId,
 	booking,
+	isPaid,
+	password,
+	toDay,
+	isPaidBookingDateMin,
 }: {
 	userId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
+	isPaid: boolean
+	password: string
+	toDay: string
+	isPaidBookingDateMin: string
 }): Promise<ApiResponse<string>> {
 	try {
 		const user = await getUser(userId)
@@ -242,10 +253,34 @@ export async function createBookingAction({
 			}
 		}
 
-		await createBooking({ booking, userId })
+		if (new Date(booking.bookingDate) < new Date(toDay))
+			return {
+				status: StatusCode.BAD_REQUEST,
+				response: '過去の日付は予約できません',
+			}
+
+		if (!isPaid) {
+			const sameUserBooking = await getBookingByUserIdAndDate({
+				userId,
+				startDate: toDay,
+				endDate: isPaidBookingDateMin,
+			})
+			console.log(sameUserBooking)
+			if (sameUserBooking.length > 5)
+				return {
+					status: StatusCode.FORBIDDEN,
+					response: '同一ユーザの無料予約は4件までです。',
+				}
+		}
+
+		const hashedPassword = hashSync(password, 10)
+
+		await createBooking({ booking, userId, isPaid, password: hashedPassword })
+
+		revalidateTag('booking')
+
 		return { status: StatusCode.CREATED, response: '予約が完了しました' }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',

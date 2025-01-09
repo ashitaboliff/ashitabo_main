@@ -23,7 +23,6 @@ export function DateToDayISOstring(date: Date): string {
 			0, // ミリ秒を 0 ミリ秒に設定
 		),
 	)
-	console.log(utcDate)
 	const ISOstring = utcDate.toISOString()
 	return ISOstring
 }
