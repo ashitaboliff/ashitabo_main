@@ -1,11 +1,9 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { Booking } from '@/types/BookingTypes'
-import { format, set } from 'date-fns'
-import { getBookingByIdAction, bookingRevalidateTagAction } from './actions'
-import Loading from '@/components/atoms/Loading'
+import { useRouter } from 'next/navigation'
+import { BookingDetailProps } from '@/types/BookingTypes'
+import { format } from 'date-fns'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
@@ -13,47 +11,17 @@ import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 import { FaApple, FaYahoo } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'
 
-const BookingDetail = ({ calendarTime }: { calendarTime: string[] }) => {
-	const id = useSearchParams().get('id')
-	if (!id) {
-		return <BookingDetailNotFound />
-	}
-	const [bookingDetail, setBookingDetail] = useState<Booking | undefined>(
-		undefined,
-	)
-	const [isLoading, setIsLoading] = useState<boolean>(true)
+const BookingDetail = ({
+	calendarTime,
+	bookingDetail,
+}: {
+	calendarTime: string[]
+	bookingDetail: BookingDetailProps
+}) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	let bookingDate: Date[] = []
 	const calendarAddPopupRef = useRef<PopupRef>(undefined)
 	const router = useRouter()
-
-	const fetchBookingDetail = async ({
-		id,
-		cache,
-	}: {
-		id: string
-		cache?: 'no-cache'
-	}) => {
-		if (cache === 'no-cache') {
-			setIsLoading(true)
-			await bookingRevalidateTagAction({ tag: `booking-${id}` })
-		}
-		const res = await getBookingByIdAction(id)
-		if (res.status === 200) {
-			setBookingDetail(res.response)
-		} else if (res.status === 404) {
-			setBookingDetail(undefined)
-		} else {
-			console.error(res)
-			setBookingDetail(undefined)
-		}
-		setIsLoading(false)
-	}
-
-	useEffect(() => {
-		fetchBookingDetail({ id, cache: 'no-cache' })
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id])
 
 	useEffect(() => {
 		if (bookingDetail) {
@@ -75,10 +43,6 @@ const BookingDetail = ({ calendarTime }: { calendarTime: string[] }) => {
 		}
 	}, [bookingDetail, bookingDate])
 
-	if (isLoading) {
-		return <Loading />
-	}
-
 	if (!bookingDetail) {
 		return <BookingDetailNotFound />
 	}
@@ -87,17 +51,18 @@ const BookingDetail = ({ calendarTime }: { calendarTime: string[] }) => {
 		<div className="flex flex-col items-center justify-center">
 			<BookingDetailBox
 				props={{
-					booking_date: bookingDetail.bookingDate,
-					booking_time: bookingDetail.bookingTime,
-					regist_name: bookingDetail.registName,
+					bookingDate: bookingDetail.bookingDate,
+					bookingTime: bookingDetail.bookingTime,
+					registName: bookingDetail.registName,
 					name: bookingDetail.name,
+					isPaidStatus: bookingDetail.isPaidStatus,
 				}}
 				calendarTime={calendarTime}
 			/>
 			<div className="flex flex-row justify-center space-x-2">
 				<button
 					className="btn btn-primary"
-					onClick={() => router.push(`/booking/edit?id=${bookingDetail?.id}`)}
+					onClick={() => router.push(`/booking/${bookingDetail?.id}/edit`)}
 				>
 					編集
 				</button>

@@ -8,5 +8,6 @@ RUN npm install -g nodemon
 
 COPY --chmod=777 . .
 RUN npm run generate
+RUN npm run db:push
 
 CMD ["npm", "start"]

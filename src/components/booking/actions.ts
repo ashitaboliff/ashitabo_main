@@ -4,7 +4,12 @@ import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
 import { addDays, eachDayOfInterval, formatISO } from 'date-fns'
 import { hashSync } from 'bcryptjs'
-import { Booking, BookingResponse, BanBooking } from '@/types/BookingTypes'
+import {
+	Booking,
+	BookingResponse,
+	BanBooking,
+	BuyBooking,
+} from '@/types/BookingTypes'
 import {
 	getAllBooking,
 	getBookingByDate,
@@ -16,7 +21,8 @@ import {
 	deleteBooking,
 	getBookingBanDate,
 	getCalendarTime,
-	putBuyBooking,
+	getBuyBookingById,
+	updateBuyBooking,
 } from '@/db/Booking'
 import { getUser } from '@/db/Auth'
 
@@ -222,6 +228,7 @@ export async function createBookingAction({
 	userId,
 	booking,
 	isPaid,
+	isPaidExpired,
 	password,
 	toDay,
 	isPaidBookingDateMin,
@@ -229,6 +236,7 @@ export async function createBookingAction({
 	userId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
 	isPaid: boolean
+	isPaidExpired?: string
 	password: string
 	toDay: string
 	isPaidBookingDateMin: string
@@ -265,17 +273,23 @@ export async function createBookingAction({
 				startDate: toDay,
 				endDate: isPaidBookingDateMin,
 			})
-			console.log(sameUserBooking)
-			if (sameUserBooking.length > 5)
+			if (sameUserBooking.length > 5) {
 				return {
 					status: StatusCode.FORBIDDEN,
 					response: '同一ユーザの無料予約は4件までです。',
 				}
+			}
 		}
 
 		const hashedPassword = hashSync(password, 10)
 
-		await createBooking({ booking, userId, isPaid, password: hashedPassword })
+		await createBooking({
+			booking,
+			userId,
+			isPaid,
+			isPaidExpired,
+			password: hashedPassword,
+		})
 
 		revalidateTag('booking')
 
@@ -283,7 +297,7 @@ export async function createBookingAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: `error: ${error}`,
 		}
 	}
 }
@@ -291,11 +305,9 @@ export async function createBookingAction({
 export async function updateBookingAction({
 	bookingId,
 	booking,
-	userId,
 }: {
 	bookingId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
-	userId: string
 }): Promise<ApiResponse<string>> {
 	try {
 		const atBooking = await getBookingById(bookingId)
@@ -303,19 +315,6 @@ export async function updateBookingAction({
 			return {
 				status: StatusCode.NOT_FOUND,
 				response: 'このidの予約は存在しません',
-			}
-
-		const user = await getUser(userId)
-		if (!user)
-			return {
-				status: StatusCode.NOT_FOUND,
-				response: 'このユーザーは存在しません',
-			}
-
-		if (atBooking.user_id !== userId && atBooking.user_id !== 'admin')
-			return {
-				status: StatusCode.FORBIDDEN,
-				response: '他のユーザーの予約情報は更新できません',
 			}
 
 		await updateBooking({
@@ -426,6 +425,38 @@ export async function getBookingBanDateAction({
 		return {
 			status: StatusCode.OK,
 			response: transformedBanBookings,
+		}
+	} catch (error) {
+		console.error(error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function getBuyBookingByIdAction(
+	id: string,
+): Promise<ApiResponse<BuyBooking>> {
+	try {
+		const buyBooking = await getBuyBookingById(id)
+		if (!buyBooking)
+			return {
+				status: StatusCode.NOT_FOUND,
+				response: 'このidの予約は存在しません',
+			}
+		return {
+			status: StatusCode.OK,
+			response: {
+				id: buyBooking.id,
+				booking_id: buyBooking.booking_id,
+				userId: buyBooking.user_id,
+				status: buyBooking.status,
+				createdAt: buyBooking.created_at,
+				updatedAt: buyBooking.updated_at,
+				expiredAt: buyBooking.expire_at,
+				isDeleted: buyBooking.is_deleted,
+			},
 		}
 	} catch (error) {
 		console.error(error)

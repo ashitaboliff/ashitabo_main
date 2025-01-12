@@ -21,6 +21,40 @@ export type BanBooking = {
 	isDeleted: boolean
 }
 
+export type BuyBooking = {
+	id: string
+	booking_id: string
+	userId: string
+	status: BuyBookingStatus
+	createdAt: Date
+	updatedAt: Date
+	expiredAt: string
+	isDeleted: boolean
+}
+
+export type BuyBookingStatus = 'PAID' | 'UNPAID' | 'EXPIRED' | 'CANCELED'
+
+export type BuyBookingStatusEnum =
+	| '支払済み'
+	| '未払い'
+	| '支払い期限切れ'
+	| 'キャンセル'
+
+export const BuyBookingStatusMap: Record<
+	BuyBookingStatus,
+	BuyBookingStatusEnum
+> = {
+	PAID: '支払済み',
+	UNPAID: '未払い',
+	EXPIRED: '支払い期限切れ',
+	CANCELED: 'キャンセル',
+}
+
+export type BookingDetailProps = Booking & {
+	isPaidStatus?: BuyBookingStatus
+	isPaidExpired?: string
+}
+
 export type BookingResponse = Record<string, Record<number, Booking | null>>
 
 export interface BookingCalenderProps {
@@ -45,14 +79,3 @@ export interface BookingLog {
 	name: string
 	is_deleted: boolean
 }
-
-export const TIME_LIST = [
-	'9:00~10:30',
-	'10:30~12:00',
-	'12:00~13:30',
-	'13:30~15:00',
-	'15:00~16:30',
-	'16:30~18:00',
-	'18:00~19:30',
-	'19:30~21:00',
-]

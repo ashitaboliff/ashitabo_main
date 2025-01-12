@@ -1,5 +1,6 @@
 'use server'
 
+import 'server-only'
 import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import fs from 'fs'
@@ -226,11 +227,13 @@ export const createBooking = async ({
 	booking,
 	userId,
 	isPaid,
+	isPaidExpired,
 	password,
 }: {
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
 	userId: string
 	isPaid: boolean
+	isPaidExpired?: string
 	password: string
 }) => {
 	const bookingId = v4()
@@ -259,8 +262,8 @@ export const createBooking = async ({
 					id: v4(),
 					booking_id: bookingId,
 					user_id: userId,
-					status: 'PAID',
-					expire_at: subDays(new Date(booking.bookingDate), 7),
+					status: 'UNPAID',
+					expire_at: isPaidExpired ?? '',
 				},
 			})
 		} catch (error) {
@@ -382,35 +385,37 @@ export const getBookingBanDate = async ({
 		banBooking,
 		[startDate, endDate],
 		{
-			tags: ['banBooking', `booking-${startDate}-${endDate}`],
+			tags: ['banBooking', `booking-${startDate}-${endDate}`, `booking`],
 		}, // これ動的なタグにする必要ないかも
 	)
 	const banBookingCacheData = await banBookingCache({ startDate, endDate })
 	return banBookingCacheData
 }
 
-export const putBuyBooking = async ({
+export const getBuyBookingById = async (id: string) => {
+	try {
+		const buyBooking = await prisma.buyBooking.findFirst({
+			where: {
+				booking_id: id,
+			},
+		})
+		return buyBooking
+	} catch (error) {
+		throw error
+	}
+}
+
+export const updateBuyBooking = async ({
 	bookingId,
-	userId,
 	state,
 }: {
 	bookingId: string
-	userId: string
-	state: 'PAID' | 'CANCELED'
+	state: 'UNPAID' | 'PAID' | 'CANCELED' | 'EXPIRED'
 }) => {
 	try {
-		const user = await getUser(userId)
-		if (!user) {
-			throw new Error('指定したIDのユーザは存在しません')
-		}
-		const booking = await getBookingById(bookingId)
-		if (!booking) {
-			throw new Error('指定したIDの予約はありません')
-		}
 		await prisma.buyBooking.update({
 			where: {
 				booking_id: bookingId,
-				user_id: userId,
 			},
 			data: {
 				status: state,

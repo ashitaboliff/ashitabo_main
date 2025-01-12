@@ -28,7 +28,7 @@ export const BookingTableBox = ({
 
 	const tdClassName =
 		new Date(bookingDate) > bookingAbleMaxDate
-			? 'border border-base-200 p-0 bg-warning'
+			? 'border border-base-200 p-0 bg-tertiary-light'
 			: 'border border-base-200 p-0'
 
 	if (registName === undefined) {
@@ -66,7 +66,7 @@ export const BookingTableBox = ({
 			<td
 				key={index}
 				className={tdClassName}
-				onClick={() => router.push(`/booking/detail?id=${id}`)}
+				onClick={() => router.push(`/booking/${id}`)}
 			>
 				<div className="w-11 h-13 flex flex-col justify-center items-center text-center break-words py-1">
 					<p className="text-xxxs text-base-content bold">

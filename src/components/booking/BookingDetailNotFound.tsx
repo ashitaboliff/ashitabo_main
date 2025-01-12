@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter } from 'next/navigation'
 import InfoMessage from '@/components/atoms/InfoMessage'
 

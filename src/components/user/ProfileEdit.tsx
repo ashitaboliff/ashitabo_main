@@ -106,10 +106,8 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 			setIsError('ログイン情報がありません')
 		} else {
 			const userId = session.data?.user.id || ''
-			console.log(data)
 			try {
 				const res = await putProfileAction(userId, data)
-				console.log(`res`, res)
 				if (res.status === 200) {
 					setPopupOpen(true)
 				} else {

@@ -13,8 +13,6 @@ import Popup, { PopupRef } from '@/components/molecules/Popup'
 import PasswordInputField from '@/components/molecules/PasswordInputField'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 
-import { MdVisibilityOff, MdVisibility } from 'react-icons/md'
-
 const passschema = yup.object({
 	password: yup.string().required('パスワードを入力してください'),
 })
@@ -128,10 +126,12 @@ const BookingEditAuth = (props: Props) => {
 			<div className="flex justify-center flex-col">
 				<div className="flex justify-center">
 					<BookingDetailBox
-						booking_date={bookingDetail.booking_date}
-						booking_time={bookingDetail.booking_time}
-						regist_name={bookingDetail.regist_name}
-						name={bookingDetail.name}
+						props={{
+							booking_date: bookingDetail.booking_date,
+							booking_time: bookingDetail.booking_time,
+							regist_name: bookingDetail.regist_name,
+							name: bookingDetail.name,
+						}}
 					/>
 				</div>
 				<form

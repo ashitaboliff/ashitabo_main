@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap } from '@/types/UserTypes'
@@ -65,6 +66,7 @@ const schema = yup.object().shape({
 })
 
 const SigninSetting = () => {
+	const router = useRouter()
 	const session = useSession()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [error, setIsError] = useState<string>('')
@@ -248,7 +250,17 @@ const SigninSetting = () => {
 				ref={popupRef}
 				open={popupOpen}
 				title="保存完了"
-				children="プロフィールを保存しました"
+				children={
+					<>
+						<p>プロフィールを保存しました</p>
+						<button
+							className="btn btn-primary"
+							onClick={() => router.push('/user')}
+						>
+							ユーザーページに移動
+						</button>
+					</>
+				}
 				onClose={() => setPopupOpen(false)}
 			/>
 		</div>

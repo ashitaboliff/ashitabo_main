@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, memo, use, Suspense } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
@@ -10,12 +10,13 @@ import BookingRule from '@/components/molecules/BookingRule'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import Loading from '@/components/atoms/Loading'
 import BookingCalendar from '@/components/booking/BookingCalendar'
+import { DateToDayISOstring } from '@/lib/CommonFunction'
 
 const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 	const yesterDate = subDays(new Date(), 1)
 	const [viewDay, setViewday] = useState<Date>(yesterDate)
 	const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
-	const ableViewDayMax = 28 // 連続表示可能な日数
+	const ableViewDayMax = 27 // 連続表示可能な日数
 	const ableViewDayMin = 8 // 連続表示可能な最小日数
 	const [bookingData, setBookingData] = useState<BookingResponse>()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -52,14 +53,14 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 			setIsLoading(true)
 			await bookingRevalidateTagAction({ tag: 'booking' })
 		}
-		const startDay = startDate.toISOString().split('T')[0]
-		const endDay = endDate.toISOString().split('T')[0]
+		const startDay = DateToDayISOstring(startDate).split('T')[0]
+		const endDay = DateToDayISOstring(endDate).split('T')[0]
 		const res = await getBookingByDateAction({
 			startDate: startDay,
 			endDate: endDay,
 		})
 		if (res.status === 200) {
-			setBookingData(res.response)
+			setBookingData({ ...res.response })
 		} else {
 			console.error('Failed to get booking data')
 			return null

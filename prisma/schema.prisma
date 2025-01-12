@@ -54,7 +54,7 @@ model BuyBooking { // 予約購入
   status       BuyBookingStatus
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
-  expire_at    DateTime
+  expire_at    String
   is_deleted   Boolean  @default(false)
 
   user         User?    @relation(fields: [user_id], references: [id])

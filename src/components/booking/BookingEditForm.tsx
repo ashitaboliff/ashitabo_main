@@ -1,29 +1,40 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo, use } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { TIME_LIST } from '@/lib/enum/BookingEnum'
-import { Booking } from '@/types/BookingTypes'
+import { addDays, subDays } from 'date-fns'
+import {
+	getBookingByDateAction,
+	updateBookingAction,
+	deleteBookingAction,
+	bookingRevalidateTagAction,
+} from './actions'
+import {
+	Booking,
+	BookingDetailProps,
+	BookingResponse,
+	BuyBookingStatus,
+} from '@/types/BookingTypes'
+import { Session } from 'next-auth'
 import Loading from '@/components/atoms/Loading'
+import TextInputField from '@/components/atoms/TextInputField'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-// import { SelectField } from '@/components/molecules/SelectField'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
+import EditCalendar from '@/components/booking/EditCalendar'
+import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { MdOutlineEditCalendar } from 'react-icons/md'
 
 const schema = yup.object().shape({
-	booking_date: yup.date().required('予約日を入力してください'),
-	booking_time: yup.number().required('予約時間を入力してください'),
-	regist_name: yup.string().required('バンド名を入力してください'),
+	bookingDate: yup.string().required('予約日を入力してください'),
+	bookingTime: yup.string().required('予約時間を入力してください'),
+	registName: yup.string().required('バンド名を入力してください'),
 	name: yup.string().required('責任者名を入力してください'),
 })
-
-interface Props {
-	id: string
-}
 
 type ResultType = {
 	status: 'success' | 'error'
@@ -31,10 +42,20 @@ type ResultType = {
 	message: string
 }
 
-const BookingEditForm = (props: Props) => {
+const BookingEditForm = ({
+	calendarTime,
+	bookingDetail,
+	session,
+}: {
+	calendarTime: string[]
+	bookingDetail: BookingDetailProps
+	session: Session
+}) => {
 	const router = useRouter()
+	const [editState, setEditState] = useState<'edit' | 'delete' | 'select'>(
+		'select',
+	)
 	const [isLoading, setIsLoading] = useState<boolean>(true)
-	const [bookingDetail, setBookingDetail] = useState<Booking>()
 	const [editPopupOpen, setEditPopupOpen] = useState(false)
 	const [deletePopupOpen, setDeletePopupOpen] = useState(false)
 	const [resultPopupOpen, setResultPopupOpen] = useState(false)
@@ -43,51 +64,16 @@ const BookingEditForm = (props: Props) => {
 	const deletePopupRef = useRef<PopupRef>(undefined)
 	const resultPopupRef = useRef<PopupRef>(undefined)
 
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-		setValue,
-	} = useForm({
-		mode: 'onBlur',
-		resolver: yupResolver(schema),
-	})
-
-	const fetchBookingDetail = async () => {
-		setIsLoading(true)
-		try {
-			const response = await fetch(`/api/booking/detail?id=${props.id}`)
-			if (response.ok) {
-				const data = await response.json()
-				setBookingDetail(data.response)
-				setValue('booking_date', new Date(data.response.booking_date))
-				setValue('booking_time', data.response.booking_time)
-				setValue('regist_name', data.response.regist_name)
-				setValue('name', data.response.name)
-			}
-		} catch (error) {
-			// エラー処理
-		}
-		setIsLoading(false)
-	}
-
-	const onPutSubmit = async (data: any) => {
-		setIsLoading(true)
-		// 予約編集処理
-	}
-
 	const onDeleteSubmit = async () => {
 		setIsLoading(true)
 		setDeletePopupOpen(false)
 		setEditPopupOpen(false)
 		try {
-			const response = await fetch(`/api/booking/delete?id=${props.id}`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
+			const response = await deleteBookingAction({
+				bookingId: bookingDetail.id,
+				userId: session.user.id,
 			})
-			if (response.ok) {
+			if (response.status === 200) {
 				setResult({
 					status: 'success',
 					title: '予約削除',
@@ -111,108 +97,54 @@ const BookingEditForm = (props: Props) => {
 		setIsLoading(false)
 	}
 
-	useEffect(() => {
-		fetchBookingDetail()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	if (isLoading) {
-		return <Loading />
-	}
 	if (!bookingDetail) {
 		return <BookingDetailNotFound />
 	}
 
 	return (
 		<>
-			<div className="flex flex-col items-center justify-center p-4">
-				<BookingDetailBox
-					booking_date={bookingDetail.booking_date}
-					booking_time={bookingDetail.booking_time}
-					regist_name={bookingDetail.regist_name}
-					name={bookingDetail.name}
+			{editState === 'select' && (
+				<div className="flex flex-col items-center justify-center p-4">
+					<BookingDetailBox
+						props={{
+							bookingDate: bookingDetail.bookingDate,
+							bookingTime: bookingDetail.bookingTime,
+							registName: bookingDetail.registName,
+							name: bookingDetail.name,
+						}}
+						calendarTime={calendarTime}
+					/>
+					<div className="flex justify-center gap-4 mt-4">
+						<button
+							className="btn btn-primary"
+							onClick={() => setEditState('edit')}
+						>
+							編集
+						</button>
+						<button
+							className="btn btn-secondary"
+							onClick={() => setEditState('delete')}
+						>
+							削除
+						</button>
+						<button
+							className="btn btn-outline"
+							onClick={() => router.push('/booking')}
+						>
+							ホームに戻る
+						</button>
+					</div>
+				</div>
+			)}
+			{editState === 'edit' && (
+				<MemoBookingEditForm
+					calendarTime={calendarTime}
+					bookingDetail={bookingDetail}
+					session={session}
+					editState={editState}
+					setEditState={setEditState}
 				/>
-				<div className="flex justify-center gap-2 mt-4">
-					<button
-						className="btn btn-success"
-						onClick={() => setEditPopupOpen(true)}
-						disabled
-					>
-						編集(未実装)
-					</button>
-					<button
-						className="btn btn-error"
-						onClick={() => setDeletePopupOpen(true)}
-					>
-						削除
-					</button>
-					<button
-						className="btn btn-outline"
-						onClick={() => router.push('/booking')}
-					>
-						ホームに戻る
-					</button>
-				</div>
-			</div>
-
-			{/* <Popup
-				ref={editPopupRef}
-				title="予約編集"
-				maxWidth="md"
-				open={editPopupOpen}
-				onClose={() => setEditPopupOpen(false)}
-			>
-				<div className="p-4">
-					<form onSubmit={handleSubmit(onPutSubmit)} className="space-y-4">
-						<div className="form-control">
-							<label className="label">予約日</label>
-							<input
-								type="date"
-								{...register('booking_date')}
-								className="input input-bordered w-full"
-								required
-							/>
-							{errors.booking_date && (
-								<p className="text-red-500 text-sm mt-1">
-									{errors.booking_date.message}
-								</p>
-							)}
-						</div>
-
-						<div className="form-control">
-							<SelectField
-								label="予約時間"
-								{...register('booking_time')}
-								required
-							>
-								{TIME_LIST.map((time, index) => (
-									<option key={index} value={index}>
-										{time}
-									</option>
-								))}
-							</SelectField>
-							{errors.booking_time && (
-								<p className="text-red-500 text-sm mt-1">
-									{errors.booking_time.message}
-								</p>
-							)}
-						</div>
-
-						<div className="flex justify-center gap-4 mt-4">
-							<button type="submit" className="btn btn-success">
-								編集
-							</button>
-							<button
-								type="button"
-								className="btn btn-outline"
-								onClick={() => setEditPopupOpen(false)}
-							>
-								キャンセル
-							</button>
-						</div>
-					</form>
-				</div>
-			</Popup> */}
+			)}
 
 			<Popup
 				ref={deletePopupRef}
@@ -266,5 +198,272 @@ const BookingEditForm = (props: Props) => {
 		</>
 	)
 }
+
+const MemoBookingEditForm = memo(
+	({
+		calendarTime,
+		bookingDetail,
+		session,
+		editState,
+		setEditState,
+	}: {
+		calendarTime: string[]
+		bookingDetail: BookingDetailProps
+		session: Session
+		editState: 'edit' | 'delete' | 'select'
+		setEditState: (state: 'edit' | 'delete' | 'select') => void
+	}) => {
+		const [isPaid, setIsPaid] = useState<boolean>(
+			bookingDetail.isPaidStatus ? true : false,
+		)
+		const [bookingDate, setBookingDate] = useState<string>(
+			new Date(bookingDetail.bookingDate).toISOString().split('T')[0],
+		)
+		const [bookingTime, setBookingTime] = useState<number>(
+			bookingDetail.bookingTime,
+		)
+		const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
+		const calendarRef = useRef<PopupRef>(undefined)
+
+		const yesterDate = subDays(new Date(), 1)
+		const [viewDay, setViewday] = useState<Date>(yesterDate)
+		const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
+		const ableViewDayMax = 27 // 連続表示可能な日数
+		const ableViewDayMin = 1 // 連続表示可能な最小日数
+		const [bookingResponse, setBookingResponse] = useState<BookingResponse>()
+
+		let nextAble =
+			addDays(viewDay, viewDayMax) <= addDays(yesterDate, ableViewDayMax)
+				? false
+				: true
+		let prevAble =
+			subDays(viewDay, viewDayMax) >= subDays(yesterDate, ableViewDayMin)
+				? false
+				: true
+
+		const nextWeek = () => {
+			setViewday(addDays(viewDay, viewDayMax))
+		}
+
+		const prevWeek = () => {
+			setViewday(subDays(viewDay, viewDayMax))
+		}
+
+		const {
+			register,
+			handleSubmit,
+			formState: { errors },
+			setValue,
+		} = useForm({
+			mode: 'onBlur',
+			resolver: yupResolver(schema),
+			defaultValues: {
+				bookingDate: bookingDate,
+				bookingTime: calendarTime[bookingTime],
+				registName: bookingDetail.registName,
+				name: bookingDetail.name,
+			},
+		})
+
+		const onPutSubmit = async (data: any) => {
+			const updateBooking = await updateBookingAction({
+				bookingId: bookingDetail.id,
+				bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
+				bookingTime: calendarTime.indexOf(data.bookingTime),
+				registName: data.registName,
+				name: data.name,
+				isPaid: isPaid,
+			})
+		}
+
+		const getBooking = async ({
+			startDate, // Date
+			endDate, // Date
+			cache,
+		}: {
+			startDate: Date
+			endDate: Date
+			cache?: 'no-cache'
+		}) => {
+			if (cache === 'no-cache') {
+				await bookingRevalidateTagAction({ tag: 'booking' })
+			}
+			const startDay = DateToDayISOstring(startDate).split('T')[0]
+			const endDay = DateToDayISOstring(endDate).split('T')[0]
+			const res = await getBookingByDateAction({
+				startDate: startDay,
+				endDate: endDay,
+			})
+			if (res.status === 200) {
+				setBookingResponse({ ...res.response })
+			} else {
+				console.error('Failed to get booking data')
+				return null
+			}
+		}
+
+		useEffect(() => {
+			getBooking({
+				startDate: viewDay,
+				endDate: addDays(viewDay, viewDayMax - 1),
+			})
+		}, [viewDay])
+
+		useEffect(() => {
+			setValue('bookingDate', bookingDate)
+			setValue('bookingTime', calendarTime[bookingTime])
+		}, [bookingDate, bookingTime])
+
+		return (
+			<div className="p-8">
+				<div className="text-center mb-8">
+					<h2 className="text-2xl font-bold">予約編集</h2>
+				</div>
+
+				<div className="max-w-md mx-auto">
+					<form onSubmit={handleSubmit(onPutSubmit)} className="space-y-2">
+						<div className="flex flex-row justify-center gap-2">
+							<div className="flex flex-col space-y-2">
+								<TextInputField
+									register={register('bookingDate')}
+									placeholder="日付"
+									type="text"
+									disabled={true}
+								/>
+								<TextInputField
+									register={register('bookingTime')}
+									placeholder="時間"
+									type="text"
+									disabled={true}
+								/>
+							</div>
+							<div className="flex flex-col items-center justify-center">
+								<button
+									type="button"
+									className="btn btn-primary"
+									onClick={() => setCalendarOpen(true)}
+								>
+									<MdOutlineEditCalendar size={25} />
+								</button>
+							</div>
+						</div>
+						<TextInputField
+							register={register('registName')}
+							placeholder="バンド名"
+							type="text"
+						/>
+						{errors.registName && (
+							<div className="flex justify-center">
+								<InfoMessage
+									messageType="error"
+									IconColor="bg-white"
+									message={errors.registName.message}
+								/>
+							</div>
+						)}
+						<TextInputField
+							register={register('name')}
+							placeholder="責任者名"
+							type="text"
+						/>
+						{errors.name && (
+							<div className="flex justify-center">
+								<InfoMessage
+									messageType="error"
+									IconColor="bg-white"
+									message={errors.name.message}
+								/>
+							</div>
+						)}
+						{isPaid && (
+							<div className="flex justify-center">
+								<InfoMessage
+									messageType="warning"
+									IconColor="bg-white"
+									message="このコマを予約するには600円の支払いが必要です。"
+								/>
+							</div>
+						)}
+
+						<div className="flex justify-center space-x-4">
+							<button type="submit" className="btn btn-primary">
+								予約を編集する
+							</button>
+							<button
+								type="button"
+								className="btn btn-outline"
+								onClick={() => setEditState('select')}
+							>
+								戻る
+							</button>
+						</div>
+					</form>
+				</div>
+
+				<Popup
+					ref={calendarRef}
+					title="カレンダー"
+					maxWidth="lg"
+					open={calendarOpen}
+					onClose={() => setCalendarOpen(false)}
+				>
+					<div className="flex flex-col gap-y-2 items-center justify-center">
+						<div className="flex flex-row justify-center space-x-2">
+							<button
+								className="btn btn-outline"
+								onClick={prevWeek}
+								disabled={prevAble}
+							>
+								{'<'}
+							</button>
+							<div className="text-lg font-bold mx-2 w-60 text-center">
+								{viewDay.toLocaleDateString()}~
+								{addDays(viewDay, viewDayMax - 1).toLocaleDateString()}
+							</div>
+							<button
+								className="btn btn-outline"
+								onClick={nextWeek}
+								disabled={nextAble}
+							>
+								{'>'}
+							</button>
+						</div>
+						{bookingResponse ? (
+							<EditCalendar
+								bookingResponse={bookingResponse}
+								timeList={calendarTime}
+								actualBookingDate={
+									new Date(bookingDetail.bookingDate)
+										.toISOString()
+										.split('T')[0]
+								}
+								actualBookingTime={bookingDetail.bookingTime}
+								bookingDate={bookingDate}
+								setBookingDate={setBookingDate}
+								bookingTime={bookingTime}
+								setBookingTime={setBookingTime}
+								setIsPaid={setIsPaid}
+								setCalendarOpen={setCalendarOpen}
+							/>
+						) : (
+							<div className="flex justify-center">
+								<div className="skeleton h-96 w-96"></div>
+							</div>
+						)}
+						<div className="flex justify-center space-x-2">
+							<button
+								type="button"
+								className="btn btn-outline"
+								onClick={() => setCalendarOpen(false)}
+							>
+								閉じる
+							</button>
+						</div>
+					</div>
+				</Popup>
+			</div>
+		)
+	},
+)
 
 export default BookingEditForm

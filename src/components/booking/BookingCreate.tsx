@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { format, addDays, set } from 'date-fns'
+import { format, addDays, set, sub, subDays } from 'date-fns'
 import { da, is, ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { createBookingAction } from './actions'
@@ -124,11 +124,18 @@ const NewBooking = ({
 			isDeleted: false,
 		}
 
+		let isPaidExpired = undefined
+		if (isPaid) {
+			const isPaidExpiredDate = subDays(bookingDate, 7)
+			isPaidExpired = DateToDayISOstring(isPaidExpiredDate)
+		}
+
 		try {
 			const response = await createBookingAction({
 				userId: session.user.id,
 				booking: reservationData,
 				isPaid: isPaid,
+				isPaidExpired: isPaidExpired,
 				password: data.password,
 				toDay: today.toISOString(),
 				isPaidBookingDateMin: isPaidBookingDateMin.toISOString(),
@@ -149,7 +156,15 @@ const NewBooking = ({
 							<p>時間: {calendarTime[Number(bookingTime)]}</p>
 							<p>バンド名: {watch('registName')}</p>
 							<p>責任者: {watch('name')}</p>
-							{isPaid && <p>支払い: 600円</p>}
+							{isPaid && isPaidExpired && (
+								<>
+									<p>支払い: 600円</p>
+									<p>
+										支払い期限:{' '}
+										{format(isPaidExpired, 'yyyy/MM/dd(E)', { locale: ja })}
+									</p>
+								</>
+							)}
 							<button
 								type="button"
 								className="btn btn-outline mt-4"
@@ -182,8 +197,7 @@ const NewBooking = ({
 							'予約に失敗しました。ログインしなおしてから予約を行ってください。'
 						break
 					case 500:
-						errorMsg =
-							'予約に失敗しました。何度もこのエラーが出る場合、管理者に連絡してください。'
+						errorMsg = `${response.response}`
 						break
 					default:
 						errorMsg =
@@ -305,7 +319,7 @@ const NewBooking = ({
 							<InfoMessage
 								messageType="warning"
 								IconColor="bg-white"
-								message="このコマを予約するには600円の支払いが必要です。確認のためチェックをしてください。"
+								message="このコマを予約するには600円の支払いが必要です。"
 							/>
 						</div>
 					)}
