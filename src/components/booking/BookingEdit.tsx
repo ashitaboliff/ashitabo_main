@@ -28,7 +28,12 @@ const BookingEdit = ({
 					session={session}
 				/>
 			) : (
-				<BookingEditAuth id={id} isAuth={isAuth} handleSetAuth={setIsAuth} />
+				<BookingEditAuth
+					handleSetAuth={setIsAuth}
+					calendarTime={calendarTime}
+					bookingDetail={bookingDetail}
+					session={session}
+				/>
 			)}
 		</div>
 	)

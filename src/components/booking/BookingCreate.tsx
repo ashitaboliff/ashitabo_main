@@ -197,7 +197,7 @@ const NewBooking = ({
 							'予約に失敗しました。ログインしなおしてから予約を行ってください。'
 						break
 					case 500:
-						errorMsg = `${response.response}`
+						errorMsg = `ヤバエラーです。これスクショして送って${response.response}`
 						break
 					default:
 						errorMsg =

@@ -3,12 +3,13 @@
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
 import { addDays, eachDayOfInterval, formatISO } from 'date-fns'
-import { hashSync } from 'bcryptjs'
+import { hashSync, compareSync } from 'bcryptjs'
 import {
 	Booking,
 	BookingResponse,
 	BanBooking,
 	BuyBooking,
+	BuyBookingStatus,
 } from '@/types/BookingTypes'
 import {
 	getAllBooking,
@@ -17,6 +18,7 @@ import {
 	createBooking,
 	getBookingByBooking,
 	getBookingByUserIdAndDate,
+	checkBookingPassword,
 	updateBooking,
 	deleteBooking,
 	getBookingBanDate,
@@ -25,6 +27,7 @@ import {
 	updateBuyBooking,
 } from '@/db/Booking'
 import { getUser } from '@/db/Auth'
+import { cookies } from 'next/headers'
 
 export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
 	try {
@@ -183,7 +186,6 @@ export async function getBookingByDateAction({
 
 		return { status: StatusCode.OK, response: bookingsByDateAndTime }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -302,12 +304,67 @@ export async function createBookingAction({
 	}
 }
 
-export async function updateBookingAction({
+export async function authBookingAction({
 	bookingId,
-	booking,
+	password,
 }: {
 	bookingId: string
+	password: string
+}): Promise<ApiResponse<string>> {
+	const oneDay = 60 * 60 * 24
+	const cookieStore = await cookies()
+	const PassFailCount = Number(cookieStore.get('PassFailCount')?.value ?? 0)
+
+	try {
+		const bookingPassword = await checkBookingPassword({ bookingId })
+		if (!bookingPassword)
+			return {
+				status: StatusCode.NOT_FOUND,
+				response: 'このidの予約は存在しません',
+			}
+
+		const isCorrect = compareSync(password, bookingPassword)
+		if (!isCorrect)
+			if (PassFailCount >= 5) {
+				cookieStore.set('PassFailCount', '0', { maxAge: oneDay }) // 一日持つ
+				return {
+					status: StatusCode.FORBIDDEN,
+					response: 'パスワードを5回以上間違えたため、ログインできません',
+				}
+			} else {
+				cookieStore.set('PassFailCount', (PassFailCount + 1).toString(), {
+					maxAge: oneDay,
+				}) // 一日持つ
+				return {
+					status: StatusCode.BAD_REQUEST,
+					response: 'パスワードが違います',
+				}
+			}
+
+		cookieStore.set('PassFailCount', '0', { maxAge: oneDay }) // 一日持つ
+		return { status: StatusCode.OK, response: '認証に成功しました' }
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function updateBookingAction({
+	bookingId,
+	userId,
+	booking,
+	isBuyUpdate,
+	state,
+	expiredAt,
+}: {
+	bookingId: string
+	userId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
+	isBuyUpdate?: boolean
+	state?: BuyBookingStatus
+	expiredAt?: string
 }): Promise<ApiResponse<string>> {
 	try {
 		const atBooking = await getBookingById(bookingId)
@@ -319,14 +376,21 @@ export async function updateBookingAction({
 
 		await updateBooking({
 			id: bookingId,
+			userId: userId,
 			bookingDate: booking.bookingDate,
 			bookingTime: booking.bookingTime,
 			registName: booking.registName,
 			name: booking.name,
+			isBuyUpdate: isBuyUpdate ?? false,
+			state: state,
+			expiredAt: expiredAt,
 		})
+
+		revalidateTag('booking')
+		revalidateTag(`booking-${bookingId}`)
+
 		return { status: StatusCode.OK, response: '予約情報を更新しました' }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -356,16 +420,10 @@ export async function deleteBookingAction({
 				response: 'このユーザーは存在しません',
 			}
 
-		if (atBooking.user_id !== userId && atBooking.user_id !== 'admin')
-			return {
-				status: StatusCode.FORBIDDEN,
-				response: '他のユーザーの予約情報は削除できません',
-			}
-
 		await deleteBooking(bookingId)
+		revalidateTag('booking')
 		return { status: StatusCode.OK, response: '予約を削除しました' }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -387,7 +445,6 @@ export async function deleteBookingByAdminAction( // 要編集
 		await deleteBooking(bookingId)
 		return { status: StatusCode.OK, response: '予約を削除しました' }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',

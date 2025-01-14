@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { addDays, subDays } from 'date-fns'
+import { addDays, sub, subDays } from 'date-fns'
 import {
 	getBookingByDateAction,
 	updateBookingAction,
@@ -123,7 +123,10 @@ const BookingEditForm = ({
 						</button>
 						<button
 							className="btn btn-secondary"
-							onClick={() => setEditState('delete')}
+							onClick={() => {
+								setEditState('delete')
+								setDeletePopupOpen(true)
+							}}
 						>
 							削除
 						</button>
@@ -141,7 +144,6 @@ const BookingEditForm = ({
 					calendarTime={calendarTime}
 					bookingDetail={bookingDetail}
 					session={session}
-					editState={editState}
 					setEditState={setEditState}
 				/>
 			)}
@@ -204,15 +206,14 @@ const MemoBookingEditForm = memo(
 		calendarTime,
 		bookingDetail,
 		session,
-		editState,
 		setEditState,
 	}: {
 		calendarTime: string[]
 		bookingDetail: BookingDetailProps
 		session: Session
-		editState: 'edit' | 'delete' | 'select'
 		setEditState: (state: 'edit' | 'delete' | 'select') => void
 	}) => {
+		const router = useRouter()
 		const [isPaid, setIsPaid] = useState<boolean>(
 			bookingDetail.isPaidStatus ? true : false,
 		)
@@ -224,6 +225,9 @@ const MemoBookingEditForm = memo(
 		)
 		const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
 		const calendarRef = useRef<PopupRef>(undefined)
+		const [resultPopupOpen, setResultPopupOpen] = useState(false)
+		const [result, setResult] = useState<ResultType>()
+		const resultPopupRef = useRef<PopupRef>(undefined)
 
 		const yesterDate = subDays(new Date(), 1)
 		const [viewDay, setViewday] = useState<Date>(yesterDate)
@@ -266,14 +270,73 @@ const MemoBookingEditForm = memo(
 		})
 
 		const onPutSubmit = async (data: any) => {
-			const updateBooking = await updateBookingAction({
+			setResultPopupOpen(false)
+			let buyStatus: BuyBookingStatus | undefined = undefined
+			let isBuyUpdate = false
+			let isPaidExpired: string | undefined = undefined
+
+			if (bookingDetail.isPaidStatus && !isPaid) {
+				// 現在の予約が購入予約で予約を変更する場合
+				buyStatus = 'CANCELED'
+				isBuyUpdate = true
+			} else if (bookingDetail.isPaidStatus === undefined && isPaid) {
+				// 現在の予約が未購入予約で予約を変更する場合
+				buyStatus = 'UNPAID'
+				isBuyUpdate = true
+				isPaidExpired = DateToDayISOstring(subDays(new Date(bookingDate), 7))
+			}
+
+			console.log('ActionArgs:', {
 				bookingId: bookingDetail.id,
-				bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
-				bookingTime: calendarTime.indexOf(data.bookingTime),
-				registName: data.registName,
-				name: data.name,
-				isPaid: isPaid,
+				userId: session.user.id,
+				booking: {
+					bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
+					bookingTime: bookingTime,
+					registName: data.registName,
+					name: data.name,
+					isDeleted: false,
+				},
+				isBuyUpdate: isBuyUpdate,
+				state: buyStatus,
+				expiredAt: isPaidExpired,
 			})
+
+			const response = await updateBookingAction({
+				bookingId: bookingDetail.id,
+				userId: session.user.id,
+				booking: {
+					bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
+					bookingTime: bookingTime,
+					registName: data.registName,
+					name: data.name,
+					isDeleted: false,
+				},
+				isBuyUpdate: isBuyUpdate,
+				state: buyStatus,
+				expiredAt: isPaidExpired,
+			})
+
+			if (response.status === 200) {
+				setResult({
+					status: 'success',
+					title: '予約編集',
+					message: '予約の編集に成功しました',
+				})
+			} else if (response.status === 404) {
+				setResult({
+					status: 'error',
+					title: '予約編集',
+					message: '予約の編集に失敗しました。予約が見つかりませんでした',
+				})
+			} else {
+				setResult({
+					status: 'error',
+					title: '予約編集',
+					message:
+						'予約の編集に失敗しました。何度もこのエラーが出る際は管理者にお問い合わせください',
+				})
+			}
+			setResultPopupOpen(true)
 		}
 
 		const getBooking = async ({
@@ -375,12 +438,21 @@ const MemoBookingEditForm = memo(
 								/>
 							</div>
 						)}
-						{isPaid && (
+						{isPaid && bookingDetail.isPaidStatus !== 'PAID' && (
 							<div className="flex justify-center">
 								<InfoMessage
 									messageType="warning"
 									IconColor="bg-white"
 									message="このコマを予約するには600円の支払いが必要です。"
+								/>
+							</div>
+						)}
+						{!isPaid && bookingDetail.isPaidStatus === 'PAID' && (
+							<div className="flex justify-center">
+								<InfoMessage
+									messageType="warning"
+									IconColor="bg-white"
+									message="支払い済みの有料枠から無料枠への変更です。支払われた金額は返金されます。"
 								/>
 							</div>
 						)}
@@ -457,6 +529,41 @@ const MemoBookingEditForm = memo(
 								onClick={() => setCalendarOpen(false)}
 							>
 								閉じる
+							</button>
+						</div>
+					</div>
+				</Popup>
+
+				<Popup
+					ref={resultPopupRef}
+					title={result?.title as string}
+					maxWidth="sm"
+					open={resultPopupOpen}
+					onClose={() => setResultPopupOpen(false)}
+				>
+					<div className="p-4 text-center">
+						<InfoMessage
+							message={result?.message as string}
+							messageType={result?.status === 'success' ? 'success' : 'error'}
+							IconColor="bg-white"
+						/>
+						<div className="flex justify-center gap-4 mt-4">
+							<button
+								className="btn btn-outline"
+								onClick={() => {
+									setResultPopupOpen(false)
+								}}
+							>
+								閉じる
+							</button>
+							<button
+								className="btn btn-outline"
+								onClick={() => {
+									router.push('/booking')
+									setResultPopupOpen(false)
+								}}
+							>
+								ホームに戻る
 							</button>
 						</div>
 					</div>

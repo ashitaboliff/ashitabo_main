@@ -5,10 +5,8 @@ import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import fs from 'fs'
 import path from 'path'
-import { subDays } from 'date-fns'
 import { unstable_cache } from 'next/cache'
-import { Booking } from '@/types/BookingTypes'
-import { getUser } from './Auth'
+import { Booking, BuyBookingStatus } from '@/types/BookingTypes'
 
 /**
  * すべての予約情報を取得する関数
@@ -273,6 +271,32 @@ export const createBooking = async ({
 }
 
 /**
+ * ハッシュ化されてる予約パスワードを返すだけの関数
+ * @param bookingId 予約ID
+ */
+export const checkBookingPassword = async ({
+	bookingId,
+}: {
+	bookingId: string
+}) => {
+	try {
+		const booking = await prisma.booking.findFirst({
+			where: {
+				AND: {
+					id: bookingId,
+					is_deleted: {
+						not: true,
+					},
+				},
+			},
+		})
+		return booking?.password
+	} catch (error) {
+		throw error
+	}
+}
+
+/**
  * 予約情報を更新する関数
  * @param id 予約ID
  * @param bookingDate 予約日
@@ -282,16 +306,24 @@ export const createBooking = async ({
  */
 export const updateBooking = async ({
 	id,
+	userId,
 	bookingDate,
 	bookingTime,
 	registName,
 	name,
+	isBuyUpdate,
+	state,
+	expiredAt,
 }: {
 	id: string
+	userId: string
 	bookingDate: string
 	bookingTime: number
 	registName: string
 	name: string
+	isBuyUpdate: boolean
+	state?: BuyBookingStatus
+	expiredAt?: string
 }) => {
 	try {
 		await prisma.booking.update({
@@ -306,6 +338,29 @@ export const updateBooking = async ({
 				name: name,
 			},
 		})
+
+		if (isBuyUpdate) {
+			if (state === 'UNPAID') {
+				await prisma.buyBooking.create({
+					data: {
+						id: v4(),
+						booking_id: id,
+						user_id: userId,
+						status: state,
+						expire_at: expiredAt ?? '',
+					},
+				})
+			} else {
+				await prisma.buyBooking.update({
+					where: {
+						booking_id: id,
+					},
+					data: {
+						status: state,
+					},
+				})
+			}
+		}
 	} catch (error) {
 		throw error
 	}
@@ -410,7 +465,7 @@ export const updateBuyBooking = async ({
 	state,
 }: {
 	bookingId: string
-	state: 'UNPAID' | 'PAID' | 'CANCELED' | 'EXPIRED'
+	state: BuyBookingStatus
 }) => {
 	try {
 		await prisma.buyBooking.update({

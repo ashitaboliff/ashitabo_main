@@ -5,8 +5,9 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'next/navigation'
+import { Session } from 'next-auth'
 import { Booking } from '@/types/BookingTypes'
-import Loading from '@/components/atoms/Loading'
+import { authBookingAction } from './actions'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
@@ -17,17 +18,20 @@ const passschema = yup.object({
 	password: yup.string().required('パスワードを入力してください'),
 })
 
-interface Props {
-	id: string
-	isAuth: boolean
+const BookingEditAuth = ({
+	handleSetAuth,
+	calendarTime,
+	bookingDetail,
+	session,
+}: {
 	handleSetAuth: (isAuth: boolean) => void
-}
-
-const BookingEditAuth = (props: Props) => {
+	calendarTime: string[]
+	bookingDetail: Booking
+	session: Session
+}) => {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [showPassword, setShowPassword] = useState<boolean>(false)
-	const [bookingDetail, setBookingDetail] = useState<Booking>()
 	const [isErrorMessages, setIsErrorMessages] = useState<string | undefined>(
 		undefined,
 	)
@@ -48,71 +52,42 @@ const BookingEditAuth = (props: Props) => {
 		event.preventDefault()
 	}
 
-	const fetchBookingDetail = async () => {
-		setIsLoading(true)
-		setIsErrorMessages(undefined)
-		setErrorPopupOpen(false)
-		try {
-			const response = await fetch(`/api/booking/detail?id=${props.id}`)
-			if (response.ok) {
-				const data = await response.json()
-				setBookingDetail(data.response)
-			} else {
-				setErrorPopupOpen(true)
-				setIsErrorMessages('予約情報が見つかりませんでした')
-			}
-		} catch (error) {
-			setErrorPopupOpen(true)
-			setIsErrorMessages('エラーが発生しました')
-		}
-		setIsLoading(false)
-	}
-
 	const onSubmit = async (data: { password: string }) => {
 		setIsLoading(true)
 		setIsErrorMessages(undefined)
 		setErrorPopupOpen(false)
 		try {
-			const response = await fetch('/api/booking/auth', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					booking_id: props.id,
-					password: data.password,
-				}),
+			const response = await authBookingAction({
+				bookingId: bookingDetail.id,
+				password: data.password,
 			})
-			if (response.ok) {
-				props.handleSetAuth(true)
-				router.push(`/booking/edit?id=${props.id}`)
+			if (response.status === 200) {
+				handleSetAuth(true)
+				router.push(`/booking/${bookingDetail.id}/edit`)
+			} else if (response.status === 400) {
+				setErrorPopupOpen(true)
+				setIsErrorMessages('パスワードが間違っています')
+			} else if (response.status === 404) {
+				setErrorPopupOpen(true)
+				setIsErrorMessages('予約が見つかりません')
+			} else if (response.status === 403) {
+				setErrorPopupOpen(true)
+				setIsErrorMessages('パスワードを5回以上間違えたためロックされました')
 			} else {
 				setErrorPopupOpen(true)
-				setIsErrorMessages('パスワードが違います')
+				setIsErrorMessages('想定外のエラーが発生しました')
 			}
 		} catch (error) {
 			setErrorPopupOpen(true)
 			setIsErrorMessages('エラーが発生しました')
 		}
-		setIsLoading(false)
 	}
 
 	useEffect(() => {
 		setIsLoading(false)
-		props.handleSetAuth(false)
-		fetchBookingDetail()
+		handleSetAuth(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
-
-	useEffect(() => {
-		props.handleSetAuth(false)
-		fetchBookingDetail()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props])
-
-	if (isLoading) {
-		return <Loading />
-	}
 
 	if (!bookingDetail) {
 		return <BookingDetailNotFound />
@@ -121,17 +96,18 @@ const BookingEditAuth = (props: Props) => {
 	return (
 		<>
 			<p className="text-lg text-center">
-				予約を編集するためにパスワードを入力してください。
+				予約編集用のパスワードを入力してください。
 			</p>
 			<div className="flex justify-center flex-col">
 				<div className="flex justify-center">
 					<BookingDetailBox
 						props={{
-							booking_date: bookingDetail.booking_date,
-							booking_time: bookingDetail.booking_time,
-							regist_name: bookingDetail.regist_name,
+							bookingDate: bookingDetail.bookingDate,
+							bookingTime: bookingDetail.bookingTime,
+							registName: bookingDetail.registName,
 							name: bookingDetail.name,
 						}}
+						calendarTime={calendarTime}
 					/>
 				</div>
 				<form
@@ -163,7 +139,7 @@ const BookingEditAuth = (props: Props) => {
 						<button
 							type="button"
 							className="btn btn-outline"
-							onClick={() => router.push(`/booking/detail?id=${props.id}`)}
+							onClick={() => router.push(`/booking/${bookingDetail.id}`)}
 						>
 							予約詳細に戻る
 						</button>
