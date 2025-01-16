@@ -71,11 +71,14 @@ export interface BookingTableBoxProps {
 
 export interface BookingLog {
 	id: string
-	created_at: string
-	updated_at: string
-	booking_date: string
-	booking_time: string
-	regist_name: string
+	userId: string
+	createdAt: Date
+	updatedAt: Date
+	bookingDate: string
+	bookingTime: number
+	registName: string
 	name: string
-	is_deleted: boolean
+	isDeleted: boolean
+	buyStatus?: BuyBookingStatus
+	buyExpiredAt?: string
 }

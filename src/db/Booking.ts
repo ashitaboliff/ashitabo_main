@@ -26,6 +26,7 @@ export const getAllBooking = async () => {
 					name: true,
 					is_deleted: true,
 				},
+				orderBy: [{ updated_at: 'desc' }],
 			})
 			return bookings
 		} catch (error) {
@@ -33,10 +34,38 @@ export const getAllBooking = async () => {
 		}
 	}
 	const getAllBookingCache = unstable_cache(getAllBooking, [], {
-		tags: ['booking-post'],
+		tags: ['booking'],
 	})
 	const bookingCacheData = await getAllBookingCache()
 	return bookingCacheData
+}
+
+export const getAllBuyBooking = async () => {
+	async function getAllBuyBooking() {
+		try {
+			const buyBookings = await prisma.buyBooking.findMany({
+				select: {
+					id: true,
+					booking_id: true,
+					user_id: true,
+					status: true,
+					created_at: true,
+					updated_at: true,
+					expire_at: true,
+					is_deleted: true,
+				},
+				orderBy: [{ updated_at: 'asc' }],
+			})
+			return buyBookings
+		} catch (error) {
+			throw error
+		}
+	}
+	const getAllBuyBookingCache = unstable_cache(getAllBuyBooking, [], {
+		tags: ['booking'],
+	})
+	const buyBookingCacheData = await getAllBuyBookingCache()
+	return buyBookingCacheData
 }
 
 /**
@@ -432,15 +461,14 @@ export const getBookingBanDate = async ({
 			})
 			return exBookings
 		} catch (error) {
-			console.error(error)
-			throw new Error('Database query failed')
+			throw error
 		}
 	}
 	const banBookingCache = unstable_cache(
 		banBooking,
 		[startDate, endDate],
 		{
-			tags: ['banBooking', `booking-${startDate}-${endDate}`, `booking`],
+			tags: ['banBooking', `booking-${startDate}-${endDate}`],
 		}, // これ動的なタグにする必要ないかも
 	)
 	const banBookingCacheData = await banBookingCache({ startDate, endDate })
@@ -448,16 +476,24 @@ export const getBookingBanDate = async ({
 }
 
 export const getBuyBookingById = async (id: string) => {
-	try {
-		const buyBooking = await prisma.buyBooking.findFirst({
-			where: {
-				booking_id: id,
-			},
-		})
-		return buyBooking
-	} catch (error) {
-		throw error
+	const getBuyBookingById = async (id: string) => {
+		try {
+			const buyBooking = await prisma.buyBooking.findFirst({
+				where: {
+					booking_id: id,
+				},
+			})
+			return buyBooking
+		} catch (error) {
+			throw error
+		}
 	}
+
+	const buyBookingCache = unstable_cache(getBuyBookingById, [id], {
+		tags: [`buyBooking-${id}`, 'booking'],
+	})
+	const buyBookingCacheData = await buyBookingCache(id)
+	return buyBookingCacheData
 }
 
 export const updateBuyBooking = async ({

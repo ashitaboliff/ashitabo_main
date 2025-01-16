@@ -28,69 +28,327 @@ async function main() {
 	console.log('Seeding data...')
 
 	// ユーザーを作成する例
-	await prisma.user.create({
-		data: {
-			id: 'admin',
-			role: 'ADMIN',
-		},
-	})
-
-	await prisma.padLock.createMany({
-		data: [
-			{
-				name: 'test',
-				password: hashSync('1234', 5),
-			},
-		],
-	})
-
-	// const admin = await prisma.user.findFirst({
-	// 	where: {
-	// 		user_id: 'admin',
+	// await prisma.user.create({
+	// 	data: {
+	// 		id: 'admin',
+	// 		role: 'ADMIN',
 	// 	},
 	// })
 
-	await prisma.profile.createMany({
-		data: [
-			{
-				id: v4(),
-				user_id: 'admin',
-				role: 'STUDENT',
-				part: ['BASS'],
-			},
-		],
-	})
+	// await prisma.padLock.createMany({
+	// 	data: [
+	// 		{
+	// 			name: 'test',
+	// 			password: hashSync('1234', 5),
+	// 		},
+	// 	],
+	// })
+
+	// await prisma.profile.createMany({
+	// 	data: [
+	// 		{
+	// 			id: v4(),
+	// 			user_id: 'admin',
+	// 			role: 'STUDENT',
+	// 			part: ['BASS'],
+	// 		},
+	// 	],
+	// })
 
 	await prisma.booking.createMany({
 		data: [
+			// {
+			// 	booking_date: DateFormat(0),
+			// 	booking_time: 0,
+			// 	regist_name: 'サンプルバンド',
+			// 	name: 'サンプルユーザー',
+			// 	user_id: 'admin',
+			// 	password: hashSync('1234', 10),
+			// },
+			// {
+			// 	booking_date: DateFormat(1),
+			// 	booking_time: 1,
+			// 	regist_name: 'サンプルバンド',
+			// 	name: 'サンプルユーザー',
+			// 	user_id: 'admin',
+			// 	password: hashSync('1234', 10),
+			// },
+			// {
+			// 	booking_date: DateFormat(2),
+			// 	booking_time: 2,
+			// 	regist_name:
+			// 		'長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル',
+			// 	name: '長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル',
+			// 	user_id: 'admin',
+			// 	password: hashSync('1234', 10),
+			// },
+			// {
+			// 	booking_date: DateFormat(4),
+			// 	booking_time: 1,
+			// 	regist_name: 'わたべサンプルバンド',
+			// 	name: 'わたべサンプルユーザー',
+			// 	user_id: 'admin',
+			// 	password: hashSync('1234', 10),
+			// },
 			{
-				booking_date: DateFormat(0),
-				booking_time: 0,
-				regist_name: 'サンプルバンド',
-				name: 'サンプルユーザー',
-				user_id: 'admin',
-				password: hashSync('1234', 10),
-			},
-			{
-				booking_date: DateFormat(1),
-				booking_time: 1,
-				regist_name: 'サンプルバンド',
-				name: 'サンプルユーザー',
-				user_id: 'admin',
-				password: hashSync('1234', 10),
-			},
-			{
-				booking_date: DateFormat(2),
+				booking_date: DateFormat(5),
 				booking_time: 2,
-				regist_name:
-					'長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル',
-				name: '長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル',
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
 				user_id: 'admin',
 				password: hashSync('1234', 10),
 			},
 			{
-				booking_date: DateFormat(4),
+				booking_date: DateFormat(7),
+				booking_time: 0,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(7),
 				booking_time: 1,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(7),
+				booking_time: 2,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(7),
+				booking_time: 3,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(7),
+				booking_time: 4,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(7),
+				booking_time: 5,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(7),
+				booking_time: 6,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(7),
+				booking_time: 7,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 0,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 1,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 2,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 3,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 4,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 5,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 6,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(8),
+				booking_time: 7,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 0,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 1,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 2,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 3,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 4,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 5,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 6,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(9),
+				booking_time: 7,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 0,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 1,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 2,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 3,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 4,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 5,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 6,
+				regist_name: 'わたべサンプルバンド',
+				name: 'わたべサンプルユーザー',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
+			},
+			{
+				booking_date: DateFormat(10),
+				booking_time: 7,
 				regist_name: 'わたべサンプルバンド',
 				name: 'わたべサンプルユーザー',
 				user_id: 'admin',
@@ -99,22 +357,22 @@ async function main() {
 		],
 	})
 
-	await prisma.exBooking.createMany({
-		data: [
-			{
-				start_date: DateFormat(3),
-				start_time: 0,
-				end_time: 5,
-				description: 'サンプル禁止',
-			},
-			{
-				start_date: DateFormat(5),
-				start_time: 0,
-				end_time: 5,
-				description: 'サンプル禁止',
-			},
-		],
-	})
+	// await prisma.exBooking.createMany({
+	// 	data: [
+	// 		{
+	// 			start_date: DateFormat(3),
+	// 			start_time: 0,
+	// 			end_time: 5,
+	// 			description: 'サンプル禁止',
+	// 		},
+	// 		{
+	// 			start_date: DateFormat(5),
+	// 			start_time: 0,
+	// 			end_time: 5,
+	// 			description: 'サンプル禁止',
+	// 		},
+	// 	],
+	// })
 
 	console.log('Data seeding complete.')
 }

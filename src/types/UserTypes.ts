@@ -3,8 +3,8 @@ export type Role = 'GRADUATE' | 'STUDENT'
 type RoleEnum = '卒業生' | '現役生'
 
 export type Part =
-	| 'BACKING_GUITER'
-	| 'LEAD_GUITER'
+	| 'BACKING_GUITAR'
+	| 'LEAD_GUITAR'
 	| 'BASS'
 	| 'DRUMS'
 	| 'KEYBOARD'
@@ -28,8 +28,8 @@ export const RoleMap: Record<Role, RoleEnum> = {
 }
 
 export const PartMap: Record<Part, PartEnum> = {
-	BACKING_GUITER: 'バッキングギター',
-	LEAD_GUITER: 'リードギター',
+	BACKING_GUITAR: 'バッキングギター',
+	LEAD_GUITAR: 'リードギター',
 	BASS: 'ベース',
 	DRUMS: 'ドラム',
 	KEYBOARD: 'キーボード',

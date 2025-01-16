@@ -86,7 +86,7 @@ const Layout = ({ className }: { className: string }) => {
 				checked={isOpen}
 				readOnly
 			/>
-			<div className="drawer-side border-r-2 border-border-light">
+			<div className="drawer-side border-r-2 border-border-light z-50">
 				<label
 					htmlFor="menu-drawer"
 					className="drawer-overlay"

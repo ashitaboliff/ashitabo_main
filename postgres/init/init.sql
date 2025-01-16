@@ -11,8 +11,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'Part') THEN
         CREATE TYPE "Part" AS ENUM (
             'VOCAL',
-            'BACKING_GUITER',
-            'LEAD_GUITER',
+            'BACKING_GUITAR',
+            'LEAD_GUITAR',
             'BASS',
             'DRUMS',
             'KEYBOARD',

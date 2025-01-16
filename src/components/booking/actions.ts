@@ -10,9 +10,11 @@ import {
 	BanBooking,
 	BuyBooking,
 	BuyBookingStatus,
+	BookingLog,
 } from '@/types/BookingTypes'
 import {
 	getAllBooking,
+	getAllBuyBooking,
 	getBookingByDate,
 	getBookingById,
 	createBooking,
@@ -45,11 +47,13 @@ export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
 	}
 }
 
-export async function getAllBookingAction(): Promise<ApiResponse<Booking[]>> {
+export async function getAllBookingAction(): Promise<
+	ApiResponse<BookingLog[]>
+> {
 	try {
 		const bookings = await getAllBooking()
 
-		const transformedBookings: Booking[] = bookings.map((booking) => ({
+		const transformedBookings: BookingLog[] = bookings.map((booking) => ({
 			id: booking.id,
 			userId: booking.user_id,
 			createdAt: booking.created_at,
@@ -61,9 +65,34 @@ export async function getAllBookingAction(): Promise<ApiResponse<Booking[]>> {
 			isDeleted: booking.is_deleted,
 		}))
 
+		const buyBookings = await getAllBuyBooking()
+
+		const transformedBuyBookings: BuyBooking[] = buyBookings.map(
+			(buyBooking) => ({
+				id: buyBooking.id,
+				booking_id: buyBooking.booking_id,
+				userId: buyBooking.user_id,
+				status: buyBooking.status,
+				createdAt: buyBooking.created_at,
+				updatedAt: buyBooking.updated_at,
+				expiredAt: buyBooking.expire_at,
+				isDeleted: buyBooking.is_deleted,
+			}),
+		)
+
+		// 予約情報と購入情報を結合
+		transformedBookings.forEach((booking) => {
+			const buyBooking = transformedBuyBookings.find(
+				(buyBooking) => buyBooking.booking_id === booking.id,
+			)
+			if (buyBooking) {
+				booking.buyStatus = buyBooking.status
+				booking.buyExpiredAt = buyBooking.expiredAt
+			}
+		})
+
 		return { status: StatusCode.OK, response: transformedBookings }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -313,7 +342,9 @@ export async function authBookingAction({
 }): Promise<ApiResponse<string>> {
 	const oneDay = 60 * 60 * 24
 	const cookieStore = await cookies()
-	const PassFailCount = Number(cookieStore.get('PassFailCount')?.value ?? 0)
+	const PassFailCount = Number(
+		cookieStore.get(`PassFailCount-${bookingId}`)?.value ?? 0,
+	)
 
 	try {
 		const bookingPassword = await checkBookingPassword({ bookingId })
@@ -326,15 +357,19 @@ export async function authBookingAction({
 		const isCorrect = compareSync(password, bookingPassword)
 		if (!isCorrect)
 			if (PassFailCount >= 5) {
-				cookieStore.set('PassFailCount', '0', { maxAge: oneDay }) // 一日持つ
+				cookieStore.set(`PassFailCount-${bookingId}`, '0', { maxAge: oneDay }) // 一日持つ
 				return {
 					status: StatusCode.FORBIDDEN,
 					response: 'パスワードを5回以上間違えたため、ログインできません',
 				}
 			} else {
-				cookieStore.set('PassFailCount', (PassFailCount + 1).toString(), {
-					maxAge: oneDay,
-				}) // 一日持つ
+				cookieStore.set(
+					`PassFailCount-${bookingId}`,
+					(PassFailCount + 1).toString(),
+					{
+						maxAge: oneDay,
+					},
+				) // 一日持つ
 				return {
 					status: StatusCode.BAD_REQUEST,
 					response: 'パスワードが違います',
@@ -533,7 +568,6 @@ export async function bookingRevalidateTagAction({
 		revalidateTag(tag)
 		return { status: StatusCode.OK, response: 'リビルドが完了しました' }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',

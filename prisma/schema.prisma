@@ -168,8 +168,8 @@ enum AccountRole {
 
 enum Part {
   VOCAL
-  BACKING_GUITER
-  LEAD_GUITER
+  BACKING_GUITAR
+  LEAD_GUITAR
   BASS
   DRUMS
   KEYBOARD

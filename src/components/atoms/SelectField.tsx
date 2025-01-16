@@ -4,7 +4,7 @@ import LabelInputField from '@/components/atoms/LabelInputField'
 
 interface SelectFieldProps
 	extends React.SelectHTMLAttributes<HTMLSelectElement> {
-	register: UseFormRegisterReturn
+	register?: UseFormRegisterReturn
 	options: Record<string, string> // key-value形式で表示するオプション
 	label?: string // ラベルをオプションで追加
 	isMultiple?: boolean // multiple選択を許可するかどうか
@@ -113,7 +113,7 @@ const SelectField = ({
 					className="select select-bordered w-full max-w-xs"
 					{...register}
 					{...props}
-					defaultValue=""
+					{...(props.value ? {} : { defaultValue: '' })}
 				>
 					<option value="" disabled hidden>
 						選択してください
