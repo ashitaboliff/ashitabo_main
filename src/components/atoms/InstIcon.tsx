@@ -16,8 +16,8 @@ export const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 	// アイコン定義
 	const icons = {
 		VOCAL: <MicIcon size={iconSize} color="#000000" />,
-		BACKING_GUITER: <GuitarIcon size={iconSize} color="#FF6F61" />,
-		LEAD_GUITER: <GuitarIcon size={iconSize} color="#B22222" />,
+		BACKING_GUITAR: <GuitarIcon size={iconSize} color="#FF6F61" />,
+		LEAD_GUITAR: <GuitarIcon size={iconSize} color="#B22222" />,
 		BASS: <BassIcon size={iconSize} color="#4169E1" />,
 		DRUMS: <DrumIcon size={iconSize} color="#FFC107" />,
 		KEYBOARD: <PianoIcon size={iconSize} color="#2A9D8F" />,
