@@ -10,6 +10,7 @@ import { redirectFrom } from '@/app/actions'
 import { getSession } from '@/app/actions'
 import BookingEdit from '@/components/booking/BookingEdit'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
+import { notFound } from 'next/navigation'
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const session = await getSession()
@@ -20,7 +21,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	let bookingDetailProps: BookingDetailProps
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
-		return { notFound: true }
+		return notFound()
 	}
 	const id = (await params).id
 	const bookingDetail = await getBookingByIdAction(id)

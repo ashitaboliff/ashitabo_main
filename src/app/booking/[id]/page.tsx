@@ -8,12 +8,13 @@ import {
 	getBuyBookingByIdAction,
 } from '@/components/booking/actions'
 import { BookingDetailProps } from '@/types/BookingTypes'
+import { notFound } from 'next/navigation'
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	let bookingDetailProps: BookingDetailProps
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
-		return { notFound: true }
+		return notFound()
 	}
 	const id = (await params).id
 	const bookingDetail = await getBookingByIdAction(id)

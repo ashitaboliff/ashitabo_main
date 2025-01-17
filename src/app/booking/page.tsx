@@ -5,11 +5,12 @@ import Image from 'next/image'
 import { getCalendarTimeAction } from '@/components/booking/actions'
 import MainPage from '@/components/booking/BookingMainPage'
 import UpdateMessage from '@/components/molecules/UpdateMessage'
+import { notFound } from 'next/navigation'
 
 const Page = async () => {
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
-		return { notFound: true }
+		return notFound()
 	}
 	return (
 		<>

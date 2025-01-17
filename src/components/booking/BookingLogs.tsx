@@ -62,8 +62,6 @@ const BookingLogs = ({
 							<th className="font-bold">予約時間</th>
 							<th className="font-bold">バンド名</th>
 							<th className="font-bold">責任者</th>
-							{/* <th>作成日</th>
-						<th>更新日</th> */}
 						</tr>
 					</thead>
 					<tbody>
@@ -89,8 +87,6 @@ const BookingLogs = ({
 								<td className="text-xxs">{calendarTime[log.bookingTime]}</td>
 								<td className="text-xxs">{log.registName}</td>
 								<td className="text-xxs">{log.name}</td>
-								{/* <td>{log.created_at}</td>
-								<td>{log.updated_at}</td> */}
 							</tr>
 						))}
 					</tbody>

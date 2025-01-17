@@ -9,6 +9,7 @@ import {
 import { getProfileAction } from '@/app/actions'
 import { Profile } from '@/types/UserTypes'
 import UserPage from '@/components/user/UserPage'
+import { notFound } from 'next/navigation'
 
 const userPage = () => {
 	const main = async () => {
@@ -16,7 +17,7 @@ const userPage = () => {
 		const isSession = await sessionCheck(session)
 		const calendarTime = await getCalendarTimeAction()
 		if (calendarTime.status !== 200) {
-			return { notFound: true }
+			return notFound()
 		}
 		if (isSession === 'no-session' || !session) {
 			await redirectFrom('/auth/signin', '/user')
@@ -27,7 +28,7 @@ const userPage = () => {
 			if (profile.status === 200) {
 				const booking = await getBookingByUserIdAction(session.user.id)
 				if (booking.status !== 200) {
-					return { notFound: true }
+					return notFound()
 				} else {
 					return (
 						<UserPage

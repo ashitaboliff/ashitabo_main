@@ -4,6 +4,7 @@ import React, { Suspense } from 'react'
 import NewBooking from '@/components/booking/BookingCreate'
 import { getSession, redirectFrom } from '../../actions'
 import { getCalendarTimeAction } from '@/components/booking/actions'
+import { notFound } from 'next/navigation'
 
 const Page = async () => {
 	const session = await getSession()
@@ -13,7 +14,7 @@ const Page = async () => {
 	}
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
-		return { notFound: true }
+		return notFound()
 	}
 	return <NewBooking calendarTime={calendarTime.response} session={session} />
 }
