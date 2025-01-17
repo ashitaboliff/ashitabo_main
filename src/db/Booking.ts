@@ -555,6 +555,35 @@ export const getBuyBookingByUserId = async (userId: string) => {
 	return buyBookingCacheData
 }
 
+export const getBuyBookingByExpire = async (expireAt: string) => {
+	const getBuyBookingByExpire = async (expireAt: string) => {
+		try {
+			const buyBooking = await prisma.buyBooking.findMany({
+				where: {
+					AND: {
+						expire_at: expireAt,
+						is_deleted: {
+							not: true,
+						},
+						status: {
+							notIn: ['EXPIRED', 'PAID'],
+						},
+					},
+				},
+			})
+			return buyBooking
+		} catch (error) {
+			throw error
+		}
+	}
+
+	const buyBookingCache = unstable_cache(getBuyBookingByExpire, [expireAt], {
+		tags: [`booking-${expireAt}`, 'booking'],
+	})
+	const buyBookingCacheData = await buyBookingCache(expireAt)
+	return buyBookingCacheData
+}
+
 export const updateBuyBooking = async ({
 	bookingId,
 	state,

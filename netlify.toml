@@ -1,0 +1,6 @@
+[functions]
+  directory = "schedule"
+
+[[functions.schedule]]
+  path = "/NetlifyUpdateStateFunction"
+  cron = "0 0 * * *" # 毎日0時に実行
