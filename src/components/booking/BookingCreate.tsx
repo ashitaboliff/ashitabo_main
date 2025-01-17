@@ -5,14 +5,15 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { format, addDays, set, sub, subDays } from 'date-fns'
-import { da, is, ja } from 'date-fns/locale'
+import { format, addDays, subDays } from 'date-fns'
+import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { createBookingAction } from './actions'
 import Loading from '@/components/atoms/Loading'
 import TextInputField from '@/components/atoms/TextInputField'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
+import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import { Session } from 'next-auth'
 import PasswordInputField from '../molecules/PasswordInputField'
 
@@ -55,6 +56,8 @@ const NewBooking = ({
 	const [PopupChildren, setPopupChildren] = useState<PopupChildren | null>(null)
 	const [noticePopupOpen, setNoticePopupOpen] = useState(false)
 	const noticePopupRef = useRef<PopupRef>(undefined)
+	const [AddCalendarPopupOpen, setAddCalendarPopupOpen] = useState(false)
+	const AddCalendarPopupRef = useRef<PopupRef>(undefined)
 
 	const regexDate = /^\d{4}-\d{2}-\d{2}$/
 	const regexTime = /^\d{1}$/
@@ -116,6 +119,8 @@ const NewBooking = ({
 	}, [isState])
 
 	const onSubmit = async (data: any) => {
+		setIsState('loading')
+		setAddCalendarPopupOpen(false)
 		const reservationData = {
 			bookingDate: DateToDayISOstring(bookingDate),
 			bookingTime: Number(bookingTime),
@@ -165,16 +170,28 @@ const NewBooking = ({
 									</p>
 								</>
 							)}
-							<button
-								type="button"
-								className="btn btn-outline mt-4"
-								onClick={() => {
-									router.push('/booking')
-									setNoticePopupOpen(false)
-								}}
-							>
-								カレンダーに戻る
-							</button>
+							<div className="flex flex-row justify-center gap-x-1">
+								<button
+									type="button"
+									className="btn btn-primary mt-4"
+									onClick={() => {
+										setNoticePopupOpen(false)
+										setAddCalendarPopupOpen(true)
+									}}
+								>
+									カレンダーに追加する
+								</button>
+								<button
+									type="button"
+									className="btn btn-outline mt-4"
+									onClick={() => {
+										router.push('/booking')
+										setNoticePopupOpen(false)
+									}}
+								>
+									ホームに戻る
+								</button>
+							</div>
 						</div>
 					),
 				})
@@ -256,10 +273,6 @@ const NewBooking = ({
 		}
 	}
 
-	if (isState === 'loading') {
-		return <Loading />
-	}
-
 	return (
 		<div className="p-8">
 			<div className="text-center mb-8">
@@ -269,50 +282,40 @@ const NewBooking = ({
 			<div className="max-w-md mx-auto">
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
 					<TextInputField
+						label="日付"
 						register={register('bookingDate')}
 						placeholder="日付"
 						type="date"
 						disabled={true}
 					/>
 					<TextInputField
+						label="時間"
 						register={register('bookingTime')}
 						placeholder="時間"
 						type="text"
 						disabled={true}
 					/>
 					<TextInputField
+						label="バンド名"
 						register={register('registName')}
 						placeholder="バンド名"
 						type="text"
+						errorMessage={errors.registName?.message}
 					/>
-					{errors.registName && (
-						<div className="flex justify-center">
-							<InfoMessage
-								messageType="error"
-								IconColor="bg-white"
-								message={errors.registName.message}
-							/>
-						</div>
-					)}
 					<TextInputField
+						label="責任者"
 						register={register('name')}
 						placeholder="責任者名"
 						type="text"
+						errorMessage={errors.name?.message}
 					/>
-					{errors.name && (
-						<div className="flex justify-center">
-							<InfoMessage
-								messageType="error"
-								IconColor="bg-white"
-								message={errors.name.message}
-							/>
-						</div>
-					)}
 					<PasswordInputField
+						label="パスワード"
 						register={register('password')}
 						showPassword={showPassword}
 						handleClickShowPassword={handleClickShowPassword}
 						handleMouseDownPassword={handleMouseDownPassword}
+						errorMessage={errors.password?.message}
 					/>
 					{isPaid && (
 						<div className="flex justify-center">
@@ -349,6 +352,23 @@ const NewBooking = ({
 			>
 				{PopupChildren?.children}
 			</Popup>
+			<AddCalendarPopup
+				calendarTime={calendarTime}
+				bookingDetail={{
+					id: '',
+					userId: '',
+					createdAt: new Date(),
+					updatedAt: new Date(),
+					bookingDate: DateToDayISOstring(bookingDate),
+					bookingTime: Number(bookingTime),
+					registName: watch('registName'),
+					name: watch('name'),
+					isDeleted: false,
+				}}
+				isPopupOpen={AddCalendarPopupOpen}
+				setIsPopupOpen={setAddCalendarPopupOpen}
+				calendarAddPopupRef={AddCalendarPopupRef}
+			/>
 		</div>
 	)
 }

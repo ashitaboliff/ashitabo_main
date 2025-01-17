@@ -2,7 +2,7 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
-import { addDays, eachDayOfInterval, formatISO } from 'date-fns'
+import { eachDayOfInterval, formatISO } from 'date-fns'
 import { hashSync, compareSync } from 'bcryptjs'
 import {
 	Booking,
@@ -11,6 +11,7 @@ import {
 	BuyBooking,
 	BuyBookingStatus,
 	BookingLog,
+	BookingDetailProps,
 } from '@/types/BookingTypes'
 import {
 	getAllBooking,
@@ -20,12 +21,14 @@ import {
 	createBooking,
 	getBookingByBooking,
 	getBookingByUserIdAndDate,
+	getBookingByUserId,
 	checkBookingPassword,
 	updateBooking,
 	deleteBooking,
 	getBookingBanDate,
 	getCalendarTime,
 	getBuyBookingById,
+	getBuyBookingByUserId,
 	updateBuyBooking,
 } from '@/db/Booking'
 import { getUser } from '@/db/Auth'
@@ -247,7 +250,60 @@ export async function getBookingByIdAction(
 			},
 		}
 	} catch (error) {
-		console.error(error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export const getBookingByUserIdAction = async (
+	userId: string,
+): Promise<ApiResponse<BookingDetailProps[]>> => {
+	try {
+		const bookings = await getBookingByUserId(userId)
+
+		const transformedBookings: BookingDetailProps[] = bookings.map(
+			(booking) => ({
+				id: booking.id,
+				userId: booking.user_id,
+				createdAt: booking.created_at,
+				updatedAt: booking.updated_at,
+				bookingDate: booking.booking_date,
+				bookingTime: booking.booking_time,
+				registName: booking.regist_name,
+				name: booking.name,
+				isDeleted: booking.is_deleted,
+			}),
+		)
+
+		const buyBookings = await getBuyBookingByUserId(userId)
+
+		const transformedBuyBookings: BuyBooking[] = buyBookings.map(
+			(buyBooking) => ({
+				id: buyBooking.id,
+				booking_id: buyBooking.booking_id,
+				userId: buyBooking.user_id,
+				status: buyBooking.status,
+				createdAt: buyBooking.created_at,
+				updatedAt: buyBooking.updated_at,
+				expiredAt: buyBooking.expire_at,
+				isDeleted: buyBooking.is_deleted,
+			}),
+		)
+
+		transformedBookings.forEach((booking) => {
+			const buyBooking = transformedBuyBookings.find(
+				(buyBooking) => buyBooking.booking_id === booking.id,
+			)
+			if (buyBooking) {
+				booking.isPaidStatus = buyBooking.status
+				booking.isPaidExpired = buyBooking.expiredAt
+			}
+		})
+
+		return { status: StatusCode.OK, response: transformedBookings }
+	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',

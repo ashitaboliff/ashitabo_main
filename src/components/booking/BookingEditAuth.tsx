@@ -123,15 +123,9 @@ const BookingEditAuth = ({
 							showPassword={showPassword}
 							handleClickShowPassword={handleClickShowPassword}
 							handleMouseDownPassword={handleMouseDownPassword}
+							errorMessage={errors.password?.message}
 						/>
 					</div>
-					{errors.password && (
-						<InfoMessage
-							message={errors.password.message || ''}
-							messageType="warning"
-							IconColor="bg-white"
-						/>
-					)}
 					<div className="flex justify-center mt-4 space-x-4">
 						<button type="submit" className="btn btn-success">
 							ログイン

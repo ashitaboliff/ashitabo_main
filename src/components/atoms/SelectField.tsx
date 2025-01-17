@@ -12,6 +12,7 @@ interface SelectFieldProps
 	watchValue?: any[] // 現在の選択値をwatchする
 	name: string // フォームフィールドの名前
 	infoDropdown?: ReactNode // ドロップダウンの情報
+	errorMessage?: string // エラーメッセージ
 }
 
 /**
@@ -34,6 +35,7 @@ const SelectField = ({
 	watchValue = [],
 	name,
 	infoDropdown,
+	errorMessage,
 	...props
 }: SelectFieldProps) => {
 	const [isOpen, setIsOpen] = useState<boolean>(false) // メニューの開閉状態
@@ -124,6 +126,11 @@ const SelectField = ({
 						</option>
 					))}
 				</select>
+			)}
+			{errorMessage && (
+				<div className="label">
+					<span className="label-text-alt text-error">{errorMessage}</span>
+				</div>
 			)}
 		</div>
 	)

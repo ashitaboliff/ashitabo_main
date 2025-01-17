@@ -133,14 +133,8 @@ const SigninSetting = () => {
 					register={register('name')}
 					label="本名"
 					infoDropdown="アカウント管理のために本名を入力してください。"
+					errorMessage={errors.name?.message}
 				/>
-				{errors.name && (
-					<InfoMessage
-						message={errors.name.message}
-						messageType="warning"
-						IconColor="bg-white"
-					/>
-				)}
 
 				<div className="flex flex-row items-center space-x-2">
 					<label className="label cursor-pointer">
@@ -163,14 +157,12 @@ const SigninSetting = () => {
 						/>
 						<span className="label-text">卒業生</span>
 					</label>
+					{errors.role && (
+						<span className="label-text-alt text-error">
+							{errors.role.message}
+						</span>
+					)}
 				</div>
-				{errors.role && (
-					<InfoMessage
-						message={errors.role.message}
-						messageType="warning"
-						IconColor="bg-white"
-					/>
-				)}
 
 				<SelectField
 					name="part"
@@ -187,14 +179,8 @@ const SigninSetting = () => {
 							また、他の楽器経験があればその他を選択してください。
 						</>
 					}
+					errorMessage={errors.part?.message}
 				/>
-				{errors.part && (
-					<InfoMessage
-						message={errors.part.message}
-						messageType="warning"
-						IconColor="bg-white"
-					/>
-				)}
 
 				{watchRole === 'STUDENT' && (
 					<>
@@ -207,14 +193,8 @@ const SigninSetting = () => {
 									信州大学および長野県立大学の学籍番号のフォーマットに対応しています。
 								</>
 							}
+							errorMessage={errors.student_id?.message}
 						/>
-						{errors.student_id && (
-							<InfoMessage
-								message={errors.student_id.message}
-								messageType="warning"
-								IconColor="bg-white"
-							/>
-						)}
 
 						<SelectField
 							name="expected"
@@ -224,14 +204,8 @@ const SigninSetting = () => {
 							infoDropdown={
 								<>この値はいつでも変更できます。留年しても大丈夫！（笑）</>
 							}
+							errorMessage={errors.expected?.message}
 						/>
-						{errors.expected && (
-							<InfoMessage
-								message={errors.expected.message}
-								messageType="warning"
-								IconColor="bg-white"
-							/>
-						)}
 					</>
 				)}
 

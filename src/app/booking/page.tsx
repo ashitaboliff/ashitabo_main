@@ -9,7 +9,7 @@ import UpdateMessage from '@/components/molecules/UpdateMessage'
 const Page = async () => {
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
-		return null
+		return { notFound: true }
 	}
 	return (
 		<>

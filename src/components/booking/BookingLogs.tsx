@@ -87,8 +87,8 @@ const BookingLogs = ({
 									{format(log.bookingDate, 'yyyy年MM月dd日', { locale: ja })}
 								</td>
 								<td className="text-xxs">{calendarTime[log.bookingTime]}</td>
-								<td className="text-xxs">{log.name}</td>
 								<td className="text-xxs">{log.registName}</td>
+								<td className="text-xxs">{log.name}</td>
 								{/* <td>{log.created_at}</td>
 								<td>{log.updated_at}</td> */}
 							</tr>

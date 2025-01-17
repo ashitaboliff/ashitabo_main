@@ -2,18 +2,18 @@
 
 import React, { Suspense } from 'react'
 import NewBooking from '@/components/booking/BookingCreate'
-import Loading from '@/components/atoms/Loading'
-import { getSession } from '../../actions'
+import { getSession, redirectFrom } from '../../actions'
 import { getCalendarTimeAction } from '@/components/booking/actions'
 
 const Page = async () => {
 	const session = await getSession()
 	if (!session) {
+		redirectFrom('/auth/signin', '/booking/new')
 		return null
 	}
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
-		return null
+		return { notFound: true }
 	}
 	return <NewBooking calendarTime={calendarTime.response} session={session} />
 }

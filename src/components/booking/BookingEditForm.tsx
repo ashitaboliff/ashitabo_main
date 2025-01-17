@@ -388,12 +388,14 @@ const MemoBookingEditForm = memo(
 						<div className="flex flex-row justify-center gap-2">
 							<div className="flex flex-col space-y-2">
 								<TextInputField
+									label="日付"
 									register={register('bookingDate')}
 									placeholder="日付"
 									type="text"
 									disabled={true}
 								/>
 								<TextInputField
+									label="時間"
 									register={register('bookingTime')}
 									placeholder="時間"
 									type="text"
@@ -411,33 +413,19 @@ const MemoBookingEditForm = memo(
 							</div>
 						</div>
 						<TextInputField
+							label="バンド名"
 							register={register('registName')}
 							placeholder="バンド名"
 							type="text"
+							errorMessage={errors.registName?.message}
 						/>
-						{errors.registName && (
-							<div className="flex justify-center">
-								<InfoMessage
-									messageType="error"
-									IconColor="bg-white"
-									message={errors.registName.message}
-								/>
-							</div>
-						)}
 						<TextInputField
+							label="責任者"
 							register={register('name')}
 							placeholder="責任者名"
 							type="text"
+							errorMessage={errors.name?.message}
 						/>
-						{errors.name && (
-							<div className="flex justify-center">
-								<InfoMessage
-									messageType="error"
-									IconColor="bg-white"
-									message={errors.name.message}
-								/>
-							</div>
-						)}
 						{isPaid && bookingDetail.isPaidStatus !== 'PAID' && (
 							<div className="flex justify-center">
 								<InfoMessage

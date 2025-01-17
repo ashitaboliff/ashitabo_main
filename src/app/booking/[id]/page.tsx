@@ -13,7 +13,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	let bookingDetailProps: BookingDetailProps
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
-		return null
+		return { notFound: true }
 	}
 	const id = (await params).id
 	const bookingDetail = await getBookingByIdAction(id)

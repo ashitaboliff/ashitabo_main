@@ -245,6 +245,44 @@ export const getBookingByBooking = async ({
 	}
 }
 
+export const getBookingByUserId = async (userId: string) => {
+	function getBookingByUserId(userId: string) {
+		try {
+			const bookings = prisma.booking.findMany({
+				where: {
+					AND: {
+						user_id: userId,
+						is_deleted: {
+							not: true,
+						},
+					},
+				},
+				select: {
+					id: true,
+					user_id: true,
+					created_at: true,
+					updated_at: true,
+					booking_date: true,
+					booking_time: true,
+					regist_name: true,
+					name: true,
+					is_deleted: true,
+				},
+				orderBy: [{ updated_at: 'desc' }],
+			})
+			return bookings
+		} catch (error) {
+			throw error
+		}
+	}
+
+	const getBookingByUserIdCache = unstable_cache(getBookingByUserId, [userId], {
+		tags: [`booking-${userId}`, 'booking'],
+	})
+	const bookingCacheData = await getBookingByUserIdCache(userId)
+	return bookingCacheData
+}
+
 /**
  * 予約情報を作成する関数
  * @param Booking Omit<Booking, 'id' | 'created_at' | 'updated_at' | 'user_id'> 予約情報
@@ -493,6 +531,27 @@ export const getBuyBookingById = async (id: string) => {
 		tags: [`buyBooking-${id}`, 'booking'],
 	})
 	const buyBookingCacheData = await buyBookingCache(id)
+	return buyBookingCacheData
+}
+
+export const getBuyBookingByUserId = async (userId: string) => {
+	const getBuyBookingByUserId = async (userId: string) => {
+		try {
+			const buyBooking = await prisma.buyBooking.findMany({
+				where: {
+					user_id: userId,
+				},
+			})
+			return buyBooking
+		} catch (error) {
+			throw error
+		}
+	}
+
+	const buyBookingCache = unstable_cache(getBuyBookingByUserId, [userId], {
+		tags: [`booking-${userId}`, 'booking'],
+	})
+	const buyBookingCacheData = await buyBookingCache(userId)
 	return buyBookingCacheData
 }
 

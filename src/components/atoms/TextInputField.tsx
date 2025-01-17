@@ -16,6 +16,7 @@ const TextInputField = ({
 	label,
 	infoDropdown,
 	disabled,
+	errorMessage,
 	...props
 }: {
 	register: UseFormRegisterReturn
@@ -24,6 +25,7 @@ const TextInputField = ({
 	label?: string
 	infoDropdown?: ReactNode
 	disabled?: boolean
+	errorMessage?: string
 }) => {
 	return (
 		<div>
@@ -36,6 +38,12 @@ const TextInputField = ({
 				{...register}
 				{...props}
 			/>
+
+			{errorMessage && (
+				<div className="label">
+					<span className="text-error label-text-alt">{errorMessage}</span>
+				</div>
+			)}
 		</div>
 	)
 }

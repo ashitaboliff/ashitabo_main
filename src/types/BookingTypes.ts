@@ -57,18 +57,6 @@ export type BookingDetailProps = Booking & {
 
 export type BookingResponse = Record<string, Record<number, Booking | null>>
 
-export interface BookingCalenderProps {
-	booking_data: Booking[]
-}
-
-export interface BookingTableBoxProps {
-	booking_date: string
-	booking_time: string
-	registName?: string | React.ReactNode
-	name?: string
-	url: string | undefined
-}
-
 export interface BookingLog {
 	id: string
 	userId: string
