@@ -15,20 +15,22 @@ const BookingLogs = ({
 	bookingLog,
 }: {
 	calendarTime: string[]
-	bookingLog: BookingLog[]
+	bookingLog: BookingLog[] | undefined | null
 }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<BookingLog>(bookingLog[0])
+	const [popupData, setPopupData] = useState<BookingLog | undefined | null>(
+		bookingLog?.[0] ?? undefined,
+	)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
 
-	const totalLogs = bookingLog.length
+	const totalLogs = bookingLog?.length ?? 0
 	const pageMax = Math.ceil(totalLogs / logsPerPage)
 
 	const indexOfLastLog = currentPage * logsPerPage
 	const indexOfFirstLog = indexOfLastLog - logsPerPage
-	const currentLogs = bookingLog.slice(indexOfFirstLog, indexOfLastLog)
+	const currentLogs = bookingLog?.slice(indexOfFirstLog, indexOfLastLog) ?? []
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
@@ -65,7 +67,7 @@ const BookingLogs = ({
 						</tr>
 					</thead>
 					<tbody>
-						{currentLogs?.map((log) => (
+						{currentLogs.map((log) => (
 							<tr
 								key={log.id}
 								className="cursor-pointer"
@@ -113,32 +115,35 @@ const BookingLogs = ({
 					<div className="flex flex-col space-y-2 text-sm">
 						<div className="grid grid-cols-2 gap-2">
 							<div className="font-bold">予約id:</div>
-							<div>{popupData.id}</div>
+							<div>{popupData?.id}</div>
 							<div className="font-bold">予約日:</div>
 							<div>
-								{format(popupData.bookingDate, 'yyyy年MM月dd日', {
-									locale: ja,
-								})}
+								{popupData &&
+									format(popupData.bookingDate, 'yyyy年MM月dd日', {
+										locale: ja,
+									})}
 							</div>
 							<div className="font-bold">予約時間:</div>
-							<div>{calendarTime[popupData.bookingTime]}</div>
+							<div>{popupData && calendarTime[popupData.bookingTime]}</div>
 							<div className="font-bold">バンド名:</div>
-							<div>{popupData.name}</div>
+							<div>{popupData?.name}</div>
 							<div className="font-bold">責任者:</div>
-							<div>{popupData.registName}</div>
+							<div>{popupData?.registName}</div>
 							<div className="font-bold">作成日:</div>
 							<div>
-								{format(popupData.createdAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-									locale: ja,
-								})}
+								{popupData &&
+									format(popupData.createdAt, 'yyyy年MM月dd日hh時mm分ss秒', {
+										locale: ja,
+									})}
 							</div>
 							<div className="font-bold">更新日:</div>
 							<div>
-								{format(popupData.updatedAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-									locale: ja,
-								})}
+								{popupData &&
+									format(popupData.updatedAt, 'yyyy年MM月dd日hh時mm分ss秒', {
+										locale: ja,
+									})}
 							</div>
-							{popupData.buyStatus && (
+							{popupData?.buyStatus && (
 								<>
 									<div className="font-bold">支払い状況:</div>
 									<div>{BuyBookingStatusMap[popupData.buyStatus]}</div>
