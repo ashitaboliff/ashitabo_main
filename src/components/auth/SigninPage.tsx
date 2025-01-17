@@ -17,13 +17,9 @@ const SigninPage = () => {
 		return <Loading />
 	}
 
-	useEffect(() => {
-		if (session.data) {
-			setPopupOpen(true)
-		} else {
-			setIsLoading(false)
-		}
-	}, [session])
+	if (session.data) {
+		setPopupOpen(true)
+	}
 
 	return (
 		<>
