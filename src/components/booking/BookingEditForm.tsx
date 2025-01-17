@@ -370,11 +370,13 @@ const MemoBookingEditForm = memo(
 				startDate: viewDay,
 				endDate: addDays(viewDay, viewDayMax - 1),
 			})
+			// eslint-disable-next-line react-hooks/rules-of-hooks
 		}, [viewDay])
 
 		useEffect(() => {
 			setValue('bookingDate', bookingDate)
 			setValue('bookingTime', calendarTime[bookingTime])
+			// eslint-disable-next-line react-hooks/rules-of-hooks
 		}, [bookingDate, bookingTime])
 
 		return (
@@ -560,5 +562,7 @@ const MemoBookingEditForm = memo(
 		)
 	},
 )
+
+MemoBookingEditForm.displayName = 'MemoBookingEditForm'
 
 export default BookingEditForm

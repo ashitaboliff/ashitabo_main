@@ -188,4 +188,6 @@ const EditCalendar = memo(
 	},
 )
 
+EditCalendar.displayName = 'EditCalendar'
+
 export default EditCalendar

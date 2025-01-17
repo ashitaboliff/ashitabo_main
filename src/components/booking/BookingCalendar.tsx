@@ -73,4 +73,6 @@ const BookingCalendar = memo(
 	},
 )
 
+BookingCalendar.displayName = 'BookingCalendar'
+
 export default BookingCalendar

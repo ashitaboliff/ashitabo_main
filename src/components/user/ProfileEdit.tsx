@@ -76,6 +76,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	// なんかPartだけ読み込まれないのでここでrefresh
 	useEffect(() => {
 		router.refresh()
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 	}, [])
 
 	const {
@@ -227,9 +228,10 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 				ref={popupRef}
 				open={popupOpen}
 				title="保存完了"
-				children="プロフィールを更新しました"
 				onClose={() => setPopupOpen(false)}
-			/>
+			>
+				<p>プロフィールを更新しました</p>
+			</Popup>
 		</div>
 	)
 }

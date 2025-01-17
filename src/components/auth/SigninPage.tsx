@@ -20,6 +20,8 @@ const SigninPage = () => {
 	useEffect(() => {
 		if (session.data) {
 			setPopupOpen(true)
+		} else {
+			setIsLoading(false)
 		}
 	}, [session])
 
@@ -43,36 +45,35 @@ const SigninPage = () => {
 				ref={popupRef}
 				open={popupOpen}
 				title="すでにログインしています"
-				children={
-					<div>
-						<p>すでにログインしているためアカウント登録は不要です。</p>
-						<div className="flex justify-center mt-2 gap-2">
-							<button
-								className="btn btn-primary"
-								onClick={() => {
-									setPopupOpen(false)
-									router.push('/user')
-								}}
-							>
-								ユーザーページへ移動
-							</button>
-							<button
-								className="btn btn-outline"
-								onClick={() => {
-									setPopupOpen(false)
-									router.push('/')
-								}}
-							>
-								ホームに戻る
-							</button>
-						</div>
-					</div>
-				}
 				onClose={() => {
 					setPopupOpen(false)
 					router.push('/user')
 				}}
-			/>
+			>
+				<div>
+					<p>すでにログインしているためアカウント登録は不要です。</p>
+					<div className="flex justify-center mt-2 gap-2">
+						<button
+							className="btn btn-primary"
+							onClick={() => {
+								setPopupOpen(false)
+								router.push('/user')
+							}}
+						>
+							ユーザーページへ移動
+						</button>
+						<button
+							className="btn btn-outline"
+							onClick={() => {
+								setPopupOpen(false)
+								router.push('/')
+							}}
+						>
+							ホームに戻る
+						</button>
+					</div>
+				</div>
+			</Popup>
 		</>
 	)
 }

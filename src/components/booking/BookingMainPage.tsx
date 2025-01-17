@@ -73,6 +73,7 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 			startDate: viewDay,
 			endDate: addDays(viewDay, viewDayMax - 1),
 		})
+		// eslint-disable-next-line react-hooks/rules-of-hooks
 	}, [viewDay])
 
 	return (

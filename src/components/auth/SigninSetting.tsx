@@ -224,19 +224,18 @@ const SigninSetting = () => {
 				ref={popupRef}
 				open={popupOpen}
 				title="保存完了"
-				children={
-					<>
-						<p>プロフィールを保存しました</p>
-						<button
-							className="btn btn-primary"
-							onClick={() => router.push('/user')}
-						>
-							ユーザーページに移動
-						</button>
-					</>
-				}
 				onClose={() => setPopupOpen(false)}
-			/>
+			>
+				<div className="p-4 flex flex-col justify-center gap-2">
+					<p>プロフィールを保存しました</p>
+					<button
+						className="btn btn-primary"
+						onClick={() => router.push('/user')}
+					>
+						ユーザーページに移動
+					</button>
+				</div>
+			</Popup>
 		</div>
 	)
 }
