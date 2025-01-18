@@ -43,6 +43,9 @@ export async function sessionCheck(
 	let isSession: 'session' | 'no-session' | 'profile' = 'no-session'
 	if (session) {
 		const userId = session.user.id
+		if (!userId) {
+			return isSession
+		}
 		const isProfile = await getProfileAction(userId)
 		if (isProfile.status === StatusCode.OK) {
 			isSession = 'profile'

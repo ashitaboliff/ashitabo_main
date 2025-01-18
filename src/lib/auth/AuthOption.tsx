@@ -18,6 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	pages: {
 		signIn: '/auth/signin',
 	},
+	trustHost: true,
 	callbacks: {
 		async session({ session, token, user }) {
 			// token なんも入ってないなんこいつ
