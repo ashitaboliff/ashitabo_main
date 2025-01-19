@@ -16,7 +16,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	secret: process.env.AUTH_SECRET,
 	...authConfig,
 	pages: {
-		signIn: '/auth/signin',
+		signIn: '/auth/signin/setting',
+		signOut: '/home',
 	},
 	trustHost: true,
 	callbacks: {
