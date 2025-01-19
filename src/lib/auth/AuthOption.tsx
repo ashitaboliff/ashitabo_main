@@ -16,8 +16,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	secret: process.env.AUTH_SECRET,
 	...authConfig,
 	pages: {
-		signIn: 'https://stg-ashitabo.netlify.app/auth/signin/setting',
-		signOut: 'https://stg-ashitabo.netlify.app/home',
+		signIn: '/auth/signin/setting',
+		signOut: '/home',
 	},
 	trustHost: true,
 	callbacks: {
