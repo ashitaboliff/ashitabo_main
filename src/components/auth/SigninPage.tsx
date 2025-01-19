@@ -29,8 +29,8 @@ const SigninPage = () => {
 					className="btn btn-primary"
 					onClick={async () =>
 						await signIn('line', {
-							redirectTo: `https://stg-ashitabo.netlify.app/auth/signin/setting`,
-							callbackUrl: `https://stg-ashitabo.netlify.app/auth/signin/setting`,
+							redirectTo: `${process.env.NEXTAUTH_URL}`+'/auth/signin/setting',
+							callbackUrl: `${process.env.NEXTAUTH_URL}`+'/auth/signin/setting',
 							maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
 						})
 					}
