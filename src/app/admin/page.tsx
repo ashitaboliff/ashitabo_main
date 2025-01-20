@@ -12,7 +12,7 @@ const Page = async () => {
 	}
 
 	const userRole = await getUserRoleAction(session.user.id)
-	if (userRole.response === 'user' || userRole.status !== 200) {
+	if (userRole.response === 'USER' || userRole.status !== 200) {
 		return notFound()
 	}
 

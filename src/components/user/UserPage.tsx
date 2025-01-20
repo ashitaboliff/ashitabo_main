@@ -31,7 +31,7 @@ const UserPage = ({
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<BookingDetailProps>(
+	const [popupData, setPopupData] = useState<BookingDetailProps | undefined>(
 		bookingDataByUser[0],
 	)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
@@ -116,8 +116,6 @@ const UserPage = ({
 									<th className="font-bold">予約時間</th>
 									<th className="font-bold">バンド名</th>
 									<th className="font-bold">責任者</th>
-									{/* <th>作成日</th>
-							<th>更新日</th> */}
 								</tr>
 							</thead>
 							<tbody>
@@ -147,8 +145,6 @@ const UserPage = ({
 										</td>
 										<td className="text-xxs">{log.registName}</td>
 										<td className="text-xxs">{log.name}</td>
-										{/* <td>{log.created_at}</td>
-									<td>{log.updated_at}</td> */}
 									</tr>
 								))}
 							</tbody>
@@ -165,84 +161,96 @@ const UserPage = ({
 							))}
 						</div>
 
-						<Popup
-							ref={popupRef}
-							title="予約詳細"
-							maxWidth="lg"
-							open={isPopupOpen}
-							onClose={() => setIsPopupOpen(false)}
-						>
-							<div className="flex flex-col space-y-2 text-sm">
-								<div className="grid grid-cols-2 gap-2">
-									<div className="font-bold">予約id:</div>
-									<div>{popupData.id}</div>
-									<div className="font-bold">予約日:</div>
-									<div>
-										{format(popupData.bookingDate, 'yyyy年MM月dd日', {
-											locale: ja,
-										})}
+						{popupData && (
+							<Popup
+								ref={popupRef}
+								title="予約詳細"
+								maxWidth="lg"
+								open={isPopupOpen}
+								onClose={() => setIsPopupOpen(false)}
+							>
+								<div className="flex flex-col space-y-2 text-sm">
+									<div className="grid grid-cols-2 gap-2">
+										<div className="font-bold">予約id:</div>
+										<div>{popupData.id}</div>
+										<div className="font-bold">予約日:</div>
+										<div>
+											{format(popupData.bookingDate, 'yyyy年MM月dd日', {
+												locale: ja,
+											})}
+										</div>
+										<div className="font-bold">予約時間:</div>
+										<div>{calendarTime[popupData.bookingTime]}</div>
+										<div className="font-bold">バンド名:</div>
+										<div>{popupData.name}</div>
+										<div className="font-bold">責任者:</div>
+										<div>{popupData.registName}</div>
+										<div className="font-bold">作成日:</div>
+										<div>
+											{format(
+												popupData.createdAt,
+												'yyyy年MM月dd日hh時mm分ss秒',
+												{
+													locale: ja,
+												},
+											)}
+										</div>
+										<div className="font-bold">更新日:</div>
+										<div>
+											{format(
+												popupData.updatedAt,
+												'yyyy年MM月dd日hh時mm分ss秒',
+												{
+													locale: ja,
+												},
+											)}
+										</div>
+										{popupData.isPaidStatus && (
+											<>
+												<div className="font-bold">支払い状況:</div>
+												<div>{BuyBookingStatusMap[popupData.isPaidStatus]}</div>
+												<div className="font-bold">支払い期限:</div>
+												<div>
+													{popupData.isPaidExpired
+														? format(
+																new Date(popupData.isPaidExpired),
+																'yyyy年MM月dd日',
+																{ locale: ja },
+															)
+														: 'N/A'}
+												</div>
+											</>
+										)}
 									</div>
-									<div className="font-bold">予約時間:</div>
-									<div>{calendarTime[popupData.bookingTime]}</div>
-									<div className="font-bold">バンド名:</div>
-									<div>{popupData.name}</div>
-									<div className="font-bold">責任者:</div>
-									<div>{popupData.registName}</div>
-									<div className="font-bold">作成日:</div>
-									<div>
-										{format(popupData.createdAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-											locale: ja,
-										})}
+									<div className="flex justify-center space-x-2">
+										<button
+											type="button"
+											className="btn btn-primary"
+											onClick={() => setIsAddCalendarPopupOpen(true)}
+										>
+											カレンダーに追加する
+										</button>
+										<button
+											className="btn btn-outline"
+											onClick={() => {
+												setIsPopupOpen(false)
+											}}
+										>
+											閉じる
+										</button>
 									</div>
-									<div className="font-bold">更新日:</div>
-									<div>
-										{format(popupData.updatedAt, 'yyyy年MM月dd日hh時mm分ss秒', {
-											locale: ja,
-										})}
-									</div>
-									{popupData.isPaidStatus && (
-										<>
-											<div className="font-bold">支払い状況:</div>
-											<div>{BuyBookingStatusMap[popupData.isPaidStatus]}</div>
-											<div className="font-bold">支払い期限:</div>
-											<div>
-												{popupData.isPaidExpired
-													? format(
-															new Date(popupData.isPaidExpired),
-															'yyyy年MM月dd日',
-															{ locale: ja },
-														)
-													: 'N/A'}
-											</div>
-										</>
-									)}
 								</div>
-								<div className="flex justify-center space-x-2">
-									<button
-										type="button"
-										className="btn btn-primary"
-										onClick={() => setIsAddCalendarPopupOpen(true)}
-									>
-										カレンダーに追加する
-									</button>
-									<button
-										className="btn btn-outline"
-										onClick={() => {
-											setIsPopupOpen(false)
-										}}
-									>
-										閉じる
-									</button>
-								</div>
-							</div>
-						</Popup>
-						<AddCalendarPopup
-							calendarTime={calendarTime}
-							bookingDetail={popupData}
-							isPopupOpen={isAddCalendarPopupOpen}
-							setIsPopupOpen={setIsAddCalendarPopupOpen}
-							calendarAddPopupRef={addCalendarPopupRef}
-						/>
+							</Popup>
+						)}
+						{popupData && (
+							<AddCalendarPopup
+								calendarTime={calendarTime}
+								bookingDetail={popupData}
+								isPopupOpen={isAddCalendarPopupOpen}
+								setIsPopupOpen={setIsAddCalendarPopupOpen}
+								calendarAddPopupRef={addCalendarPopupRef}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

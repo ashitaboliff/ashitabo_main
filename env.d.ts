@@ -6,7 +6,7 @@ declare namespace NodeJS {
 		NEXT_PUBLIC_LIFF_ID: string
 		AUTH_LINE_SECRET: string
 		AUTH_LINE_SECRET: string
-		NEXTAUTH_URL: string
+		AUTH_URL: string
 		NEXTAUTH_SECRET: string
 		AUTH_SECRET: string
 		ADMIN_ID: string

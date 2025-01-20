@@ -1,7 +1,96 @@
 'use server'
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
+import { revalidateTag } from 'next/cache'
 import { getUser } from '@/db/Auth'
+import {
+	getAllUsers,
+	getAllUserProfiles,
+	deleteUser,
+	updateUserRole,
+	createBookingBanDate,
+} from '@/db/Admin'
+import { AccountRole, User, UserDetail } from '@/types/UserTypes'
+
+export async function adminRevalidateTagAction(
+	tag: string,
+): Promise<ApiResponse<string>> {
+	try {
+		revalidateTag(tag)
+		return {
+			status: StatusCode.OK,
+			response: 'リビルド完了',
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function getAllUserDetailsAction(): Promise<
+	ApiResponse<UserDetail[]>
+> {
+	try {
+		const users = await getAllUsers()
+		const userProfiles = await getAllUserProfiles()
+		const userDetails: UserDetail[] = users.map((user) => {
+			const userProfile = userProfiles.find(
+				(profile) => profile.user_id === user.id,
+			)
+			return {
+				id: user.id,
+				name: user.name,
+				fullName: userProfile?.name ?? undefined,
+				studentId: userProfile?.student_id ?? undefined,
+				expected: userProfile?.expected ?? undefined,
+				image: user.image,
+				createAt: user.createdAt,
+				updateAt: user.updatedAt,
+				AccountRole: user.role,
+				role: userProfile?.role,
+				part: userProfile?.part,
+			}
+		})
+		return {
+			status: StatusCode.OK,
+			response: userDetails,
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function deleteUserAction({
+	id,
+	role,
+}: {
+	id: string
+	role: AccountRole | null
+}): Promise<ApiResponse<string>> {
+	try {
+		if (role !== 'ADMIN') {
+			return {
+				status: StatusCode.FORBIDDEN,
+				response: 'このユーザは削除できません',
+			}
+		}
+		await deleteUser(id)
+		return {
+			status: StatusCode.OK,
+			response: '削除完了',
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
 
 export async function getUserRoleAction(
 	user_id: string,
@@ -13,19 +102,33 @@ export async function getUserRoleAction(
 				status: StatusCode.NOT_FOUND,
 				response: 'このidのユーザは存在しません',
 			}
-		} else if (user.role === 'ADMIN') {
-			return {
-				status: StatusCode.OK,
-				response: 'admin',
-			}
-		} else {
-			return {
-				status: StatusCode.OK,
-				response: 'user',
-			}
+		}
+		return {
+			status: StatusCode.OK,
+			response: user.role as string,
 		}
 	} catch (error) {
-		console.error(error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function updateUserRoleAction({
+	id,
+	role,
+}: {
+	id: string
+	role: AccountRole
+}): Promise<ApiResponse<string>> {
+	try {
+		await updateUserRole(id, role)
+		return {
+			status: StatusCode.OK,
+			response: '更新完了',
+		}
+	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',

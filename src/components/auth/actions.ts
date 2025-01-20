@@ -10,6 +10,7 @@ import {
 } from '@/db/Auth'
 import { cookies } from 'next/headers'
 import { Profile, User } from '@/types/UserTypes'
+import { revalidateTag } from 'next/cache'
 
 const oneDay = 60 * 60 * 24
 const oneMonth = 60 * 60 * 24 * 30
@@ -102,6 +103,7 @@ export async function createProfileAction(
 				response: 'このユーザは既にプロフィールが設定されています',
 			}
 		await createProfile(user_id, body)
+		revalidateTag('users')
 		return { status: StatusCode.CREATED, response: 'success' }
 	} catch (error) {
 		console.error(error)
@@ -130,6 +132,7 @@ export async function putProfileAction(
 				response: 'このユーザはプロフィールが設定されていません',
 			}
 		await updateProfile(user_id, body)
+		revalidateTag('users')
 		return { status: StatusCode.OK, response: 'success' }
 	} catch (error) {
 		console.error(error)

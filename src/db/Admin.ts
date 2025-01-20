@@ -4,6 +4,67 @@ import fs from 'fs'
 import path from 'path'
 import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
+import { unstable_cache } from 'next/cache'
+import { AccountRole } from '@/types/UserTypes'
+
+export const getAllUsers = async () => {
+	async function getAllUsers() {
+		try {
+			const users = await prisma.user.findMany()
+			return users
+		} catch (error) {
+			throw error
+		}
+	}
+	const users = unstable_cache(getAllUsers, [], {
+		tags: ['users'],
+	})
+	const result = await users()
+	return result
+}
+
+export const getAllUserProfiles = async () => {
+	async function getAllUserProfiles() {
+		try {
+			const userProfiles = await prisma.profile.findMany()
+			return userProfiles
+		} catch (error) {
+			throw error
+		}
+	}
+	const userProfiles = unstable_cache(getAllUserProfiles, [], {
+		tags: ['user'],
+	})
+	const result = await userProfiles()
+	return result
+}
+
+export const deleteUser = async (id: string) => {
+	try {
+		await prisma.user.delete({
+			where: {
+				id: id,
+			},
+		})
+	} catch (error) {
+		throw error
+	}
+}
+
+export const updateUserRole = async (id: string, role: AccountRole) => {
+	try {
+		await prisma.user.update({
+			where: {
+				id: id,
+			},
+			data: {
+				role: role,
+			},
+		})
+	} catch (error) {
+		throw error
+	}
+}
 
 /**
  * 予約禁止日を作成する関数
@@ -34,7 +95,6 @@ export const createBookingBanDate = async ({
 			},
 		})
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
