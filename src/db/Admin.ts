@@ -66,6 +66,65 @@ export const updateUserRole = async (id: string, role: AccountRole) => {
 	}
 }
 
+export const getAllPadLocks = async () => {
+	async function getAllPadLocks() {
+		try {
+			const padlocks = await prisma.padLock.findMany({
+				select: {
+					id: true,
+					name: true,
+					created_at: true,
+					updated_at: true,
+					is_deleted: true,
+				},
+			})
+			return padlocks
+		} catch (error) {
+			throw error
+		}
+	}
+	const padlocks = unstable_cache(getAllPadLocks, [], {
+		tags: ['padlocks'],
+	})
+	const result = await padlocks()
+	return result
+}
+
+export const createPadLock = async ({
+	name,
+	password,
+}: {
+	name: string
+	password: string
+}) => {
+	try {
+		await prisma.padLock.create({
+			data: {
+				id: v4(),
+				name: name,
+				password: password,
+			},
+		})
+	} catch (error) {
+		throw error
+	}
+}
+
+export const deletePadLock = async (id: string) => {
+	try {
+		await prisma.padLock.update({
+			where: {
+				id: id,
+			},
+			data: {
+				is_deleted: true,
+			},
+		})
+	} catch (error) {
+		throw error
+	}
+}
+
 /**
  * 予約禁止日を作成する関数
  * @param startDate 開始日ISO形式

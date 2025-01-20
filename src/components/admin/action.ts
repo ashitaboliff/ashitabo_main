@@ -2,15 +2,20 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
+import { hashSync } from 'bcryptjs'
 import { getUser } from '@/db/Auth'
 import {
 	getAllUsers,
 	getAllUserProfiles,
 	deleteUser,
 	updateUserRole,
+	getAllPadLocks,
+	createPadLock,
+	deletePadLock,
 	createBookingBanDate,
 } from '@/db/Admin'
 import { AccountRole, User, UserDetail } from '@/types/UserTypes'
+import { PadLock } from '@/types/AdminTypes'
 
 export async function adminRevalidateTagAction(
 	tag: string,
@@ -127,6 +132,67 @@ export async function updateUserRoleAction({
 		return {
 			status: StatusCode.OK,
 			response: '更新完了',
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function getAllPadLocksAction(): Promise<ApiResponse<PadLock[]>> {
+	try {
+		const padLocks = await getAllPadLocks()
+		const shapedPadLocks = padLocks.map((p) => ({
+			id: p.id,
+			name: p.name,
+			createdAt: p.created_at,
+			updatedAt: p.updated_at,
+			isDeleted: p.is_deleted,
+		}))
+		return {
+			status: StatusCode.OK,
+			response: shapedPadLocks,
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function createPadLockAction({
+	name,
+	password,
+}: {
+	name: string
+	password: string
+}): Promise<ApiResponse<string>> {
+	try {
+		const hashedPassword = hashSync(password, 10)
+		await createPadLock({ name, password: hashedPassword })
+		revalidateTag('padlocks')
+		return {
+			status: StatusCode.CREATED,
+			response: 'success',
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: error instanceof Error ? error.message : 'Internal Server Error',
+		}
+	}
+}
+
+export async function deletePadLockAction(id: string): Promise<ApiResponse<string>> {
+	try {
+		await deletePadLock(id)
+		revalidateTag('padlocks')
+		return {
+			status: StatusCode.OK,
+			response: '削除完了',
 		}
 	} catch (error) {
 		return {
