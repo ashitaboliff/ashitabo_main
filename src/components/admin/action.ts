@@ -98,10 +98,10 @@ export async function deleteUserAction({
 }
 
 export async function getUserRoleAction(
-	user_id: string,
+	userId: string,
 ): Promise<ApiResponse<string>> {
 	try {
-		const user = await getUser(user_id)
+		const user = await getUser(userId)
 		if (!user) {
 			return {
 				status: StatusCode.NOT_FOUND,
@@ -181,12 +181,15 @@ export async function createPadLockAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: error instanceof Error ? error.message : 'Internal Server Error',
+			response:
+				error instanceof Error ? error.message : 'Internal Server Error',
 		}
 	}
 }
 
-export async function deletePadLockAction(id: string): Promise<ApiResponse<string>> {
+export async function deletePadLockAction(
+	id: string,
+): Promise<ApiResponse<string>> {
 	try {
 		await deletePadLock(id)
 		revalidateTag('padlocks')
@@ -198,6 +201,44 @@ export async function deletePadLockAction(id: string): Promise<ApiResponse<strin
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
+		}
+	}
+}
+
+export async function createBookingBanDateAction({
+	startDate,
+	startTime,
+	endTime,
+	description,
+}: {
+	startDate: string | string[]
+	startTime: number
+	endTime: number
+	description: string
+}): Promise<ApiResponse<string>> {
+	try {
+		if (Array.isArray(startDate)) {
+			for (const date of startDate) {
+				await createBookingBanDate({ startDate: date, startTime, endTime, description })
+			}
+			revalidateTag('booking')
+			return {
+				status: StatusCode.CREATED,
+				response: 'success',
+			}
+		} else {
+			await createBookingBanDate({ startDate, startTime, endTime, description })
+			revalidateTag('booking')
+			return {
+				status: StatusCode.CREATED,
+				response: 'success',
+			}
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response:
+				error instanceof Error ? error.message : 'Internal Server Error',
 		}
 	}
 }
