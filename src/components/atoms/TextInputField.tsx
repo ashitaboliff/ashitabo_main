@@ -33,7 +33,7 @@ const TextInputField = ({
 			<input
 				type={type}
 				placeholder={placeholder}
-				className="input input-bordered w-full pr-10"
+				className="input input-bordered w-full pr-10 bg-bg-white"
 				disabled={disabled}
 				{...register}
 				{...props}

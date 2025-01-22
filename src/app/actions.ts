@@ -29,7 +29,6 @@ export async function getProfileAction(
 					response: 'このユーザはプロフィールが設定されていません',
 				}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',

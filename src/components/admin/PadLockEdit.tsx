@@ -6,12 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
-import { is, ja } from 'date-fns/locale'
-import {
-	adminRevalidateTagAction,
-	createPadLockAction,
-	deletePadLockAction,
-} from './action'
+import { ja } from 'date-fns/locale'
+import { createPadLockAction, deletePadLockAction } from './action'
 import { PadLock } from '@/types/AdminTypes'
 import TextInputField from '@/components/atoms/TextInputField'
 import SelectField from '@/components/atoms/SelectField'
@@ -86,13 +82,13 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
 			<h1 className="text-2xl font-bold">ログイン用パスワード管理</h1>
-      <p className="text-sm text-center">
-        このページではアカウント新規作成時のログイン用パスワードを管理することができます。
-        <br />
-        基本的には部室の4桁のパスワードを年間で管理しますが、OB、OG用のパスワードを発行することも可能です。
-      </p>
+			<p className="text-sm text-center">
+				このページではアカウント新規作成時のログイン用パスワードを管理することができます。
+				<br />
+				基本的には部室の4桁のパスワードを年間で管理しますが、OB、OG用のパスワードを発行することも可能です。
+			</p>
 			<button
-				className="btn btn-primary btn-md"
+				className="btn btn-primary btn-outline btn-md"
 				onClick={() => setIsCreatePopupOpen(true)}
 			>
 				パスワードを新規作成

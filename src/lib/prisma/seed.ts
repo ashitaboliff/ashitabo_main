@@ -356,22 +356,22 @@ async function main() {
 		],
 	})
 
-	// await prisma.exBooking.createMany({
-	// 	data: [
-	// 		{
-	// 			start_date: DateFormat(3),
-	// 			start_time: 0,
-	// 			end_time: 5,
-	// 			description: 'サンプル禁止',
-	// 		},
-	// 		{
-	// 			start_date: DateFormat(5),
-	// 			start_time: 0,
-	// 			end_time: 5,
-	// 			description: 'サンプル禁止',
-	// 		},
-	// 	],
-	// })
+	await prisma.exBooking.createMany({
+		data: [
+			{
+				start_date: DateFormat(3),
+				start_time: 0,
+				end_time: 5,
+				description: 'サンプル禁止',
+			},
+			{
+				start_date: DateFormat(5),
+				start_time: 0,
+				end_time: 5,
+				description: 'サンプル禁止',
+			},
+		],
+	})
 
 	console.log('Data seeding complete.')
 }

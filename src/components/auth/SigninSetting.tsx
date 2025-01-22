@@ -108,7 +108,6 @@ const SigninSetting = () => {
 					setIsError(`${res.response}`)
 				}
 			} catch (error) {
-				console.error(error)
 				setIsError(
 					'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
 				)

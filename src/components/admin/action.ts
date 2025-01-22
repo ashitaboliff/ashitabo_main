@@ -12,10 +12,13 @@ import {
 	getAllPadLocks,
 	createPadLock,
 	deletePadLock,
+	getAllBanBooking,
 	createBookingBanDate,
+	deleteBanBooking,
 } from '@/db/Admin'
 import { AccountRole, User, UserDetail } from '@/types/UserTypes'
 import { PadLock } from '@/types/AdminTypes'
+import { BanBooking } from '@/types/BookingTypes'
 
 export async function adminRevalidateTagAction(
 	tag: string,
@@ -205,6 +208,33 @@ export async function deletePadLockAction(
 	}
 }
 
+export async function getAllBanBookingAction(): Promise<
+	ApiResponse<BanBooking[]>
+> {
+	try {
+		const banBookingDates = await getAllBanBooking()
+		const dates = banBookingDates.map((date) => ({
+			id: date.id,
+			startDate: date.start_date,
+			startTime: date.start_time,
+			endTime: date.end_time,
+			description: date.description,
+			createdAt: date.created_at,
+			updatedAt: date.updated_at,
+			isDeleted: date.is_deleted,
+		}))
+		return {
+			status: StatusCode.OK,
+			response: dates,
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
+		}
+	}
+}
+
 export async function createBookingBanDateAction({
 	startDate,
 	startTime,
@@ -213,22 +243,27 @@ export async function createBookingBanDateAction({
 }: {
 	startDate: string | string[]
 	startTime: number
-	endTime: number
+	endTime?: number
 	description: string
 }): Promise<ApiResponse<string>> {
 	try {
 		if (Array.isArray(startDate)) {
 			for (const date of startDate) {
-				await createBookingBanDate({ startDate: date, startTime, endTime, description })
+				await createBookingBanDate({
+					startDate: date,
+					startTime,
+					endTime,
+					description,
+				})
 			}
-			revalidateTag('booking')
+			revalidateTag('banBooking')
 			return {
 				status: StatusCode.CREATED,
 				response: 'success',
 			}
 		} else {
 			await createBookingBanDate({ startDate, startTime, endTime, description })
-			revalidateTag('booking')
+			revalidateTag('banBooking')
 			return {
 				status: StatusCode.CREATED,
 				response: 'success',
@@ -239,6 +274,24 @@ export async function createBookingBanDateAction({
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response:
 				error instanceof Error ? error.message : 'Internal Server Error',
+		}
+	}
+}
+
+export async function deleteBanBookingAction(
+	id: string,
+): Promise<ApiResponse<string>> {
+	try {
+		await deleteBanBooking(id)
+		revalidateTag('banBooking')
+		return {
+			status: StatusCode.OK,
+			response: '削除完了',
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'Internal Server Error',
 		}
 	}
 }

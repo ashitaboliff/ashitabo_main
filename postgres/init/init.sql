@@ -61,7 +61,7 @@ CREATE TABLE "ex_booking" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
   "start_date" TEXT NOT NULL,
   "start_time" INT NOT NULL,
-  "end_time" INT NOT NULL,
+  "end_time" INT,
   "description" TEXT NOT NULL,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),

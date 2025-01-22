@@ -125,6 +125,26 @@ export const deletePadLock = async (id: string) => {
 	}
 }
 
+export const getAllBanBooking = async () => {
+	async function getAllBanBooking() {
+		try {
+			const banBooking = await prisma.exBooking.findMany({
+				orderBy: {
+					start_date: 'desc',
+				},
+			})
+			return banBooking
+		} catch (error) {
+			throw error
+		}
+	}
+	const banBooking = unstable_cache(getAllBanBooking, [], {
+		tags: ['banBooking'],
+	})
+	const result = await banBooking()
+	return result
+}
+
 /**
  * 予約禁止日を作成する関数
  * @param startDate 開始日ISO形式
@@ -151,6 +171,18 @@ export const createBookingBanDate = async ({
 				start_time: startTime,
 				end_time: endTime,
 				description: description,
+			},
+		})
+	} catch (error) {
+		throw error
+	}
+}
+
+export const deleteBanBooking = async (id: string) => {
+	try {
+		await prisma.exBooking.delete({
+			where: {
+				id: id,
 			},
 		})
 	} catch (error) {

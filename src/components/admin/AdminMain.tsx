@@ -35,7 +35,7 @@ const AdminMain = () => {
 								<RxCrossCircled size={25} />
 							</th>
 							<td>
-								<Link href="/admin/booking/forbidden">部室予約禁止日設定</Link>
+								<Link href="/admin/forbidden">部室予約禁止日設定</Link>
 							</td>
 						</tr>
 						{/* <tr>

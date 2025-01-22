@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { addDays, sub, subDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import {
 	getBookingByDateAction,
 	updateBookingAction,

@@ -622,8 +622,7 @@ export const getCalendarTime = async () => {
 				.map((line) => line.trim().replace(',', ''))
 				.filter((line) => line !== '')
 		} catch (error) {
-			console.error(error)
-			throw new Error('Database query failed')
+			throw error
 		}
 	}
 	const calendarTimeCache = unstable_cache(calendarTime, [], {

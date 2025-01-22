@@ -42,7 +42,6 @@ export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
 			response: timeList,
 		}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -575,7 +574,6 @@ export async function getBookingBanDateAction({
 			response: transformedBanBookings,
 		}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -607,7 +605,6 @@ export async function getBuyBookingByIdAction(
 			},
 		}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',

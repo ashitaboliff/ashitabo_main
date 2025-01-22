@@ -45,7 +45,6 @@ export async function padLockAction(
 			}
 		}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -77,7 +76,6 @@ export async function getUserAction(
 					response: 'このidのユーザは存在しません',
 				}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -106,7 +104,6 @@ export async function createProfileAction(
 		revalidateTag('users')
 		return { status: StatusCode.CREATED, response: 'success' }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
@@ -135,7 +132,6 @@ export async function putProfileAction(
 		revalidateTag('users')
 		return { status: StatusCode.OK, response: 'success' }
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
 			response: 'Internal Server Error',
