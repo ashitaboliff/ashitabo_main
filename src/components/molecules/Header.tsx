@@ -11,14 +11,17 @@ import { LuMenu } from 'react-icons/lu'
 import { FaRegUserCircle } from 'react-icons/fa'
 import { RxCountdownTimer } from 'react-icons/rx'
 import { MdOutlineEditCalendar } from 'react-icons/md'
+import { IoHomeOutline } from 'react-icons/io5'
 
-const Layout = () => {
+const Layout = ({ className }: { className: string }) => {
 	const session = useSession()
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const [user, setUser] = useState<User | undefined>(undefined)
+	const [loading, setLoading] = useState<boolean>(true)
 
 	useEffect(() => {
 		const main = async () => {
+			setLoading(true)
 			if (!session.data?.user.id) {
 				return
 			}
@@ -28,6 +31,7 @@ const Layout = () => {
 			} else {
 				setUser(undefined)
 			}
+			setLoading(false)
 		}
 		main()
 	}, [session])
@@ -43,7 +47,7 @@ const Layout = () => {
 	return (
 		<div>
 			<div
-				className={`navbar bg-bg-white mb-5 border-b-2 border-border-light `}
+				className={`navbar bg-bg-white mb-5 border-b-2 border-border-light ${className}`}
 			>
 				<div className="navbar-start">
 					<button
@@ -54,7 +58,7 @@ const Layout = () => {
 					</button>
 				</div>
 				<div className="navbar-center">
-					<Link href="/booking">
+					<Link href="/home">
 						<p className="font-nicoMoji text-3xl text-center">
 							あしたぼホームページ
 						</p>
@@ -64,13 +68,17 @@ const Layout = () => {
 					<button className="btn btn-square btn-ghost text-3xl">
 						<Link href="/user">
 							{user ? (
-								<Image
-									src={user.image as string}
-									alt="user icon"
-									width={40}
-									height={40}
-									className="rounded-full"
-								/>
+								loading ? (
+									<div className="skeleton w-10 h-10"></div>
+								) : (
+									<Image
+										src={user.image as string}
+										alt="user icon"
+										width={40}
+										height={40}
+										className="rounded-full"
+									/>
+								)
 							) : (
 								<FaRegUserCircle />
 							)}
@@ -92,16 +100,22 @@ const Layout = () => {
 					className="drawer-overlay"
 					onClick={handleMenuClose}
 				></label>
-				<ul className="menu p-4 w-5/12 bg-bg-white text-text-light">
+				<ul className="menu p-4 w-5/12 bg-bg-light text-text-light h-full">
 					<li className="menu-title text-lg">
 						<span>メニュー</span>
 					</li>
-					<li onClick={handleMenuClose} className="text-base">
+					<li onClick={handleMenuClose} className="text-lg">
+						<Link href="/home">
+							<IoHomeOutline />
+							ホーム
+						</Link>
+					</li>
+					<li onClick={handleMenuClose} className="text-lg">
 						<Link href="/booking">
 							<MdOutlineEditCalendar /> コマ表
 						</Link>
 					</li>
-					<li onClick={handleMenuClose} className="text-base">
+					<li onClick={handleMenuClose} className="text-lg">
 						<Link href="/booking/logs">
 							<RxCountdownTimer /> 予約ログ
 						</Link>

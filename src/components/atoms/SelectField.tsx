@@ -81,7 +81,7 @@ const SelectField = ({
 					<div
 						tabIndex={0}
 						role="button"
-						className={`btn btn-primary m-1 ${watchValue.length !== 0 ? 'btn-outline' : ''} bg-bg-white`}
+						className={`btn btn-primary m-1 ${watchValue.length !== 0 ? 'btn-outline' : ''}`}
 						onClick={toggleDropdown} // クリックで開閉を切り替え
 					>
 						{watchValue.length === 0
