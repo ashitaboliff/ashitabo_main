@@ -3,13 +3,20 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { ja, se } from 'date-fns/locale'
 import {
 	adminRevalidateTagAction,
 	deleteUserAction,
 	updateUserRoleAction,
 } from './action'
-import { UserDetail, RoleMap, PartMap, AccountRoleMap } from '@/types/UserTypes'
+import {
+	UserDetail,
+	RoleMap,
+	PartMap,
+	AccountRoleMap,
+	AccountRole,
+} from '@/types/UserTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import { Session } from 'next-auth'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
@@ -32,6 +39,10 @@ const AdminUserPage = ({
 	const [isdeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
 	const deletePopupRef = useRef<PopupRef>(undefined)
 
+	const [error, setError] = useState<ErrorType>()
+	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
+	const successPopupRef = useRef<PopupRef>(undefined)
+
 	const totalUsers = userDetails?.length ?? 0
 	const pageMax = Math.ceil(totalUsers / usersPerPage)
 
@@ -39,6 +50,28 @@ const AdminUserPage = ({
 	const indexOfFirstUser = indexOfLastUser - usersPerPage
 	const currentUsers =
 		userDetails?.slice(indexOfFirstUser, indexOfLastUser) ?? []
+
+	const onDelete = async (id: string) => {
+		const res = await deleteUserAction({ id, role: 'ADMIN' })
+		if (res.status === 200) {
+			setPopupData(null)
+			setIsPopupOpen(false)
+			setIsDeletePopupOpen(false)
+			await adminRevalidateTagAction('users')
+		} else {
+			setError(res)
+		}
+	}
+
+	const onRoleChange = async (id: string, role: AccountRole) => {
+		const res = await updateUserRoleAction({ id, role })
+		if (res.status === 200) {
+			await adminRevalidateTagAction('users')
+			setIsPopupOpen(false)
+		} else {
+			setError(res)
+		}
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
@@ -162,9 +195,7 @@ const AdminUserPage = ({
 							}
 							onClick={async () => {
 								if (!popupData) return
-								await updateUserRoleAction({ id: popupData.id, role: 'ADMIN' })
-								await adminRevalidateTagAction('users')
-								setIsPopupOpen(false)
+								await onRoleChange(popupData.id, 'ADMIN')
 							}}
 						>
 							三役に任命
@@ -175,7 +206,7 @@ const AdminUserPage = ({
 							onClick={async () => {
 								if (!popupData) return
 								setIsDeletePopupOpen(true)
-								setIsPopupOpen(false)
+								setError(undefined)
 							}}
 						>
 							削除
@@ -187,6 +218,11 @@ const AdminUserPage = ({
 							閉じる
 						</button>
 					</div>
+					{error && (
+						<p className="text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
 				</div>
 			</Popup>
 			<div className="join justify-center">
@@ -224,9 +260,7 @@ const AdminUserPage = ({
 							className="btn btn-error"
 							onClick={async () => {
 								if (!popupData) return
-								await deleteUserAction({ id: popupData.id, role: 'ADMIN' })
-								await adminRevalidateTagAction('users')
-								setIsDeletePopupOpen(false)
+								await onDelete(popupData.id)
 							}}
 						>
 							はい
@@ -238,6 +272,27 @@ const AdminUserPage = ({
 							いいえ
 						</button>
 					</div>
+					{error && (
+						<p className="text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
+				</div>
+			</Popup>
+			<Popup
+				ref={successPopupRef}
+				title="削除完了"
+				open={isSuccessPopupOpen}
+				onClose={() => setIsSuccessPopupOpen(false)}
+			>
+				<div className="flex flex-col space-y-2 text-sm items-center">
+					<div>削除が完了しました</div>
+					<button
+						className="btn btn-primary"
+						onClick={() => setIsSuccessPopupOpen(false)}
+					>
+						閉じる
+					</button>
 				</div>
 			</Popup>
 		</div>

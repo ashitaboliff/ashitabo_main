@@ -26,6 +26,7 @@ import {
 	updateBooking,
 	deleteBooking,
 	getBookingBanDate,
+	getBanBookingByDate,
 	getCalendarTime,
 	getBuyBookingById,
 	getBuyBookingByUserId,
@@ -367,6 +368,36 @@ export async function createBookingAction({
 			}
 		}
 
+		const BanBooking = await getBanBookingByDate(booking.bookingDate)
+		console.log(BanBooking)
+		if (BanBooking.length > 0) {
+			BanBooking.forEach((banBooking) => {
+				if (banBooking.end_time === null) {
+					if (banBooking.start_time === booking.bookingTime) {
+						return {
+							status: StatusCode.FORBIDDEN,
+							response: '予約が禁止されています',
+						}
+					}
+				} else {
+					if (
+						banBooking.start_time <= booking.bookingTime &&
+						booking.bookingTime <= banBooking.end_time
+					) {
+						console.log(
+							banBooking.start_time,
+							booking.bookingTime,
+							banBooking.end_time,
+						)
+						return {
+							status: StatusCode.FORBIDDEN,
+							response: '予約が禁止されています',
+						}
+					}
+				}
+			})
+		}
+
 		const hashedPassword = hashSync(password, 10)
 
 		await createBooking({
@@ -462,6 +493,16 @@ export async function updateBookingAction({
 			return {
 				status: StatusCode.NOT_FOUND,
 				response: 'このidの予約は存在しません',
+			}
+
+		const isBooking = await getBookingByBooking({
+			bookingDate: booking.bookingDate,
+			bookingTime: booking.bookingTime,
+		})
+		if (isBooking)
+			return {
+				status: StatusCode.CONFLICT,
+				response: '予約が重複しています',
 			}
 
 		await updateBooking({

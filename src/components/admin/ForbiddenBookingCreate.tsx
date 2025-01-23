@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { format, eachDayOfInterval, getDay } from 'date-fns'
+import { format, eachDayOfInterval, getDay, set } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { createBookingBanDateAction } from './action'
-import { BanBooking } from '@/types/BookingTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import CustomDatePicker from '@/components/atoms/DatePicker'
 import TextInputField from '@/components/atoms/TextInputField'
 import SelectField from '@/components/atoms/SelectField'
@@ -67,6 +67,7 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
+	const [error, setError] = useState<ErrorType>()
 
 	const {
 		register,
@@ -94,11 +95,10 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 				description: data.description,
 			})
 			if (res.status === 201) {
-				console.log(res)
 				reset()
 				setIsPopupOpen(true)
 			} else {
-				console.log(res)
+				setError(res)
 			}
 		} else if (data.type === 'period') {
 			const res = await createBookingBanDateAction({
@@ -108,11 +108,10 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 				description: data.description,
 			})
 			if (res.status === 201) {
-				console.log(res)
 				reset()
 				setIsPopupOpen(true)
 			} else {
-				console.log(res)
+				setError(res)
 			}
 		} else if (data.type === 'regular') {
 			const allDates = eachDayOfInterval({
@@ -272,6 +271,29 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 					</button>
 				</div>
 			</form>
+			{error && (
+				<p className="text-sm text-error text-center">
+					エラーコード{error.status}:{error.response}
+				</p>
+			)}
+			<Popup
+				ref={popupRef}
+				title="予約禁止日追加"
+				open={isPopupOpen}
+				onClose={() => setIsPopupOpen(false)}
+			>
+				<div className="p-4 flex flex-col justify-center gap-2">
+					<p className="font-bold text-primary text-center">
+						予約禁止日を追加しました
+					</p>
+					<button
+						className="btn btn-outline"
+						onClick={() => router.push('/admin/forbidden')}
+					>
+						予約禁止日一覧に戻る
+					</button>
+				</div>
+			</Popup>
 		</div>
 	)
 }

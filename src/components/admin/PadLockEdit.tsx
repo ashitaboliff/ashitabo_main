@@ -6,9 +6,10 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import { ja, se } from 'date-fns/locale'
 import { createPadLockAction, deletePadLockAction } from './action'
 import { PadLock } from '@/types/AdminTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import TextInputField from '@/components/atoms/TextInputField'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
@@ -33,6 +34,8 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 	const createPopupRef = useRef<PopupRef>(undefined)
 	const [isDeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
 	const deletePopupRef = useRef<PopupRef>(undefined)
+
+	const [error, setError] = useState<ErrorType>()
 
 	const totalPadLocks = padLocks?.length ?? 0
 	const pageMax = Math.ceil(totalPadLocks / padLocksPerPage)
@@ -62,9 +65,8 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 		if (res.status === 201) {
 			setIsCreatePopupOpen(false)
 			reset()
-			console.log('success')
 		} else {
-			console.log(res)
+			setError(res)
 		}
 	}
 
@@ -73,9 +75,8 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 		if (res.status === 200) {
 			setIsDeletePopupOpen(false)
 			setIsPopupOpen(false)
-			console.log('success')
 		} else {
-			console.log(res)
+			setError(res)
 		}
 	}
 
@@ -210,6 +211,11 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 						削除
 					</button>
 				</div>
+				{error && (
+					<p className="text-sm text-error text-center">
+						エラーコード{error.status}:{error.response}
+					</p>
+				)}
 			</Popup>
 			<Popup
 				ref={createPopupRef}
@@ -219,7 +225,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 			>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="flex flex-col items-center justify-center"
+					className="flex flex-col items-center justify-center gap-y-2"
 				>
 					<TextInputField
 						label="管理名"
@@ -233,9 +239,22 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 						register={register('password')}
 						errorMessage={errors.password?.message}
 					/>
-					<button type="submit" className="btn btn-primary">
-						作成
-					</button>
+					<div className="flex flex-row gap-x-2 justify-center">
+						<button type="submit" className="btn btn-primary">
+							作成
+						</button>
+						<button
+							className="btn btn-outline"
+							onClick={() => setIsCreatePopupOpen(false)}
+						>
+							閉じる
+						</button>
+					</div>
+					{error && (
+						<p className="text-sm text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
 				</form>
 			</Popup>
 			<div className="join justify-center">

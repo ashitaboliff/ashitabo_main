@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useRef, ReactNode } from 'react'
+import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,18 +9,13 @@ import { format, addDays, subDays } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { createBookingAction } from './actions'
-import Loading from '@/components/atoms/Loading'
 import TextInputField from '@/components/atoms/TextInputField'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import { Session } from 'next-auth'
 import PasswordInputField from '../molecules/PasswordInputField'
-
-type PopupChildren = {
-	title: string
-	children: ReactNode
-}
+import { ErrorType } from '@/types/ResponseTypes'
 
 const today = new Date(
 	new Date().getFullYear(),
@@ -30,7 +25,6 @@ const today = new Date(
 	0,
 	0,
 )
-const isAbleBookingDateMax = addDays(today, 28)
 const isPaidBookingDateMin = addDays(today, 14)
 
 const schema = yup.object().shape({
@@ -41,55 +35,28 @@ const schema = yup.object().shape({
 	password: yup.string().required('パスワードを入力してください'),
 })
 
-const NewBooking = ({
+export default function NewBooking({
 	calendarTime,
 	session,
 }: {
 	calendarTime: string[]
 	session: Session
-}) => {
+}) {
 	const router = useRouter()
-	const [isState, setIsState] = useState<'loading' | 'input' | 'submit'>(
-		'loading',
-	)
-	const [showPassword, setShowPassword] = useState<boolean>(false)
-	const [PopupChildren, setPopupChildren] = useState<PopupChildren | null>(null)
 	const [noticePopupOpen, setNoticePopupOpen] = useState(false)
-	const noticePopupRef = useRef<PopupRef>(undefined)
-	const [AddCalendarPopupOpen, setAddCalendarPopupOpen] = useState(false)
-	const AddCalendarPopupRef = useRef<PopupRef>(undefined)
-
-	const regexDate = /^\d{4}-\d{2}-\d{2}$/
-	const regexTime = /^\d{1}$/
+	const [addCalendarPopupOpen, setAddCalendarPopupOpen] = useState(false)
+	const [error, setError] = useState<ErrorType>()
+	const noticePopupRef = useRef<PopupRef>()
+	const addCalendarPopupRef = useRef<PopupRef>()
+	const [showPassword, setShowPassword] = useState(false)
 
 	const queryParams = useSearchParams()
-	const bookingDate = queryParams.get('date')
-		? regexDate.test(queryParams.get('date') as string)
-			? new Date(queryParams.get('date') as string)
-			: new Date()
-		: new Date()
-	const bookingTime = queryParams.get('time')
-		? regexTime.test(queryParams.get('time') as string)
-			? (queryParams.get('time') as string)
-			: '0'
-		: '0'
+	const bookingDateParam = queryParams.get('date')
+	const bookingTimeParam = queryParams.get('time')
 
-	const isPaid =
-		new Date(
-			bookingDate.getFullYear(),
-			bookingDate.getMonth(),
-			bookingDate.getDate(),
-			0,
-			0,
-			0,
-		) > isPaidBookingDateMin
-
-	const handleClickShowPassword = () => setShowPassword((show) => !show)
-	const handleMouseDownPassword = (
-		event: React.MouseEvent<HTMLButtonElement>,
-	) => {
-		event.preventDefault()
-	}
+	const bookingDate = bookingDateParam ? new Date(bookingDateParam) : new Date()
+	const bookingTime = bookingTimeParam || '0'
+	const isPaid = bookingDate >= isPaidBookingDateMin
 
 	const {
 		register,
@@ -105,21 +72,8 @@ const NewBooking = ({
 		},
 	})
 
-	useEffect(() => {
-		setIsState('input')
-		setNoticePopupOpen(false)
-	}, [])
-
-	useEffect(() => {
-		if (isState === 'submit') {
-			setNoticePopupOpen(true)
-		} else {
-			setNoticePopupOpen(false)
-		}
-	}, [isState])
-
 	const onSubmit = async (data: any) => {
-		setIsState('loading')
+		setNoticePopupOpen(false)
 		setAddCalendarPopupOpen(false)
 		const reservationData = {
 			bookingDate: DateToDayISOstring(bookingDate),
@@ -128,193 +82,71 @@ const NewBooking = ({
 			name: data.name,
 			isDeleted: false,
 		}
-
-		let isPaidExpired = undefined
+		let isPaidExpired
 		if (isPaid) {
-			const isPaidExpiredDate = subDays(bookingDate, 7)
-			isPaidExpired = DateToDayISOstring(isPaidExpiredDate)
+			isPaidExpired = DateToDayISOstring(subDays(bookingDate, 7))
 		}
-
 		try {
 			const response = await createBookingAction({
 				userId: session.user.id,
 				booking: reservationData,
-				isPaid: isPaid,
-				isPaidExpired: isPaidExpired,
+				isPaid,
+				isPaidExpired,
 				password: data.password,
 				toDay: today.toISOString(),
 				isPaidBookingDateMin: isPaidBookingDateMin.toISOString(),
 			})
-
 			if (response.status === 201) {
-				setPopupChildren({
-					title: '予約完了',
-					children: (
-						<div className="text-center">
-							<p>以下の内容で予約が完了しました。</p>
-							<p>
-								日付:{' '}
-								{format(bookingDate, 'yyyy/MM/dd(E)', {
-									locale: ja,
-								})}
-							</p>
-							<p>時間: {calendarTime[Number(bookingTime)]}</p>
-							<p>バンド名: {watch('registName')}</p>
-							<p>責任者: {watch('name')}</p>
-							{isPaid && isPaidExpired && (
-								<>
-									<p>支払い: 600円</p>
-									<p>
-										支払い期限:{' '}
-										{format(isPaidExpired, 'yyyy/MM/dd(E)', { locale: ja })}
-									</p>
-								</>
-							)}
-							<div className="flex flex-row justify-center gap-x-1">
-								<button
-									type="button"
-									className="btn btn-primary mt-4"
-									onClick={() => {
-										setNoticePopupOpen(false)
-										setAddCalendarPopupOpen(true)
-									}}
-								>
-									カレンダーに追加する
-								</button>
-								<button
-									type="button"
-									className="btn btn-outline mt-4"
-									onClick={() => {
-										router.push('/booking')
-										setNoticePopupOpen(false)
-									}}
-								>
-									ホームに戻る
-								</button>
-							</div>
-						</div>
-					),
-				})
-				setIsState('submit')
+				setNoticePopupOpen(true)
 			} else {
-				let errorMsg: string
-				switch (response.status) {
-					case 400:
-						errorMsg = '予約に失敗しました。予約時間の範囲外です。'
-						break
-					case 409:
-						errorMsg = '予約に失敗しました。予約が重複しています。'
-						break
-					case 403:
-						errorMsg =
-							'予約に失敗しました。同一ユーザの無料予約は2週間で4件までです。'
-						break
-					case 404:
-						errorMsg =
-							'予約に失敗しました。ログインしなおしてから予約を行ってください。'
-						break
-					case 500:
-						errorMsg = `ヤバエラーです。これスクショして送って${response.response}`
-						break
-					default:
-						errorMsg =
-							'予約に失敗しました。何度もこのエラーが出る場合、管理者に連絡してください。'
-						break
-				}
-				setPopupChildren({
-					title: 'エラー',
-					children: (
-						<div className="text-center">
-							<InfoMessage
-								messageType="error"
-								IconColor="bg-white"
-								message={errorMsg}
-							/>
-							<button
-								type="button"
-								className="btn btn-outline mt-4"
-								onClick={() => {
-									setNoticePopupOpen(false)
-									setIsState('input')
-								}}
-							>
-								閉じる
-							</button>
-						</div>
-					),
-				})
-				setIsState('submit')
+				setError({ status: response.status, response: response.response })
 			}
-		} catch (error) {
-			setPopupChildren({
-				title: 'エラー',
-				children: (
-					<div className="text-center">
-						<InfoMessage
-							messageType="error"
-							IconColor="bg-white"
-							message={
-								'予約に失敗しました。何度もこのエラーが出る場合、管理者に連絡してください。'
-							}
-						/>
-						<button
-							type="button"
-							className="btn btn-outline mt-4"
-							onClick={() => {
-								setNoticePopupOpen(false)
-								setIsState('input')
-							}}
-						>
-							閉じる
-						</button>
-					</div>
-				),
+		} catch (e) {
+			setError({
+				status: 500,
+				response:
+					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
 			})
 		}
 	}
 
 	return (
 		<div className="p-8">
-			<div className="text-center mb-8">
-				<h2 className="text-2xl font-bold">新規予約</h2>
-			</div>
-
+			<h2 className="text-2xl font-bold text-center mb-8">新規予約</h2>
 			<div className="max-w-md mx-auto">
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
 					<TextInputField
 						label="日付"
 						register={register('bookingDate')}
-						placeholder="日付"
 						type="date"
-						disabled={true}
+						disabled
 					/>
 					<TextInputField
 						label="時間"
 						register={register('bookingTime')}
-						placeholder="時間"
 						type="text"
-						disabled={true}
+						disabled
 					/>
 					<TextInputField
+						type="text"
 						label="バンド名"
 						register={register('registName')}
 						placeholder="バンド名"
-						type="text"
 						errorMessage={errors.registName?.message}
 					/>
 					<TextInputField
+						type="text"
 						label="責任者"
 						register={register('name')}
 						placeholder="責任者名"
-						type="text"
 						errorMessage={errors.name?.message}
 					/>
 					<PasswordInputField
 						label="パスワード"
 						register={register('password')}
 						showPassword={showPassword}
-						handleClickShowPassword={handleClickShowPassword}
-						handleMouseDownPassword={handleMouseDownPassword}
+						handleClickShowPassword={() => setShowPassword(!showPassword)}
+						handleMouseDownPassword={(e) => e.preventDefault()}
 						errorMessage={errors.password?.message}
 					/>
 					{isPaid && (
@@ -326,7 +158,6 @@ const NewBooking = ({
 							/>
 						</div>
 					)}
-
 					<div className="flex justify-center space-x-4">
 						<button type="submit" className="btn btn-primary">
 							予約する
@@ -339,18 +170,56 @@ const NewBooking = ({
 							カレンダーに戻る
 						</button>
 					</div>
+					{error && (
+						<p className="text-sm text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
 				</form>
 			</div>
-
-			{/* Completion Popup */}
 			<Popup
 				ref={noticePopupRef}
-				title={PopupChildren?.title as string}
-				maxWidth="md"
+				title="予約完了"
 				open={noticePopupOpen}
 				onClose={() => setNoticePopupOpen(false)}
 			>
-				{PopupChildren?.children}
+				<div className="text-center">
+					<p>以下の内容で予約が完了しました。</p>
+					<p>日付: {format(bookingDate, 'yyyy/MM/dd(E)', { locale: ja })}</p>
+					<p>時間: {calendarTime[Number(bookingTime)]}</p>
+					<p>バンド名: {watch('registName')}</p>
+					<p>責任者: {watch('name')}</p>
+					{isPaid && (
+						<>
+							<p>支払い: 600円</p>
+							<p>
+								支払い期限:{' '}
+								{format(subDays(bookingDate, 7), 'yyyy/MM/dd(E)', {
+									locale: ja,
+								})}
+							</p>
+						</>
+					)}
+					<div className="flex flex-row justify-center gap-x-1">
+						<button
+							type="button"
+							className="btn btn-primary mt-4"
+							onClick={() => {
+								setNoticePopupOpen(false)
+								setAddCalendarPopupOpen(true)
+							}}
+						>
+							カレンダーに追加する
+						</button>
+						<button
+							type="button"
+							className="btn btn-outline mt-4"
+							onClick={() => router.push('/booking')}
+						>
+							ホームに戻る
+						</button>
+					</div>
+				</div>
 			</Popup>
 			<AddCalendarPopup
 				calendarTime={calendarTime}
@@ -365,12 +234,10 @@ const NewBooking = ({
 					name: watch('name'),
 					isDeleted: false,
 				}}
-				isPopupOpen={AddCalendarPopupOpen}
+				isPopupOpen={addCalendarPopupOpen}
 				setIsPopupOpen={setAddCalendarPopupOpen}
-				calendarAddPopupRef={AddCalendarPopupRef}
+				calendarAddPopupRef={addCalendarPopupRef}
 			/>
 		</div>
 	)
 }
-
-export default NewBooking

@@ -513,6 +513,43 @@ export const getBookingBanDate = async ({
 	return banBookingCacheData
 }
 
+export const getBanBookingByDate = async (date: string) => {
+	async function banBooking(date: string) {
+		try {
+			const exBookings = await prisma.exBooking.findMany({
+				where: {
+					AND: {
+						start_date: date,
+						is_deleted: {
+							not: true,
+						},
+					},
+				},
+				select: {
+					id: true,
+					created_at: true,
+					updated_at: true,
+					start_date: true,
+					start_time: true,
+					end_time: true,
+					description: true,
+					is_deleted: true,
+				},
+				orderBy: [{ start_time: 'asc' }],
+			})
+			return exBookings
+		} catch (error) {
+			throw error
+		}
+	}
+	const banBookingCache = unstable_cache(banBooking, [date], {
+		tags: ['banBooking', `booking-${date}`],
+	})
+
+	const banBookingCacheData = await banBookingCache(date)
+	return banBookingCacheData
+}
+
 export const getBuyBookingById = async (id: string) => {
 	const getBuyBookingById = async (id: string) => {
 		try {

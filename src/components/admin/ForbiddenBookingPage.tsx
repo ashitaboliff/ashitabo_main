@@ -4,10 +4,11 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { deleteBanBookingAction } from './action'
+import { deleteBanBookingAction, adminRevalidateTagAction } from './action'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import { BanBooking } from '@/types/BookingTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 
 import { TiDeleteOutline } from 'react-icons/ti'
 
@@ -28,6 +29,9 @@ const ForbiddenBookingPage = ({
 	const popupRef = useRef<PopupRef>(undefined)
 	const [isdeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
 	const deletePopupRef = useRef<PopupRef>(undefined)
+	const [error, setError] = useState<ErrorType>()
+	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
+	const successPopupRef = useRef<PopupRef>(undefined)
 
 	const totalBanBookings = banBooking?.length ?? 0
 	const pageMax = Math.ceil(totalBanBookings / banBookingsPerPage)
@@ -42,8 +46,10 @@ const ForbiddenBookingPage = ({
 		if (res.status === 200) {
 			setPopupData(null)
 			setIsPopupOpen(false)
+			setIsDeletePopupOpen(false)
+			setIsSuccessPopupOpen(true)
 		} else {
-			console.log(res)
+			setError(res)
 		}
 	}
 
@@ -57,12 +63,20 @@ const ForbiddenBookingPage = ({
 				<br />
 				んじゃ！
 			</p>
-			<button
-				className="btn btn-primary btn-outline btn-md"
-				onClick={() => router.push('/admin/forbidden/new')}
-			>
-				予約禁止日を追加
-			</button>
+			<div className="flex flex-row justify-center space-x-2 w-1/2">
+				<button
+					className="btn btn-primary btn-outline btn-md"
+					onClick={() => router.push('/admin/forbidden/new')}
+				>
+					予約禁止日を追加
+				</button>
+				<button
+					className="btn btn-outline btn-md"
+					onClick={async () => await adminRevalidateTagAction('banBookings')}
+				>
+					予約禁止日を更新
+				</button>
+			</div>
 			<div className="overflow-x-auto w-full flex flex-col justify-center gap-y-2">
 				<div className="flex flex-row items-center ml-auto space-x-2 w-1/2">
 					<p className="text-sm whitespace-nowrap">表示件数:</p>
@@ -178,7 +192,10 @@ const ForbiddenBookingPage = ({
 						<div className="flex flex-row gap-x-2 justify-center">
 							<button
 								className="btn btn-error"
-								onClick={() => setIsDeletePopupOpen(true)}
+								onClick={() => {
+									setIsDeletePopupOpen(true)
+									setIsPopupOpen(false)
+								}}
 							>
 								削除
 							</button>
@@ -218,6 +235,27 @@ const ForbiddenBookingPage = ({
 							閉じる
 						</button>
 					</div>
+					{error && (
+						<p className="text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
+				</div>
+			</Popup>
+			<Popup
+				title="削除完了"
+				ref={successPopupRef}
+				open={isSuccessPopupOpen}
+				onClose={() => setIsSuccessPopupOpen(false)}
+			>
+				<div className="flex flex-col items-center space-y-2 text-sm">
+					<p className="text-center">削除が完了しました</p>
+					<button
+						className="btn btn-primary"
+						onClick={() => setIsSuccessPopupOpen(false)}
+					>
+						閉じる
+					</button>
 				</div>
 			</Popup>
 			<button className="btn btn-outline" onClick={() => router.push('/admin')}>

@@ -5,11 +5,12 @@ import ForbiddenBookingPage from '@/components/admin/ForbiddenBookingPage'
 import { getSession } from '@/app/actions'
 import { getAllBanBookingAction } from '@/components/admin/action'
 import { getCalendarTimeAction } from '@/components/booking/actions'
+import SessionForbidden from '@/components/atoms/SessionNotFound'
 
 const Page = async () => {
 	const session = await getSession()
 	if (!session) {
-		return notFound()
+		return <SessionForbidden />
 	}
 
 	const calendarTime = await getCalendarTimeAction()

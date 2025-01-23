@@ -7,11 +7,12 @@ import {
 	getAllPadLocksAction,
 } from '@/components/admin/action'
 import { getSession } from '@/app/actions'
+import SessionForbidden from '@/components/atoms/SessionNotFound'
 
 const Page = async () => {
 	const session = await getSession()
 	if (!session) {
-		return notFound()
+		return <SessionForbidden />
 	}
 
 	const userRole = await getUserRoleAction(session.user.id)
