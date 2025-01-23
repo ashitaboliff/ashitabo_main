@@ -115,8 +115,9 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				nicoMoji: ['var(--nicomoji)', 'sans-serif'],
+				nicoMoji: ['nicomoji', 'sans-serif'],
 				notojp: ['var(--font-noto-jp)', 'sans-serif'],
+				Gkktt: ['851Gkktt', 'sans-serif'],
 			},
 			fontSize: {
 				xxxs: ['0.375rem', { lineHeight: 'normal' }], // 6px
@@ -167,6 +168,19 @@ const config: Config = {
 				// },
 			},
 		],
+	},
+	async headers() {
+		return [
+			{
+				source: '/fonts/(.*)',
+				headers: [
+					{
+						key: 'Cache-Control',
+						value: 'public, max-age=31536000, immutable',
+					},
+				],
+			},
+		]
 	},
 }
 

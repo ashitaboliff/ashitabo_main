@@ -12,7 +12,7 @@ import { FaRegUserCircle } from 'react-icons/fa'
 import { RxCountdownTimer } from 'react-icons/rx'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 
-const Layout = ({ className }: { className: string }) => {
+const Layout = () => {
 	const session = useSession()
 	const [isOpen, setIsOpen] = useState<boolean>(false)
 	const [user, setUser] = useState<User | undefined>(undefined)
@@ -43,7 +43,7 @@ const Layout = ({ className }: { className: string }) => {
 	return (
 		<div>
 			<div
-				className={`navbar bg-bg-white mb-5 border-b-2 border-border-light ${className}`}
+				className={`navbar bg-bg-white mb-5 border-b-2 border-border-light `}
 			>
 				<div className="navbar-start">
 					<button

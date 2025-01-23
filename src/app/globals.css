@@ -40,3 +40,19 @@
 		@apply border-base-300 text-base-300;
 	} */
 }
+
+@font-face {
+	font-family: 'nicomoji';
+	src: url('/fonts/nicomoji-plus_v2-5.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: '851Gkktt';
+	src: url('/fonts/851Gkktt_005.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}

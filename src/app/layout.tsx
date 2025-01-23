@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import Local from 'next/font/local'
 import './globals.css'
 import Header from '@/components/molecules/Header'
 import { GoogleAnalytics } from '@next/third-parties/google'
@@ -8,13 +7,6 @@ import { LiffProvider } from '@/lib/liff/LiffOption'
 import NextAuthProvider from '@/lib/auth/AuthProvider'
 
 const inter = Inter({ subsets: ['latin'] })
-
-const myFont = Local({
-	src: '../lib/fonts/nicomoji-plus_v2-5.ttf',
-	weight: 'normal',
-	style: 'normal',
-	variable: '--nicomoji',
-})
 
 export const metadata: Metadata = {
 	title: 'あしたぼホームページ',
@@ -32,6 +24,21 @@ export default function RootLayout({
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<meta name="google-adsense-account" content="ca-pub-6241533281842243" />
+				<link
+					rel="preload"
+					href="/fonts/nicomoji-plus_v2-5.woff"
+					as="font"
+					type="font/woff"
+					crossOrigin="anonymous"
+				/>
+				<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+				<link
+					rel="preload"
+					href="/fonts/851Gkktt_005.woff"
+					as="font"
+					type="font/woff"
+					crossOrigin="anonymous"
+				/>
 			</head>
 			<body className={inter.className}>
 				<div
@@ -43,7 +50,7 @@ export default function RootLayout({
 					}}
 				/>
 				<NextAuthProvider>
-					<Header className={myFont.variable} />
+					<Header />
 					<LiffProvider liffId={process.env.LIFF_ID ?? ''}>
 						{children}
 					</LiffProvider>
