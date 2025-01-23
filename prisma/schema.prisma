@@ -29,7 +29,7 @@ model Booking {
 
   BuyBooking   BuyBooking?
 
-  user User? @relation(fields: [user_id], references: [id])
+  user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("booking")
 }

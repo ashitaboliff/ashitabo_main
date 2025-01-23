@@ -28,8 +28,7 @@ export const checkPadLock = async (password: string) => {
 		})
 		return match
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 
@@ -45,8 +44,7 @@ export const getUser = async (user_id: string) => {
 		})
 		return user
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 
@@ -62,8 +60,7 @@ export const getProfile = async (id: string) => {
 		})
 		return profile
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 
@@ -85,8 +82,7 @@ export const createProfile = async (id: string, body: Omit<Profile, 'id'>) => {
 			},
 		})
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }
 
@@ -109,7 +105,6 @@ export const updateProfile = async (id: string, body: Omit<Profile, 'id'>) => {
 			},
 		})
 	} catch (error) {
-		console.error(error)
-		throw new Error('Database query failed')
+		throw error
 	}
 }

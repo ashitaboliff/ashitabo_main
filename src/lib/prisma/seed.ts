@@ -27,33 +27,32 @@ function DateFormat(addDay) {
 async function main() {
 	console.log('Seeding data...')
 
-	// ユーザーを作成する例
-	// await prisma.user.create({
-	// 	data: {
-	// 		id: 'admin',
-	// 		role: 'ADMIN',
-	// 	},
-	// })
+	await prisma.user.create({
+		data: {
+			id: 'admin',
+			role: 'ADMIN',
+		},
+	})
 
-	// await prisma.padLock.createMany({
-	// 	data: [
-	// 		{
-	// 			name: 'test',
-	// 			password: hashSync('1234', 5),
-	// 		},
-	// 	],
-	// })
+	await prisma.padLock.createMany({
+		data: [
+			{
+				name: 'test',
+				password: hashSync('1234', 5),
+			},
+		],
+	})
 
-	// await prisma.profile.createMany({
-	// 	data: [
-	// 		{
-	// 			id: v4(),
-	// 			user_id: 'admin',
-	// 			role: 'STUDENT',
-	// 			part: ['BASS'],
-	// 		},
-	// 	],
-	// })
+	await prisma.profile.createMany({
+		data: [
+			{
+				id: v4(),
+				user_id: 'admin',
+				role: 'STUDENT',
+				part: ['BASS'],
+			},
+		],
+	})
 
 	await prisma.booking.createMany({
 		data: [
@@ -357,22 +356,22 @@ async function main() {
 		],
 	})
 
-	// await prisma.exBooking.createMany({
-	// 	data: [
-	// 		{
-	// 			start_date: DateFormat(3),
-	// 			start_time: 0,
-	// 			end_time: 5,
-	// 			description: 'サンプル禁止',
-	// 		},
-	// 		{
-	// 			start_date: DateFormat(5),
-	// 			start_time: 0,
-	// 			end_time: 5,
-	// 			description: 'サンプル禁止',
-	// 		},
-	// 	],
-	// })
+	await prisma.exBooking.createMany({
+		data: [
+			{
+				start_date: DateFormat(3),
+				start_time: 0,
+				end_time: 5,
+				description: 'サンプル禁止',
+			},
+			{
+				start_date: DateFormat(5),
+				start_time: 0,
+				end_time: 5,
+				description: 'サンプル禁止',
+			},
+		],
+	})
 
 	console.log('Data seeding complete.')
 }

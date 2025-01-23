@@ -5,7 +5,7 @@ import NextAuth from 'next-auth'
 const { auth } = NextAuth(authConfig)
 
 export const config = {
-	matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+	matcher: ['/((?!_next|api|favicon.ico).*)'],
 }
 
 class MiddlewareApp {
@@ -71,7 +71,7 @@ class MiddlewareApp {
 				process.env.MAINTENANCE_WHITELIST?.split(',') ?? []
 			if (!maintenanceWhiteListIPs.includes(this.getSimpleIpAdress())) {
 				// メンテナンス画面へリダイレクト
-				const url = `${process.env.NEXT_PUBLIC_URL}/maintenance`
+				const url = `${process.env.AUTH_URL}/maintenance`
 				return NextResponse.rewrite(new URL(url, this.request.url), {
 					status: 503,
 				})

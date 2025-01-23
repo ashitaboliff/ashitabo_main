@@ -1,5 +1,6 @@
 import NextAuth, { type DefaultSession } from 'next-auth'
 import { AdapterUser } from '@auth/core/adapters'
+import { AccountRole, Part } from '@auth/core/types'
 
 declare module 'next-auth' {
 	interface Session {
@@ -9,8 +10,8 @@ declare module 'next-auth' {
 			name: string
 			image: string
 			full_name: string
-			part: string[]
-			role: string
+			part: Part[]
+			role: AccountRole
 			is_profile: boolean
 		} & DefaultSession['user']
 	}

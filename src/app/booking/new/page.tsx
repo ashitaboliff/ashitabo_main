@@ -1,6 +1,5 @@
 'use server'
 
-import React, { Suspense } from 'react'
 import NewBooking from '@/components/booking/BookingCreate'
 import { getSession, redirectFrom } from '../../actions'
 import { getCalendarTimeAction } from '@/components/booking/actions'

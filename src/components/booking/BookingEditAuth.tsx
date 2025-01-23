@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { Session } from 'next-auth'
 import { Booking } from '@/types/BookingTypes'
 import { authBookingAction } from './actions'
+import { ErrorType } from '@/types/ResponseTypes'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
@@ -32,11 +33,7 @@ const BookingEditAuth = ({
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [showPassword, setShowPassword] = useState<boolean>(false)
-	const [isErrorMessages, setIsErrorMessages] = useState<string | undefined>(
-		undefined,
-	)
-	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false)
-	const errorPopupRef = useRef<PopupRef>(undefined)
+	const [error, setError] = useState<ErrorType>()
 	const {
 		register,
 		handleSubmit,
@@ -54,8 +51,6 @@ const BookingEditAuth = ({
 
 	const onSubmit = async (data: { password: string }) => {
 		setIsLoading(true)
-		setIsErrorMessages(undefined)
-		setErrorPopupOpen(false)
 		try {
 			const response = await authBookingAction({
 				bookingId: bookingDetail.id,
@@ -64,22 +59,15 @@ const BookingEditAuth = ({
 			if (response.status === 200) {
 				handleSetAuth(true)
 				router.push(`/booking/${bookingDetail.id}/edit`)
-			} else if (response.status === 400) {
-				setErrorPopupOpen(true)
-				setIsErrorMessages('パスワードが間違っています')
-			} else if (response.status === 404) {
-				setErrorPopupOpen(true)
-				setIsErrorMessages('予約が見つかりません')
-			} else if (response.status === 403) {
-				setErrorPopupOpen(true)
-				setIsErrorMessages('パスワードを5回以上間違えたためロックされました')
 			} else {
-				setErrorPopupOpen(true)
-				setIsErrorMessages('想定外のエラーが発生しました')
+				setError(response)
 			}
-		} catch (error) {
-			setErrorPopupOpen(true)
-			setIsErrorMessages('エラーが発生しました')
+		} catch (e) {
+			setError({
+				status: 500,
+				response:
+					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
+			})
 		}
 	}
 
@@ -139,28 +127,12 @@ const BookingEditAuth = ({
 						</button>
 					</div>
 				</form>
+				{error && (
+					<p className="text-sm text-error text-center">
+						エラーコード{error.status}:{error.response}
+					</p>
+				)}
 			</div>
-			<Popup
-				ref={errorPopupRef}
-				title="エラー"
-				maxWidth="sm"
-				open={errorPopupOpen}
-				onClose={() => setErrorPopupOpen(false)}
-			>
-				<div className="p-4 flex flex-col justify-center gap-2">
-					<InfoMessage
-						message={isErrorMessages || ''}
-						messageType="error"
-						IconColor="bg-white"
-					/>
-					<button
-						className="btn btn-outline"
-						onClick={() => setErrorPopupOpen(false)}
-					>
-						閉じる
-					</button>
-				</div>
-			</Popup>
 		</>
 	)
 }

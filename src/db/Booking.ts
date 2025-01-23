@@ -513,6 +513,43 @@ export const getBookingBanDate = async ({
 	return banBookingCacheData
 }
 
+export const getBanBookingByDate = async (date: string) => {
+	async function banBooking(date: string) {
+		try {
+			const exBookings = await prisma.exBooking.findMany({
+				where: {
+					AND: {
+						start_date: date,
+						is_deleted: {
+							not: true,
+						},
+					},
+				},
+				select: {
+					id: true,
+					created_at: true,
+					updated_at: true,
+					start_date: true,
+					start_time: true,
+					end_time: true,
+					description: true,
+					is_deleted: true,
+				},
+				orderBy: [{ start_time: 'asc' }],
+			})
+			return exBookings
+		} catch (error) {
+			throw error
+		}
+	}
+	const banBookingCache = unstable_cache(banBooking, [date], {
+		tags: ['banBooking', `booking-${date}`],
+	})
+
+	const banBookingCacheData = await banBookingCache(date)
+	return banBookingCacheData
+}
+
 export const getBuyBookingById = async (id: string) => {
 	const getBuyBookingById = async (id: string) => {
 		try {
@@ -528,7 +565,7 @@ export const getBuyBookingById = async (id: string) => {
 	}
 
 	const buyBookingCache = unstable_cache(getBuyBookingById, [id], {
-		tags: [`buyBooking-${id}`, 'booking'],
+		tags: [`buyBooking`, 'booking'],
 	})
 	const buyBookingCacheData = await buyBookingCache(id)
 	return buyBookingCacheData
@@ -584,27 +621,6 @@ export const getBuyBookingByExpire = async (expireAt: string) => {
 	return buyBookingCacheData
 }
 
-export const updateBuyBooking = async ({
-	bookingId,
-	state,
-}: {
-	bookingId: string
-	state: BuyBookingStatus
-}) => {
-	try {
-		await prisma.buyBooking.update({
-			where: {
-				booking_id: bookingId,
-			},
-			data: {
-				status: state,
-			},
-		})
-	} catch (error) {
-		throw error
-	}
-}
-
 /**
  * 予約可能時間を配列で取得する関数
  */
@@ -622,8 +638,7 @@ export const getCalendarTime = async () => {
 				.map((line) => line.trim().replace(',', ''))
 				.filter((line) => line !== '')
 		} catch (error) {
-			console.error(error)
-			throw new Error('Database query failed')
+			throw error
 		}
 	}
 	const calendarTimeCache = unstable_cache(calendarTime, [], {

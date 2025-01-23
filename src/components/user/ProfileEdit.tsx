@@ -116,7 +116,6 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					setIsError(`${res.response}`)
 				}
 			} catch (error) {
-				console.error(error)
 				setIsError(
 					'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
 				)
@@ -217,9 +216,18 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					</>
 				)}
 
-				<button type="submit" className="btn btn-primary">
-					更新
-				</button>
+				<div className="flex flex-row items-center space-x-2 justify-center">
+					<button type="submit" className="btn btn-primary">
+						更新
+					</button>
+					<button
+						type="button"
+						className="btn btn-outline"
+						onClick={() => router.back()}
+					>
+						戻る
+					</button>
+				</div>
 			</form>
 			{error && (
 				<InfoMessage message={error} messageType="error" IconColor="bg-white" />

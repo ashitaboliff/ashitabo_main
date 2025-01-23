@@ -23,5 +23,4 @@ const userPage = async () => {
 	}
 }
 
-
 export default userPage

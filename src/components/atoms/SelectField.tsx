@@ -81,7 +81,7 @@ const SelectField = ({
 					<div
 						tabIndex={0}
 						role="button"
-						className={`btn btn-primary m-1 ${watchValue.length !== 0 ? 'btn-outline' : ''}`}
+						className={`btn btn-primary m-1 ${watchValue.length !== 0 ? 'btn-outline' : ''} bg-bg-white`}
 						onClick={toggleDropdown} // クリックで開閉を切り替え
 					>
 						{watchValue.length === 0
@@ -112,7 +112,7 @@ const SelectField = ({
 				</div>
 			) : (
 				<select
-					className="select select-bordered w-full max-w-xs"
+					className="select select-bordered w-full max-w-xs bg-bg-white"
 					{...register}
 					{...props}
 					{...(props.value ? {} : { defaultValue: '' })}

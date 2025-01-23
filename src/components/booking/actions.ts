@@ -26,10 +26,10 @@ import {
 	updateBooking,
 	deleteBooking,
 	getBookingBanDate,
+	getBanBookingByDate,
 	getCalendarTime,
 	getBuyBookingById,
 	getBuyBookingByUserId,
-	updateBuyBooking,
 } from '@/db/Booking'
 import { getUser } from '@/db/Auth'
 import { cookies } from 'next/headers'
@@ -42,10 +42,9 @@ export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
 			response: timeList,
 		}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -73,7 +72,7 @@ export async function getAllBookingAction(): Promise<
 		const transformedBuyBookings: BuyBooking[] = buyBookings.map(
 			(buyBooking) => ({
 				id: buyBooking.id,
-				booking_id: buyBooking.booking_id,
+				bookingId: buyBooking.booking_id,
 				userId: buyBooking.user_id,
 				status: buyBooking.status,
 				createdAt: buyBooking.created_at,
@@ -86,7 +85,7 @@ export async function getAllBookingAction(): Promise<
 		// 予約情報と購入情報を結合
 		transformedBookings.forEach((booking) => {
 			const buyBooking = transformedBuyBookings.find(
-				(buyBooking) => buyBooking.booking_id === booking.id,
+				(buyBooking) => buyBooking.bookingId === booking.id,
 			)
 			if (buyBooking) {
 				booking.buyStatus = buyBooking.status
@@ -98,7 +97,7 @@ export async function getAllBookingAction(): Promise<
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -197,10 +196,7 @@ export async function getBookingByDateAction({
 			const endTime: number = banBooking.endTime ?? startTime
 
 			for (let time = startTime; time <= endTime; time++) {
-				if (
-					bookingsByDateAndTime[dateKey] &&
-					bookingsByDateAndTime[dateKey][time] === null
-				) {
+				if (bookingsByDateAndTime[dateKey]) {
 					bookingsByDateAndTime[dateKey][time] = {
 						id: banBooking.id,
 						userId: 'ForbiddenBooking',
@@ -220,7 +216,7 @@ export async function getBookingByDateAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -252,7 +248,7 @@ export async function getBookingByIdAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -282,7 +278,7 @@ export const getBookingByUserIdAction = async (
 		const transformedBuyBookings: BuyBooking[] = buyBookings.map(
 			(buyBooking) => ({
 				id: buyBooking.id,
-				booking_id: buyBooking.booking_id,
+				bookingId: buyBooking.booking_id,
 				userId: buyBooking.user_id,
 				status: buyBooking.status,
 				createdAt: buyBooking.created_at,
@@ -294,7 +290,7 @@ export const getBookingByUserIdAction = async (
 
 		transformedBookings.forEach((booking) => {
 			const buyBooking = transformedBuyBookings.find(
-				(buyBooking) => buyBooking.booking_id === booking.id,
+				(buyBooking) => buyBooking.bookingId === booking.id,
 			)
 			if (buyBooking) {
 				booking.isPaidStatus = buyBooking.status
@@ -306,7 +302,7 @@ export const getBookingByUserIdAction = async (
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -366,6 +362,36 @@ export async function createBookingAction({
 					response: '同一ユーザの無料予約は4件までです。',
 				}
 			}
+		}
+
+		const BanBooking = await getBanBookingByDate(booking.bookingDate)
+		console.log(BanBooking)
+		if (BanBooking.length > 0) {
+			BanBooking.forEach((banBooking) => {
+				if (banBooking.end_time === null) {
+					if (banBooking.start_time === booking.bookingTime) {
+						return {
+							status: StatusCode.FORBIDDEN,
+							response: '予約が禁止されています',
+						}
+					}
+				} else {
+					if (
+						banBooking.start_time <= booking.bookingTime &&
+						booking.bookingTime <= banBooking.end_time
+					) {
+						console.log(
+							banBooking.start_time,
+							booking.bookingTime,
+							banBooking.end_time,
+						)
+						return {
+							status: StatusCode.FORBIDDEN,
+							response: '予約が禁止されています',
+						}
+					}
+				}
+			})
 		}
 
 		const hashedPassword = hashSync(password, 10)
@@ -437,7 +463,7 @@ export async function authBookingAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -465,6 +491,16 @@ export async function updateBookingAction({
 				response: 'このidの予約は存在しません',
 			}
 
+		const isBooking = await getBookingByBooking({
+			bookingDate: booking.bookingDate,
+			bookingTime: booking.bookingTime,
+		})
+		if (isBooking)
+			return {
+				status: StatusCode.CONFLICT,
+				response: '予約が重複しています',
+			}
+
 		await updateBooking({
 			id: bookingId,
 			userId: userId,
@@ -484,7 +520,7 @@ export async function updateBookingAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -517,7 +553,7 @@ export async function deleteBookingAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -538,7 +574,7 @@ export async function deleteBookingByAdminAction( // 要編集
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -575,10 +611,9 @@ export async function getBookingBanDateAction({
 			response: transformedBanBookings,
 		}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -597,7 +632,7 @@ export async function getBuyBookingByIdAction(
 			status: StatusCode.OK,
 			response: {
 				id: buyBooking.id,
-				booking_id: buyBooking.booking_id,
+				bookingId: buyBooking.booking_id,
 				userId: buyBooking.user_id,
 				status: buyBooking.status,
 				createdAt: buyBooking.created_at,
@@ -607,10 +642,9 @@ export async function getBuyBookingByIdAction(
 			},
 		}
 	} catch (error) {
-		console.error(error)
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -626,7 +660,7 @@ export async function bookingRevalidateTagAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }

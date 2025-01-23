@@ -92,7 +92,7 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 					カレンダーを更新
 				</button>
 				<button
-					className="btn btn-outline"
+					className="btn btn-outline btn-primary"
 					onClick={() => setIsPopupOpen(true)}
 				>
 					使い方の表示

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { addDays, sub, subDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 import {
 	getBookingByDateAction,
 	updateBookingAction,
@@ -13,11 +13,11 @@ import {
 	bookingRevalidateTagAction,
 } from './actions'
 import {
-	Booking,
 	BookingDetailProps,
 	BookingResponse,
 	BuyBookingStatus,
 } from '@/types/BookingTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import { Session } from 'next-auth'
 import Loading from '@/components/atoms/Loading'
 import TextInputField from '@/components/atoms/TextInputField'
@@ -52,49 +52,33 @@ const BookingEditForm = ({
 	session: Session
 }) => {
 	const router = useRouter()
-	const [editState, setEditState] = useState<'edit' | 'delete' | 'select'>(
-		'select',
-	)
+	const [editState, setEditState] = useState<'edit' | 'select'>('select')
 	const [isLoading, setIsLoading] = useState<boolean>(true)
-	const [editPopupOpen, setEditPopupOpen] = useState(false)
 	const [deletePopupOpen, setDeletePopupOpen] = useState(false)
-	const [resultPopupOpen, setResultPopupOpen] = useState(false)
-	const [result, setResult] = useState<ResultType>()
-	const editPopupRef = useRef<PopupRef>(undefined)
+	const [successPopupOpen, setSuccessPopupOpen] = useState(false)
+	const [error, setError] = useState<ErrorType>()
 	const deletePopupRef = useRef<PopupRef>(undefined)
-	const resultPopupRef = useRef<PopupRef>(undefined)
+	const successPopupRef = useRef<PopupRef>(undefined)
 
 	const onDeleteSubmit = async () => {
-		setIsLoading(true)
-		setDeletePopupOpen(false)
-		setEditPopupOpen(false)
 		try {
 			const response = await deleteBookingAction({
 				bookingId: bookingDetail.id,
 				userId: session.user.id,
 			})
 			if (response.status === 200) {
-				setResult({
-					status: 'success',
-					title: '予約削除',
-					message: '予約の削除に成功しました',
-				})
+				setSuccessPopupOpen(true)
+				setDeletePopupOpen(false)
 			} else {
-				setResult({
-					status: 'error',
-					title: '予約削除',
-					message: '予約の削除に失敗しました',
-				})
+				setError(response)
 			}
-		} catch (error) {
-			setResult({
-				status: 'error',
-				title: '予約削除',
-				message: '予約の削除に失敗しました。エラーコード:' + error,
+		} catch (e) {
+			setError({
+				status: 500,
+				response:
+					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
 			})
 		}
-		setResultPopupOpen(true)
-		setIsLoading(false)
 	}
 
 	if (!bookingDetail) {
@@ -124,7 +108,6 @@ const BookingEditForm = ({
 						<button
 							className="btn btn-secondary"
 							onClick={() => {
-								setEditState('delete')
 								setDeletePopupOpen(true)
 							}}
 						>
@@ -158,38 +141,41 @@ const BookingEditForm = ({
 				<div className="p-4">
 					<p className="text-center">予約を削除しますか？</p>
 					<div className="flex justify-center gap-4 mt-4">
-						<button className="btn btn-error" onClick={onDeleteSubmit}>
+						<button className="btn btn-secondary" onClick={onDeleteSubmit}>
 							削除
 						</button>
 						<button
 							className="btn btn-outline"
-							onClick={() => setDeletePopupOpen(false)}
+							onClick={() => {
+								setDeletePopupOpen(false)
+							}}
 						>
 							キャンセル
 						</button>
 					</div>
+					{error && (
+						<p className="text-sm text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
 				</div>
 			</Popup>
 
 			<Popup
-				ref={resultPopupRef}
-				title={result?.title as string}
+				ref={successPopupRef}
+				title="予約削除"
 				maxWidth="sm"
-				open={resultPopupOpen}
-				onClose={() => setResultPopupOpen(false)}
+				open={successPopupOpen}
+				onClose={() => setSuccessPopupOpen(false)}
 			>
 				<div className="p-4 text-center">
-					<InfoMessage
-						message={result?.message as string}
-						messageType={result?.status === 'success' ? 'success' : 'error'}
-						IconColor="bg-white"
-					/>
+					<p className="font-bold text-primary">予約の削除に成功しました。</p>
 					<div className="flex justify-center gap-4 mt-4">
 						<button
 							className="btn btn-outline"
 							onClick={() => {
 								router.push('/booking')
-								setResultPopupOpen(false)
+								setSuccessPopupOpen(false)
 							}}
 						>
 							ホームに戻る
@@ -211,11 +197,13 @@ const MemoBookingEditForm = memo(
 		calendarTime: string[]
 		bookingDetail: BookingDetailProps
 		session: Session
-		setEditState: (state: 'edit' | 'delete' | 'select') => void
+		setEditState: (state: 'edit' | 'select') => void
 	}) => {
 		const router = useRouter()
 		const [isPaid, setIsPaid] = useState<boolean>(
-			bookingDetail.isPaidStatus ? true : false,
+			bookingDetail.isPaidStatus && bookingDetail.isPaidStatus !== 'CANCELED'
+				? true
+				: false,
 		)
 		const [bookingDate, setBookingDate] = useState<string>(
 			new Date(bookingDetail.bookingDate).toISOString().split('T')[0],
@@ -225,9 +213,9 @@ const MemoBookingEditForm = memo(
 		)
 		const [calendarOpen, setCalendarOpen] = useState<boolean>(false)
 		const calendarRef = useRef<PopupRef>(undefined)
-		const [resultPopupOpen, setResultPopupOpen] = useState(false)
-		const [result, setResult] = useState<ResultType>()
-		const resultPopupRef = useRef<PopupRef>(undefined)
+		const [successPopupOpen, setSuccessPopupOpen] = useState(false)
+		const [error, setError] = useState<ErrorType>()
+		const successPopupRef = useRef<PopupRef>(undefined)
 
 		const yesterDate = subDays(new Date(), 1)
 		const [viewDay, setViewday] = useState<Date>(yesterDate)
@@ -270,7 +258,7 @@ const MemoBookingEditForm = memo(
 		})
 
 		const onPutSubmit = async (data: any) => {
-			setResultPopupOpen(false)
+			setSuccessPopupOpen(false)
 			let buyStatus: BuyBookingStatus | undefined = undefined
 			let isBuyUpdate = false
 			let isPaidExpired: string | undefined = undefined
@@ -286,57 +274,34 @@ const MemoBookingEditForm = memo(
 				isPaidExpired = DateToDayISOstring(subDays(new Date(bookingDate), 7))
 			}
 
-			console.log('ActionArgs:', {
-				bookingId: bookingDetail.id,
-				userId: session.user.id,
-				booking: {
-					bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
-					bookingTime: bookingTime,
-					registName: data.registName,
-					name: data.name,
-					isDeleted: false,
-				},
-				isBuyUpdate: isBuyUpdate,
-				state: buyStatus,
-				expiredAt: isPaidExpired,
-			})
-
-			const response = await updateBookingAction({
-				bookingId: bookingDetail.id,
-				userId: session.user.id,
-				booking: {
-					bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
-					bookingTime: bookingTime,
-					registName: data.registName,
-					name: data.name,
-					isDeleted: false,
-				},
-				isBuyUpdate: isBuyUpdate,
-				state: buyStatus,
-				expiredAt: isPaidExpired,
-			})
-
-			if (response.status === 200) {
-				setResult({
-					status: 'success',
-					title: '予約編集',
-					message: '予約の編集に成功しました',
+			try {
+				const response = await updateBookingAction({
+					bookingId: bookingDetail.id,
+					userId: session.user.id,
+					booking: {
+						bookingDate: DateToDayISOstring(new Date(data.bookingDate)),
+						bookingTime: bookingTime,
+						registName: data.registName,
+						name: data.name,
+						isDeleted: false,
+					},
+					isBuyUpdate: isBuyUpdate,
+					state: buyStatus,
+					expiredAt: isPaidExpired,
 				})
-			} else if (response.status === 404) {
-				setResult({
-					status: 'error',
-					title: '予約編集',
-					message: '予約の編集に失敗しました。予約が見つかりませんでした',
-				})
-			} else {
-				setResult({
-					status: 'error',
-					title: '予約編集',
-					message:
-						'予約の編集に失敗しました。何度もこのエラーが出る際は管理者にお問い合わせください',
+
+				if (response.status === 200) {
+					setSuccessPopupOpen(true)
+				} else {
+					setError(response)
+				}
+			} catch (e) {
+				setError({
+					status: 500,
+					response:
+						'このエラーが出た際はわたべに問い合わせてください。' + String(e),
 				})
 			}
-			setResultPopupOpen(true)
 		}
 
 		const getBooking = async ({
@@ -460,6 +425,11 @@ const MemoBookingEditForm = memo(
 							</button>
 						</div>
 					</form>
+					{error && (
+						<p className="text-sm text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
 				</div>
 
 				<Popup
@@ -525,32 +495,20 @@ const MemoBookingEditForm = memo(
 				</Popup>
 
 				<Popup
-					ref={resultPopupRef}
-					title={result?.title as string}
+					ref={successPopupRef}
+					title={successPopupOpen ? '予約編集' : ''}
 					maxWidth="sm"
-					open={resultPopupOpen}
-					onClose={() => setResultPopupOpen(false)}
+					open={successPopupOpen}
+					onClose={() => setSuccessPopupOpen(false)}
 				>
 					<div className="p-4 text-center">
-						<InfoMessage
-							message={result?.message as string}
-							messageType={result?.status === 'success' ? 'success' : 'error'}
-							IconColor="bg-white"
-						/>
+						<p className="font-bold text-primary">予約の編集に成功しました。</p>
 						<div className="flex justify-center gap-4 mt-4">
 							<button
 								className="btn btn-outline"
 								onClick={() => {
-									setResultPopupOpen(false)
-								}}
-							>
-								閉じる
-							</button>
-							<button
-								className="btn btn-outline"
-								onClick={() => {
 									router.push('/booking')
-									setResultPopupOpen(false)
+									setSuccessPopupOpen(false)
 								}}
 							>
 								ホームに戻る

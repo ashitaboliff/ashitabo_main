@@ -37,6 +37,12 @@ export const PartMap: Record<Part, PartEnum> = {
 	OTHER: 'その他',
 }
 
+export const AccountRoleMap: Record<AccountRole, string> = {
+	ADMIN: '三役',
+	USER: 'ユーザ',
+	TOPADMIN: '管理者',
+}
+
 export interface Profile {
 	id: string
 	user_id: string
@@ -63,17 +69,16 @@ export interface User {
 	updatedAt: Date
 }
 
-/**
- * const profile: {
-    name: string | null;
-    id: string;
-    user_id: string;
-    role: $Enums.Role;
-    student_id: string | null;
-    created_at: Date;
-    updated_at: Date;
-    expected: string | null;
-    part: $Enums.Part[];
-    is_deleted: boolean;
-} | null
- */
+export interface UserDetail {
+	id: string
+	name: string | null
+	fullName?: string
+	studentId?: string
+	expected?: string
+	image: string | null
+	createAt: Date
+	updateAt: Date
+	AccountRole: AccountRole | null
+	role?: Role
+	part?: Part[]
+}

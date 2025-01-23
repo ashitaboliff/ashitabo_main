@@ -39,3 +39,8 @@ export type ApiResponse<T> =
 			response: string
 			error?: string
 	  } // サーバーエラー
+
+export type ErrorType = {
+	status: number
+	response?: string | null
+}

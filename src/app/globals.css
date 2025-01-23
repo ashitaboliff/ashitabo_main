@@ -33,10 +33,10 @@
 }
 
 @layer components {
-	.btn.btn-outline {
+	/* .btn.btn-outline.btn-base {
 		@apply bg-bg-white text-base-content border border-base-200;
 	}
-	.btn-outline:hover {
-		@apply border-seconday-light text-seconday-light;
-	}
+	.btn.btn-outline.btn-base:hover {
+		@apply border-base-300 text-base-300;
+	} */
 }

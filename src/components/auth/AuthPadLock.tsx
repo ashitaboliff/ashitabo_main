@@ -41,6 +41,7 @@ const AuthPadLock = () => {
 		handleSubmit,
 		watch,
 		setFocus,
+		reset,
 		formState: { errors },
 	} = useForm({
 		mode: 'onBlur',
@@ -88,13 +89,13 @@ const AuthPadLock = () => {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center">
-			<div className="text-lg font-bold mx-2 text-center">
+		<div className="flex flex-col items-center justify-center space-y-2">
+			<div className="text-base font-bold mx-2 text-center">
 				部室のパスワードを入力してください
 			</div>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className="flex flex-col items-center justify-center"
+				className="flex flex-col items-center justify-center gap-y-2"
 			>
 				<div>
 					<input
@@ -118,9 +119,18 @@ const AuthPadLock = () => {
 						className="input input-bordered w-16 h-16 text-center text-2xl"
 					/>
 				</div>
-				<button type="submit" className="btn btn-primary">
-					送信
-				</button>
+				<div className="flex flex-row justify-center space-x-2">
+					<button type="submit" className="btn btn-primary">
+						送信
+					</button>
+					<button
+						type="button"
+						className="btn btn-outline"
+						onClick={() => reset()}
+					>
+						入力をクリア
+					</button>
+				</div>
 				{loading && <Loading />}
 				{error && <p>{error}</p>}
 			</form>
