@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
-import { ja, se } from 'date-fns/locale'
+import { ja } from 'date-fns/locale'
 import {
 	adminRevalidateTagAction,
 	deleteUserAction,

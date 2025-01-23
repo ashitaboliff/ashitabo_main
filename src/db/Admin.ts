@@ -6,6 +6,7 @@ import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
 import { AccountRole } from '@/types/UserTypes'
+import { BuyBookingStatus } from '@/types/BookingTypes'
 
 export const getAllUsers = async () => {
 	async function getAllUsers() {
@@ -183,6 +184,53 @@ export const deleteBanBooking = async (id: string) => {
 		await prisma.exBooking.delete({
 			where: {
 				id: id,
+			},
+		})
+	} catch (error) {
+		throw error
+	}
+}
+
+export const getBuyBookingByStatus = async ({
+	status,
+}: {
+	status: BuyBookingStatus[]
+}) => {
+	async function getBuyBookingByStatus() {
+		try {
+			const buyBooking = await prisma.buyBooking.findMany({
+				where: {
+					status: {
+						in: status,
+					},
+				},
+			})
+			return buyBooking
+		} catch (error) {
+			throw error
+		}
+	}
+	const buyBooking = unstable_cache(getBuyBookingByStatus, [], {
+		tags: ['buyBooking'],
+	})
+	const result = await buyBooking()
+	return result
+}
+
+export const updateBuyBooking = async ({
+	bookingId,
+	state,
+}: {
+	bookingId: string
+	state: BuyBookingStatus
+}) => {
+	try {
+		await prisma.buyBooking.update({
+			where: {
+				booking_id: bookingId,
+			},
+			data: {
+				status: state,
 			},
 		})
 	} catch (error) {

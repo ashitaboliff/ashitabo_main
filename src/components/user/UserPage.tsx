@@ -22,11 +22,13 @@ const UserPage = ({
 	session,
 	bookingDataByUser,
 	calendarTime,
+	userRole,
 }: {
 	profile: Profile
 	session: Session
 	bookingDataByUser: BookingDetailProps[]
 	calendarTime: string[]
+	userRole: string
 }) => {
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -253,6 +255,25 @@ const UserPage = ({
 						)}
 					</div>
 				</div>
+			</div>
+			<div className="flex flex-row justify-center mt-5 gap-5">
+				{userRole === 'ADMIN' ||
+					(userRole === 'TOPADMIN' && (
+						<button
+							className="btn btn-primary"
+							onClick={() => router.push('/admin')}
+						>
+							管理者ページへ
+						</button>
+					))}
+				{userRole === 'TOPADMIN' && (
+					<button
+						className="btn btn-primary"
+						onClick={() => router.push('/admin/topadmin')}
+					>
+						トップ管理者ページへ
+					</button>
+				)}
 			</div>
 			<div className="mt-5 text-2xl text-center">---以下開発中---</div>
 			<div className="flex flex-row justify-around">

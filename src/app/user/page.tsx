@@ -7,6 +7,7 @@ import {
 	getCalendarTimeAction,
 } from '@/components/booking/actions'
 import { getProfileAction } from '@/app/actions'
+import { getUserRoleAction } from '@/components/admin/action'
 import { Profile } from '@/types/UserTypes'
 import UserPage from '@/components/user/UserPage'
 import { notFound } from 'next/navigation'
@@ -23,6 +24,10 @@ const userPage = async () => {
 	} else if (isSession === 'session') {
 		await redirectFrom('/auth/signin/setting', '/user')
 	} else {
+		const userRole = await getUserRoleAction(session.user.id)
+		if (userRole.status !== 200) {
+			return notFound()
+		}
 		const profile = await getProfileAction(session.user.id)
 		if (profile.status === 200) {
 			const booking = await getBookingByUserIdAction(session.user.id)
@@ -35,6 +40,7 @@ const userPage = async () => {
 						session={session}
 						bookingDataByUser={booking.response}
 						calendarTime={calendarTime.response}
+						userRole={userRole.response}
 					/>
 				)
 			}

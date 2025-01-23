@@ -23,7 +23,7 @@ export type BanBooking = {
 
 export type BuyBooking = {
 	id: string
-	booking_id: string
+	bookingId: string
 	userId: string
 	status: BuyBookingStatus
 	createdAt: Date

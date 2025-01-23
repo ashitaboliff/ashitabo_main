@@ -565,7 +565,7 @@ export const getBuyBookingById = async (id: string) => {
 	}
 
 	const buyBookingCache = unstable_cache(getBuyBookingById, [id], {
-		tags: [`buyBooking-${id}`, 'booking'],
+		tags: [`buyBooking`, 'booking'],
 	})
 	const buyBookingCacheData = await buyBookingCache(id)
 	return buyBookingCacheData
@@ -619,27 +619,6 @@ export const getBuyBookingByExpire = async (expireAt: string) => {
 	})
 	const buyBookingCacheData = await buyBookingCache(expireAt)
 	return buyBookingCacheData
-}
-
-export const updateBuyBooking = async ({
-	bookingId,
-	state,
-}: {
-	bookingId: string
-	state: BuyBookingStatus
-}) => {
-	try {
-		await prisma.buyBooking.update({
-			where: {
-				booking_id: bookingId,
-			},
-			data: {
-				status: state,
-			},
-		})
-	} catch (error) {
-		throw error
-	}
 }
 
 /**

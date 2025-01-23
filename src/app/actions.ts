@@ -31,7 +31,7 @@ export async function getProfileAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }

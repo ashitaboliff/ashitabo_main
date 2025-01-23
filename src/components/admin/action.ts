@@ -15,10 +15,12 @@ import {
 	getAllBanBooking,
 	createBookingBanDate,
 	deleteBanBooking,
+	getBuyBookingByStatus,
+	updateBuyBooking,
 } from '@/db/Admin'
-import { AccountRole, User, UserDetail } from '@/types/UserTypes'
+import { AccountRole, UserDetail } from '@/types/UserTypes'
 import { PadLock } from '@/types/AdminTypes'
-import { BanBooking } from '@/types/BookingTypes'
+import { BanBooking, BuyBooking } from '@/types/BookingTypes'
 
 export async function adminRevalidateTagAction(
 	tag: string,
@@ -32,7 +34,7 @@ export async function adminRevalidateTagAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -68,7 +70,7 @@ export async function getAllUserDetailsAction(): Promise<
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -95,7 +97,7 @@ export async function deleteUserAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -118,7 +120,7 @@ export async function getUserRoleAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -139,7 +141,7 @@ export async function updateUserRoleAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -161,7 +163,7 @@ export async function getAllPadLocksAction(): Promise<ApiResponse<PadLock[]>> {
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -184,8 +186,7 @@ export async function createPadLockAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response:
-				error instanceof Error ? error.message : 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -203,7 +204,7 @@ export async function deletePadLockAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -230,7 +231,7 @@ export async function getAllBanBookingAction(): Promise<
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -272,8 +273,7 @@ export async function createBookingBanDateAction({
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response:
-				error instanceof Error ? error.message : 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -291,7 +291,58 @@ export async function deleteBanBookingAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
+		}
+	}
+}
+
+export async function getBuyBookingByStatusAction({
+	status,
+}: {
+	status: BuyBooking['status'][]
+}): Promise<ApiResponse<BuyBooking[]>> {
+	try {
+		const buyBooking = await getBuyBookingByStatus({ status })
+
+		const transformedBuyBookings: BuyBooking[] = buyBooking.map((booking) => ({
+			id: booking.id,
+			bookingId: booking.booking_id,
+			userId: booking.user_id,
+			status: booking.status,
+			createdAt: booking.created_at,
+			updatedAt: booking.updated_at,
+			expiredAt: booking.expire_at,
+			isDeleted: booking.is_deleted,
+		}))
+		return {
+			status: StatusCode.OK,
+			response: transformedBuyBookings,
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: String(error),
+		}
+	}
+}
+
+export async function updateBuyBookingAction({
+	bookingId,
+	state,
+}: {
+	bookingId: string
+	state: BuyBooking['status']
+}): Promise<ApiResponse<string>> {
+	try {
+		await updateBuyBooking({ bookingId, state })
+		return {
+			status: StatusCode.OK,
+			response: '更新完了',
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: String(error),
 		}
 	}
 }

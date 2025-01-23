@@ -47,7 +47,7 @@ export async function padLockAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -78,7 +78,7 @@ export async function getUserAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -106,7 +106,7 @@ export async function createProfileAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
@@ -134,7 +134,7 @@ export async function putProfileAction(
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: 'Internal Server Error',
+			response: String(error),
 		}
 	}
 }
