@@ -1,10 +1,19 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import LocalFont from 'next/font/local'
 import { signIn, useSession } from 'next-auth/react'
 import Loading from '@/components/atoms/Loading'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
+
+const nicomoji = LocalFont({
+	src: '../../lib/fonts/nicomoji-plus_v2-5.woff',
+	weight: 'normal',
+	style: 'normal',
+	variable: '--nicomoji',
+})
 
 const SigninPage = () => {
 	const session = useSession()
@@ -23,18 +32,25 @@ const SigninPage = () => {
 
 	return (
 		<>
-			<div className="flex flex-col items-center justify-center p-4">
-				<div className="text-2xl font-bold">ログイン</div>
-				<div
-					className="btn btn-primary"
-					onClick={async () =>
-						await signIn('line', {
-							callbackUrl: '/auth/signin/setting',
-							maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
-						})
-					}
-				>
-					LINEでログイン
+			<div className="flex items-center justify-center h-96">
+				<div className="flex flex-col items-center justify-center card bg-bg-white shadow-lg w-72">
+					<figure>
+						<Image src="/login.jpg" alt="login" width={300} height={250} />
+					</figure>
+					<div className="flex flex-col items-center justify-center gap-y-2 p-4">
+						<div className={`text-3xl ${nicomoji.className}`}>ログイン</div>
+						<div
+							className={`btn btn-primary`}
+							onClick={async () =>
+								await signIn('line', {
+									callbackUrl: '/auth/signin/setting',
+									maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
+								})
+							}
+						>
+							LINEでログイン
+						</div>
+					</div>
 				</div>
 			</div>
 			<Popup

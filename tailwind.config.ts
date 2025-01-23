@@ -115,9 +115,9 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				nicoMoji: ['nicomoji', 'sans-serif'],
+				nicoMoji: ['var(--nicomoji)', 'sans-serif'],
 				notojp: ['var(--font-noto-jp)', 'sans-serif'],
-				Gkktt: ['851Gkktt', 'sans-serif'],
+				gkktt: ['var(--851-Gkktt)', 'sans-serif'],
 			},
 			fontSize: {
 				xxxs: ['0.375rem', { lineHeight: 'normal' }], // 6px

@@ -1,12 +1,28 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import LocalFont from 'next/font/local'
 import './globals.css'
 import Header from '@/components/molecules/Header'
+import Footer from '@/components/molecules/Footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { LiffProvider } from '@/lib/liff/LiffOption'
 import NextAuthProvider from '@/lib/auth/AuthProvider'
 
 const inter = Inter({ subsets: ['latin'] })
+
+const nicomoji = LocalFont({
+	src: '../lib/fonts/nicomoji-plus_v2-5.woff',
+	weight: 'normal',
+	style: 'normal',
+	variable: '--nicomoji',
+})
+
+const gkktt = LocalFont({
+	src: '../lib/fonts/851Gkktt_005.woff',
+	weight: 'normal',
+	style: 'normal',
+	variable: '--851-gkktt',
+})
 
 export const metadata: Metadata = {
 	title: 'あしたぼホームページ',
@@ -50,10 +66,13 @@ export default function RootLayout({
 					}}
 				/>
 				<NextAuthProvider>
-					<Header />
-					<LiffProvider liffId={process.env.LIFF_ID ?? ''}>
-						{children}
-					</LiffProvider>
+					<div className="relative">
+						<Header className={nicomoji.className} />
+						<LiffProvider liffId={process.env.LIFF_ID ?? ''}>
+							{children}
+						</LiffProvider>
+						<Footer />
+					</div>
 				</NextAuthProvider>
 			</body>
 			<GoogleAnalytics gaId={process.env.GA_ID ?? ''} />

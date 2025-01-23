@@ -49,8 +49,8 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 		endDate: Date
 		cache?: 'no-cache'
 	}) => {
+		setIsLoading(true)
 		if (cache === 'no-cache') {
-			setIsLoading(true)
 			await bookingRevalidateTagAction({ tag: 'booking' })
 		}
 		const startDay = DateToDayISOstring(startDate).split('T')[0]
@@ -81,13 +81,14 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 			<div className="flex justify-center space-x-2 m-2">
 				<button
 					className="btn btn-primary"
-					onClick={() =>
+					onClick={async () => {
 						getBooking({
 							startDate: viewDay,
 							endDate: addDays(viewDay, viewDayMax - 1),
 							cache: 'no-cache',
 						})
-					}
+						await bookingRevalidateTagAction({ tag: 'banBooking' })
+					}}
 				>
 					カレンダーを更新
 				</button>
@@ -121,7 +122,16 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 					</button>
 				</div>
 				{bookingData ? (
-					<BookingCalendar bookingDate={bookingData} timeList={calendarTime} />
+					isLoading ? (
+						<div className="flex justify-center">
+							<div className="skeleton h-96 w-96"></div>
+						</div>
+					) : (
+						<BookingCalendar
+							bookingDate={bookingData}
+							timeList={calendarTime}
+						/>
+					)
 				) : (
 					<div className="flex justify-center">
 						<div className="skeleton h-96 w-96"></div>

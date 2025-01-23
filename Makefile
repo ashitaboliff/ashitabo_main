@@ -54,6 +54,12 @@ node: ## node.jsをインストールしている場合これで実行
 	npx prisma generate
 	npm run dev
 
+clean-cache:
+	sudo rm -rf ./.next/cache/fetch-cache/*
+
+clean-image:
+	sudo rm -rf ./.next/cache/images/*
+
 # Define the help target
 help:
 	@echo "Available targets:"
