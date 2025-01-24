@@ -23,7 +23,7 @@ const HomePageButton = ({
 	const lines = text.match(new RegExp(`.{1,${maxCharsPerLine}}`, 'g')) || [text]
 
 	return (
-		<a href={link} className={`cursor-pointer ${patting}`}>
+		<a href={link} className={`cursor-pointer ${patting} z-20`}>
 			<svg
 				width="110"
 				height="110"

@@ -23,8 +23,8 @@ export const useScreenSize = () => {
 export const getMaxWidth = (
 	width: number,
 ): { device: string; defaultSize: string } => {
-	let device = ''
-	let defaultSize = ''
+	let device = 'mobile'
+	let defaultSize = 'max-w-sm'
 
 	if (width < 768) {
 		device = 'mobile'

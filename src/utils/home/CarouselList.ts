@@ -1,22 +1,34 @@
 const list = [
 	{
-		src: '/homepage_1.jpg',
+		src: '/home/homepage_1.jpg',
 		alt: 'homepage',
 	},
 	{
-		src: '/homepage_2.jpg',
+		src: '/home/homepage_2.jpg',
 		alt: 'homepage',
 	},
 	{
-		src: '/homepage_3.jpg',
+		src: '/home/homepage_3.jpg',
 		alt: 'homepage',
 	},
 	{
-		src: '/homepage_4.jpg',
+		src: '/home/homepage_4.jpg',
 		alt: 'homepage',
 	},
 	{
-		src: '/homepage_5.jpg',
+		src: '/home/homepage_5.jpg',
+		alt: 'homepage',
+	},
+	{
+		src: '/home/homepage_6.jpg',
+		alt: 'homepage',
+	},
+	{
+		src: '/home/homepage_7.jpg',
+		alt: 'homepage',
+	},
+	{
+		src: '/home/homepage_8.jpg',
 		alt: 'homepage',
 	},
 ]
