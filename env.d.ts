@@ -14,5 +14,9 @@ declare namespace NodeJS {
 		TEST_ID: string
 		TEST_PASSWORD: string
 		MAINTENANCE_MODE: string
+		YOUTUBE_CLIENT_ID: string
+		YOUTUBE_CLIENT_SECRET: string
+		YOUTUBE_REDIRECT_URI: string
+		YOUTUBE_API_KEY: string
 	}
 }

@@ -98,6 +98,17 @@ CREATE TABLE "profile" (
   FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );
 
+CREATE TABLE "user_gacha" (
+  "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+  "user_id" TEXT UNIQUE,
+  "gacha_id" TEXT[],
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  "is_deleted" BOOLEAN DEFAULT FALSE,
+
+  FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
+);
+
 -- Create Accounts table
 CREATE TABLE "account" (
   "user_id" TEXT NOT NULL,
@@ -144,3 +155,34 @@ CREATE TABLE "pad_lock" (
   "password" TEXT NOT NULL,
   "is_deleted" BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE "youtube_auth" (
+  "google_id" TEXT PRIMARY KEY,
+  "email" TEXT,
+  "access_token" TEXT,
+  "refresh_token" TEXT,
+  "token_expiry" TIMESTAMP,
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  "is_deleted" BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE "playlist" (
+  "playlist_id" TEXT PRIMARY KEY UNIQUE,
+  "title" TEXT,
+  "link" TEXT,
+  "tags" TEXT[] DEFAULT '{}',
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE "video" (
+  "video_id" TEXT PRIMARY KEY UNIQUE,
+  "playlist_id" TEXT,
+  "title" TEXT,
+  "link" TEXT,
+  "tags" TEXT[] DEFAULT '{}',
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  FOREIGN KEY ("playlist_id") REFERENCES "playlist" ("playlist_id") ON DELETE CASCADE
+)

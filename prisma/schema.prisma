@@ -78,6 +78,7 @@ model User {
   profile       Profile?
   bookings      Booking[]
   buyBookings   BuyBooking[]
+  userGachas    UserGacha?
 
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
@@ -99,6 +100,19 @@ model Profile {
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade) // Userのidと1対1のリレーション
   @@map("profile")
+}
+
+model UserGacha {
+  id         String   @id @default(uuid())
+  user_id    String   @unique
+  gacha_id   String[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  is_deleted Boolean  @default(false)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("user_gacha")
 }
 
 model Account {
@@ -153,6 +167,44 @@ model PadLock {
   is_deleted Boolean  @default(false)
 
   @@map("pad_lock")
+}
+
+model YoutubeAuth {
+  google_id     String   @id
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  email         String
+  access_token  String
+  refresh_token String
+  token_expiry  DateTime
+  is_deleted    Boolean  @default(false)
+
+  @@map("youtube_auth")
+}
+
+model Playlist {
+  playlistId String   @id @unique @map("playlist_id")
+  title      String
+  link       String
+  videos     Video[]
+  tags       String[] @default([])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("playlist")
+}
+
+model Video {
+  videoId     String   @id @map("video_id")
+  title       String
+  link        String
+  tags        String[] @default([])
+  playlistId  String   @map("playlist_id")
+  playlist    Playlist @relation(fields: [playlistId], references: [playlistId])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("video")
 }
 
 enum Role {
