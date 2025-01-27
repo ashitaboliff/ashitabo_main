@@ -76,7 +76,14 @@ const YoutubeIdPage = ({ detail, liveOrBand, playlist }: Props) => {
 						</div>
 						<div className="flex flex-row justify-between w-92 mt-2">
 							<div className="flex flex-row">
-								{detail.tags && <Tags tags={detail.tags} size="text-sm" />}
+								{detail.tags && (
+									<Tags
+										tags={detail.tags}
+										size="text-sm"
+										isLink
+										liveOrBand={liveOrBand}
+									/>
+								)}
 							</div>
 							<button
 								className="btn btn-outline btn-primary btn-sm"
@@ -161,7 +168,14 @@ const YoutubeIdPage = ({ detail, liveOrBand, playlist }: Props) => {
 						</div>
 						<div className="flex flex-row justify-between w-92 mt-2">
 							<div className="flex flex-row">
-								{detail.tags && <Tags tags={detail.tags} size="text-sm" />}
+								{detail.tags && (
+									<Tags
+										tags={detail.tags}
+										size="text-sm"
+										isLink
+										liveOrBand={liveOrBand}
+									/>
+								)}
 							</div>
 							<button
 								className="btn btn-outline btn-primary btn-sm"
