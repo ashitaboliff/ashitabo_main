@@ -37,6 +37,7 @@ const YoutubeMainPage = () => {
 	const [pageMax, setPageMax] = useState<number>(1)
 	const [youtubeDetails, setYoutubeDetails] = useState<YoutubeDetail[]>([])
 	const [isSearching, setIsSearching] = useState<boolean>(false)
+	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(null)
 
@@ -48,6 +49,7 @@ const YoutubeMainPage = () => {
 				defaultSearchQuery.liveOrBand,
 			bandName: searchParams.get('bandName') ?? defaultSearchQuery.bandName,
 			liveName: searchParams.get('liveName') ?? defaultSearchQuery.liveName,
+			tag: (searchParams.getAll('tag') as string[]) ?? defaultSearchQuery.tag,
 			sort:
 				(searchParams.get('sort') as 'new' | 'old') ?? defaultSearchQuery.sort,
 			page: Number(searchParams.get('page')) || defaultSearchQuery.page,
@@ -62,6 +64,7 @@ const YoutubeMainPage = () => {
 	// 検索を実行する関数
 	const executeSearch = async (query: YoutubeSearchQuery) => {
 		setIsSearching(true)
+		setIsLoading(true)
 		const res = await searchYoutubeDetailsAction(query)
 		if (res.status === 200) {
 			setYoutubeDetails(res.response.results)
@@ -70,6 +73,7 @@ const YoutubeMainPage = () => {
 			console.error('Failed to get youtube details')
 			console.error(res)
 		}
+		setIsLoading(false)
 	}
 
 	// クエリを更新し、searchParams に反映
@@ -102,7 +106,6 @@ const YoutubeMainPage = () => {
 			liveOrBand: formData.get('liveOrBand') as 'live' | 'band',
 			bandName: formData.get('bandName') as string,
 			liveName: formData.get('liveName') as string,
-			sort: formData.get('sort') as 'new' | 'old',
 			tag: formData.getAll('tag') as string[],
 		}
 		updateQuery({ ...newQuery, page: 1 }) // ページをリセット
@@ -114,7 +117,7 @@ const YoutubeMainPage = () => {
 				過去ライブ映像
 			</div>
 			<button
-				className={`btn btn-outline ${isSearching ? 'btn-tetiary' : ''}`}
+				className={`btn btn-outline w-80 ${isSearching ? 'btn-tetiary' : ''}`}
 				onClick={() => setIsPopupOpen(true)}
 			>
 				<div className="flex flex-row items-center space-x-2">
@@ -134,14 +137,75 @@ const YoutubeMainPage = () => {
 						name="videoPerPage"
 					/>
 				</div>
-				<div className="flex flex-col gap-y-2 border-t border-b border-base-200">
-					{youtubeDetails.map((youtubeDetail) => (
-						<YoutubeDetailBox
-							key={youtubeDetail.id}
-							youtubeDetail={youtubeDetail}
-							liveOrBand={query.liveOrBand}
+				<div className="flex flex-col gap-y-2">
+					<div className="flex flex-row gap-x-2">
+						<input
+							type="radio"
+							name="sort"
+							value="new"
+							defaultChecked={query.sort === 'new'}
+							className="btn btn-tetiary btn-sm"
+							aria-label="新しい順"
+							onChange={() => updateQuery({ sort: 'new' })}
 						/>
-					))}
+						<input
+							type="radio"
+							name="sort"
+							value="old"
+							defaultChecked={query.sort === 'old'}
+							className="btn btn-tetiary btn-sm"
+							aria-label="古い順"
+							onChange={() => updateQuery({ sort: 'old' })}
+						/>
+					</div>
+					{isLoading ? (
+						<>
+							<div className="flex flex-col items-center">
+								<div className="skeleton h-52 w-92"></div>
+								<div className="flex flex-col gap-y-1 mt-1">
+									<div className="skeleton h-6 w-92"></div>
+									<div className="skeleton h-5 w-92"></div>
+									<div className="skeleton h-5 w-92"></div>
+									<div className="flex flex-row gap-x-2">
+										<div className="skeleton h-5 w-8"></div>
+										<div className="skeleton h-5 w-8"></div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col items-center">
+								<div className="skeleton h-52 w-92"></div>
+								<div className="flex flex-col gap-y-1 mt-1">
+									<div className="skeleton h-6 w-92"></div>
+									<div className="skeleton h-5 w-92"></div>
+									<div className="skeleton h-5 w-92"></div>
+									<div className="flex flex-row gap-x-2">
+										<div className="skeleton h-5 w-8"></div>
+										<div className="skeleton h-5 w-8"></div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col items-center">
+								<div className="skeleton h-52 w-92"></div>
+								<div className="flex flex-col gap-y-1 mt-1">
+									<div className="skeleton h-6 w-92"></div>
+									<div className="skeleton h-5 w-92"></div>
+									<div className="skeleton h-5 w-92"></div>
+									<div className="flex flex-row gap-x-2">
+										<div className="skeleton h-5 w-8"></div>
+										<div className="skeleton h-5 w-8"></div>
+									</div>
+								</div>
+							</div>
+						</>
+					) : (
+						youtubeDetails.map((youtubeDetail) => (
+							<YoutubeDetailBox
+								key={youtubeDetail.id}
+								youtubeDetail={youtubeDetail}
+								liveOrBand={query.liveOrBand}
+							/>
+						))
+					)}
 				</div>
 				<Pagination
 					currentPage={query.page}
@@ -151,7 +215,7 @@ const YoutubeMainPage = () => {
 			</div>
 			<Popup
 				ref={popupRef}
-				title="検索条件"
+				title="条件検索"
 				open={isPopupOpen}
 				onClose={() => setIsPopupOpen(false)}
 			>
@@ -192,24 +256,7 @@ const YoutubeMainPage = () => {
 						placeholder="タグ"
 						defaultValue={query.tag}
 					/>
-					<div className="flex flex-row justify-center gap-x-2">
-						<input
-							type="radio"
-							name="sort"
-							value="new"
-							defaultChecked={query.sort === 'new'}
-							className="btn btn-tetiary"
-							aria-label="新しい順"
-						/>
-						<input
-							type="radio"
-							name="sort"
-							value="old"
-							defaultChecked={query.sort === 'old'}
-							className="btn btn-tetiary"
-							aria-label="古い順"
-						/>
-					</div>
+					<div className="flex flex-row justify-center gap-x-2"></div>
 					<div className="flex flex-row justify-center gap-x-2">
 						<button type="submit" className="btn btn-primary">
 							検索
@@ -219,6 +266,7 @@ const YoutubeMainPage = () => {
 							className="btn btn-outline"
 							onClick={() => {
 								setQuery(defaultSearchQuery)
+								updateQuery(defaultSearchQuery)
 								setIsPopupOpen(false)
 							}}
 						>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Controller } from 'react-hook-form'
+import React, { useState } from 'react'
+import { Controller, UseFormSetValue } from 'react-hook-form'
 import { HiMiniXMark } from 'react-icons/hi2'
 
 type TagInputFieldProps = {
@@ -8,6 +8,7 @@ type TagInputFieldProps = {
 	placeholder?: string // プレースホルダーテキスト
 	control?: any
 	defaultValue?: string[] // 初期値として渡されるタグの配列
+	setValue?: UseFormSetValue<any> // react-hook-form の setValue
 }
 
 /**
@@ -17,6 +18,7 @@ type TagInputFieldProps = {
  * @param placeholder プレースホルダーテキスト
  * @param control react-hook-form の control
  * @param defaultValue 初期値として渡されるタグの配列
+ * @param setValue react-hook-form の setValue
  */
 const TagInputField = ({
 	name,
@@ -24,6 +26,7 @@ const TagInputField = ({
 	placeholder,
 	control,
 	defaultValue = [],
+	setValue,
 }: TagInputFieldProps) => {
 	const [tagCount, setTagCount] = useState<number>(
 		defaultValue.length > 0 ? defaultValue.length : 1,
@@ -38,7 +41,14 @@ const TagInputField = ({
 	// タグ入力フィールドを削除
 	const removeTagField = (index: number) => {
 		setTagCount((prev) => prev - 1)
-		setTags((prevTags) => prevTags.filter((_, i) => i !== index))
+		setTags((prevTags) => {
+			const newTags = prevTags.filter((_, i) => i !== index)
+			// react-hook-form の値を更新（setValue が存在する場合のみ）
+			if (setValue) {
+				setValue(name, newTags)
+			}
+			return newTags
+		})
 	}
 
 	// タグの値を更新
@@ -46,6 +56,10 @@ const TagInputField = ({
 		setTags((prevTags) => {
 			const newTags = [...prevTags]
 			newTags[index] = value
+			// react-hook-form の値を更新（setValue が存在する場合のみ）
+			if (setValue) {
+				setValue(name, newTags)
+			}
 			return newTags
 		})
 	}
@@ -58,7 +72,7 @@ const TagInputField = ({
 
 			{Array.from({ length: tagCount }).map((_, index) => (
 				<div key={index} className="flex items-center space-x-2">
-					{control ? ( // 修正: control が存在する場合のみ Controller を使用
+					{control ? ( // control が存在する場合のみ Controller を使用
 						<Controller
 							name={`${name}.${index}`} // 配列形式でフィールドを管理
 							control={control}

@@ -196,7 +196,7 @@ model Playlist {
 }
 
 model Video {
-  videoId     String   @id @map("video_id")
+  videoId     String   @id @unique @map("video_id")
   title       String
   link        String
   liveDate    String   @map("live_date")

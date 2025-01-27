@@ -33,7 +33,10 @@ const YoutubeDetailBox = ({
 					<YouTubeEmbed videoid={youtubeDetail.id} width={368} />
 				)}
 			</div>
-			<div className="flex flex-col gap-y-1 justify-center w-92">
+			<div
+				className="flex flex-col gap-y-1 justify-center w-92 link link-hover"
+				onClick={() => router.push(`/video/${youtubeDetail.id}`)}
+			>
 				<div className="text-base font-bold">
 					{youtubeDetail.title.split('(')[0]}
 				</div>

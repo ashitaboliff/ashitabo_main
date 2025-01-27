@@ -6,15 +6,19 @@ import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import {
 	Playlist,
 	Token,
+	Video,
 	YoutubeDetail,
 	YoutubeSearchQuery,
+	liveOrBand,
 } from '@/types/YoutubeTypes'
 import {
 	createPlaylist,
-	getPlaylist,
 	getAccessToken,
 	upsertAccessToken,
 	searchYoutubeDetails,
+	getPlaylistById,
+	getVideoById,
+	updateTags,
 } from '@/db/Youtube'
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
@@ -189,22 +193,68 @@ export async function createPlaylistAction(): Promise<ApiResponse<string>> {
 	}
 }
 
-export async function getPlaylistAction(): Promise<ApiResponse<Playlist[]>> {
+export async function searchYoutubeDetailsAction(
+	query: YoutubeSearchQuery,
+): Promise<ApiResponse<{ results: YoutubeDetail[]; totalCount: number }>> {
 	try {
-		const playlist = await getPlaylist()
+		const results = await searchYoutubeDetails(query)
+		return { status: StatusCode.OK, response: results }
+	} catch (error) {
+		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	}
+}
+
+export async function getPlaylistByIdAction(
+	id: string,
+): Promise<ApiResponse<Playlist>> {
+	try {
+		const playlist = await getPlaylistById(id)
+		if (!playlist) {
+			return {
+				status: StatusCode.NOT_FOUND,
+				response: 'プレイリストが見つけられませんでした',
+			}
+		}
 		return { status: StatusCode.OK, response: playlist }
 	} catch (error) {
 		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
 	}
 }
 
-export async function searchYoutubeDetailsAction(
-	query: YoutubeSearchQuery,
-): Promise<ApiResponse<{ results: YoutubeDetail[]; totalCount: number }>> {
+export async function getVideoByIdAction(
+	id: string,
+): Promise<ApiResponse<Video>> {
 	try {
-		console.log(query)
-		const results = await searchYoutubeDetails(query)
-		return { status: StatusCode.OK, response: results }
+		const video = await getVideoById(id)
+		if (!video) {
+			return {
+				status: StatusCode.NOT_FOUND,
+				response: '動画が見つけられませんでした',
+			}
+		}
+		return { status: StatusCode.OK, response: video }
+	} catch (error) {
+		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	}
+}
+
+export async function updateTagsAction(
+	id: string,
+	tags: string[],
+	liveOrBand: liveOrBand,
+): Promise<ApiResponse<string>> {
+	try {
+		if (tags.length === 1 && tags[0] === '') {
+			tags = []
+		}
+		await updateTags({ id, tags, liveOrBand })
+		if (liveOrBand === 'live') {
+			revalidateTag(`playlist-${id}`)
+		}
+		if (liveOrBand === 'band') {
+			revalidateTag(`video-${id}`)
+		}
+		return { status: StatusCode.OK, response: 'Tags updated successfully' }
 	} catch (error) {
 		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
 	}

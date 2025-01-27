@@ -45,8 +45,14 @@
 	.btn.btn-tetiary.btn-outline {
 		@apply text-tetiary bg-bg-white border-tetiary;
 	}
+	.btn.btn-secondary-light {
+		@apply bg-secondary text-bg-white border-secondary;
+	}
 	.w-92 {
 		width: 23rem;
+	}
+	.h-52 {
+		height: 13rem;
 	}
 }
 

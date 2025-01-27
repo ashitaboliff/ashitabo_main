@@ -6,6 +6,7 @@ import {
 	Playlist,
 	YoutubeDetail,
 	YoutubeSearchQuery,
+	liveOrBand,
 } from '@/types/YoutubeTypes'
 
 export const getAccessToken = async () => {
@@ -102,10 +103,11 @@ export const createPlaylist = async (playlist: Playlist[]) => {
 	}
 }
 
-export const getPlaylist = async () => {
-	async function getPlaylist() {
+export const getPlaylistById = async (id: string) => {
+	async function getPlaylistById() {
 		try {
-			const playlist = await prisma.playlist.findMany({
+			const playlist = await prisma.playlist.findFirst({
+				where: { playlistId: id },
 				include: {
 					videos: true,
 				},
@@ -115,213 +117,259 @@ export const getPlaylist = async () => {
 			throw error
 		}
 	}
-	const playlist = unstable_cache(getPlaylist, [], {
-		tags: ['youtube'],
+	const playlist = unstable_cache(getPlaylistById, [id], {
+		tags: ['youtube', `playlist-${id}`],
 	})
 	const result = await playlist()
+	return result
+}
+
+export const getVideoById = async (id: string) => {
+	async function getVideoById() {
+		try {
+			const video = await prisma.video.findFirst({
+				where: { videoId: id },
+				include: {
+					playlist: true,
+				},
+			})
+			return video
+		} catch (error) {
+			throw error
+		}
+	}
+	const video = unstable_cache(getVideoById, [id], {
+		tags: ['youtube', `video-${id}`],
+	})
+	const result = await video()
 	return result
 }
 
 export async function searchYoutubeDetails(
 	query: YoutubeSearchQuery,
 ): Promise<{ results: YoutubeDetail[]; totalCount: number }> {
-	const { liveOrBand, bandName, liveName, tag, sort, page, videoPerPage } =
-		query
+	try {
+		const { liveOrBand, bandName, liveName, tag, sort, page, videoPerPage } =
+			query
 
-	// page と videoPerPage が数値であることを保証
-	const pageNumber = Number(page) || 1
-	const videoPerPageNumber = Number(videoPerPage) || 10
+		const pageNumber = Number(page) || 1
+		const videoPerPageNumber = Number(videoPerPage) || 10
+		const MOTETAIZU_PLAYLIST_ID = process.env.MOTETAIZU_PLAYLIST_ID
+		const MOTETAIZU_VIDEO_ID = process.env.MOTETAIZU_VIDEO_ID
+		const isSpecialCase =
+			liveName === 'マーシャル' ||
+			liveName === 'Marshall' ||
+			bandName === 'マーシャル' ||
+			bandName === 'Marshall'
 
-	// .env から特別なIDを取得
-	const MOTETAIZU_PLAYLIST_ID = process.env.MOTETAIZU_PLAYLIST_ID
-	const MOTETAIZU_VIDEO_ID = process.env.MOTETAIZU_VIDEO_ID
+		let results: YoutubeDetail[] = []
+		let totalCount = 0
 
-	// 特別な条件: liveName または bandName が "マーシャル" または "Marshall" の場合
-	const isSpecialCase =
-		liveName === 'マーシャル' ||
-		liveName === 'Marshall' ||
-		bandName === 'マーシャル' ||
-		bandName === 'Marshall'
-
-	let results: YoutubeDetail[] = []
-	let totalCount = 0
-
-	if (liveOrBand === 'live') {
-		const [playlists, count] = await Promise.all([
-			prisma.playlist.findMany({
-				where: {
-					// 特別な条件の場合、playlistId が MOTETAIZU_PLAYLIST_ID と一致するもののみを取得
-					...(isSpecialCase
-						? { playlistId: MOTETAIZU_PLAYLIST_ID }
-						: {
-								AND: [
-									liveName && liveName !== ''
-										? { title: { contains: liveName } }
-										: {},
-									bandName && bandName !== ''
-										? {
-												videos: {
-													some: {
-														title: { contains: bandName },
+		if (liveOrBand === 'live') {
+			const [playlists, count] = await Promise.all([
+				prisma.playlist.findMany({
+					where: {
+						...(isSpecialCase
+							? { playlistId: MOTETAIZU_PLAYLIST_ID }
+							: {
+									AND: [
+										liveName && liveName !== ''
+											? { title: { contains: liveName } }
+											: {},
+										bandName && bandName !== ''
+											? {
+													videos: {
+														some: {
+															title: { contains: bandName },
+														},
 													},
-												},
-											}
-										: {},
-									tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-										? {
-												tags: {
-													hasSome: tag,
-												},
-											}
-										: {},
-									// 通常の条件の場合、playlistId が MOTETAIZU_PLAYLIST_ID と一致しないものを取得
-									{ NOT: { playlistId: MOTETAIZU_PLAYLIST_ID } },
-								],
-							}),
-				},
-				include: {
-					videos: true,
-				},
-				orderBy: {
-					liveDate: sort === 'new' ? 'desc' : 'asc',
-				},
-				skip: (pageNumber - 1) * videoPerPageNumber,
-				take: videoPerPageNumber,
-			}),
-			prisma.playlist.count({
-				where: {
-					// 特別な条件の場合、playlistId が MOTETAIZU_PLAYLIST_ID と一致するもののみをカウント
-					...(isSpecialCase
-						? { playlistId: MOTETAIZU_PLAYLIST_ID }
-						: {
-								AND: [
-									liveName && liveName !== ''
-										? { title: { contains: liveName } }
-										: {},
-									bandName && bandName !== ''
-										? {
-												videos: {
-													some: {
-														title: { contains: bandName },
-													},
-												},
-											}
-										: {},
-									tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-										? {
-												tags: {
-													hasSome: tag,
-												},
-											}
-										: {},
-									// 通常の条件の場合、playlistId が MOTETAIZU_PLAYLIST_ID と一致しないものをカウント
-									{ NOT: { playlistId: MOTETAIZU_PLAYLIST_ID } },
-								],
-							}),
-				},
-			}),
-		])
-
-		results = playlists.map((playlist) => ({
-			id: playlist.playlistId,
-			title: playlist.title,
-			link: playlist.link,
-			tags: playlist.tags,
-			liveDate: playlist.liveDate,
-			liveOrBand: 'live',
-			playlistId: undefined,
-			playlistTitle: undefined,
-			videoId: playlist.videos[0].videoId,
-		}))
-		totalCount = count
-	} else if (liveOrBand === 'band') {
-		const [videos, count] = await Promise.all([
-			prisma.video.findMany({
-				where: {
-					// 特別な条件の場合、videoId が MOTETAIZU_VIDEO_ID と一致するもののみを取得
-					...(isSpecialCase
-						? { videoId: MOTETAIZU_VIDEO_ID }
-						: {
-								AND: [
-									bandName && bandName !== ''
-										? { title: { contains: bandName } }
-										: {},
-									liveName && liveName !== ''
-										? {
-												playlist: {
-													title: { contains: liveName },
-												},
-											}
-										: {},
-									tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-										? {
-												playlist: {
+												}
+											: {},
+										tag &&
+										!(tag.length === 1 && tag[0] === '') &&
+										tag.length > 0
+											? {
 													tags: {
 														hasSome: tag,
 													},
-												},
-											}
-										: {},
-									// 通常の条件の場合、videoId が MOTETAIZU_VIDEO_ID と一致しないものを取得
-									{ NOT: { videoId: MOTETAIZU_VIDEO_ID } },
-								],
-							}),
-				},
-				include: {
-					playlist: true,
-				},
-				orderBy: {
-					liveDate: sort === 'new' ? 'desc' : 'asc',
-				},
-				skip: (pageNumber - 1) * videoPerPageNumber,
-				take: videoPerPageNumber,
-			}),
-			prisma.video.count({
-				where: {
-					// 特別な条件の場合、videoId が MOTETAIZU_VIDEO_ID と一致するもののみをカウント
-					...(isSpecialCase
-						? { videoId: MOTETAIZU_VIDEO_ID }
-						: {
-								AND: [
-									bandName && bandName !== ''
-										? { title: { contains: bandName } }
-										: {},
-									liveName && liveName !== ''
-										? {
-												playlist: {
-													title: { contains: liveName },
-												},
-											}
-										: {},
-									tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-										? {
-												playlist: {
+												}
+											: {},
+										{ NOT: { playlistId: MOTETAIZU_PLAYLIST_ID } },
+									],
+								}),
+					},
+					include: {
+						videos: true,
+					},
+					orderBy: {
+						liveDate: sort === 'new' ? 'desc' : 'asc',
+					},
+					skip: (pageNumber - 1) * videoPerPageNumber,
+					take: videoPerPageNumber,
+				}),
+				prisma.playlist.count({
+					where: {
+						...(isSpecialCase
+							? { playlistId: MOTETAIZU_PLAYLIST_ID }
+							: {
+									AND: [
+										liveName && liveName !== ''
+											? { title: { contains: liveName } }
+											: {},
+										bandName && bandName !== ''
+											? {
+													videos: {
+														some: {
+															title: { contains: bandName },
+														},
+													},
+												}
+											: {},
+										tag &&
+										!(tag.length === 1 && tag[0] === '') &&
+										tag.length > 0
+											? {
 													tags: {
 														hasSome: tag,
 													},
-												},
-											}
-										: {},
-									// 通常の条件の場合、videoId が MOTETAIZU_VIDEO_ID と一致しないものをカウント
-									{ NOT: { videoId: MOTETAIZU_VIDEO_ID } },
-								],
-							}),
-				},
-			}),
-		])
+												}
+											: {},
+										{ NOT: { playlistId: MOTETAIZU_PLAYLIST_ID } },
+									],
+								}),
+					},
+				}),
+			])
 
-		results = videos.map((video) => ({
-			id: video.videoId,
-			title: video.title,
-			link: video.link,
-			tags: video.tags,
-			liveDate: video.liveDate,
-			liveOrBand: 'band',
-			playlistId: video.playlistId,
-			playlistTitle: video.playlist.title,
-		}))
-		totalCount = count
+			results = playlists.map((playlist) => ({
+				id: playlist.playlistId,
+				title: playlist.title,
+				link: playlist.link,
+				tags: playlist.tags,
+				liveDate: playlist.liveDate,
+				liveOrBand: 'live',
+				playlistId: undefined,
+				playlistTitle: undefined,
+				videoId: playlist.videos[0].videoId,
+			}))
+			totalCount = count
+		} else if (liveOrBand === 'band') {
+			const [videos, count] = await Promise.all([
+				prisma.video.findMany({
+					where: {
+						...(isSpecialCase
+							? { videoId: MOTETAIZU_VIDEO_ID }
+							: {
+									AND: [
+										bandName && bandName !== ''
+											? { title: { contains: bandName } }
+											: {},
+										liveName && liveName !== ''
+											? {
+													playlist: {
+														title: { contains: liveName },
+													},
+												}
+											: {},
+										tag &&
+										!(tag.length === 1 && tag[0] === '') &&
+										tag.length > 0
+											? {
+													tags: {
+														hasSome: tag,
+													},
+												}
+											: {},
+										{ NOT: { videoId: MOTETAIZU_VIDEO_ID } },
+									],
+								}),
+					},
+					include: {
+						playlist: true,
+					},
+					orderBy: {
+						liveDate: sort === 'new' ? 'desc' : 'asc',
+					},
+					skip: (pageNumber - 1) * videoPerPageNumber,
+					take: videoPerPageNumber,
+				}),
+				prisma.video.count({
+					where: {
+						...(isSpecialCase
+							? { videoId: MOTETAIZU_VIDEO_ID }
+							: {
+									AND: [
+										bandName && bandName !== ''
+											? { title: { contains: bandName } }
+											: {},
+										liveName && liveName !== ''
+											? {
+													playlist: {
+														title: { contains: liveName },
+													},
+												}
+											: {},
+										tag &&
+										!(tag.length === 1 && tag[0] === '') &&
+										tag.length > 0
+											? {
+													tags: {
+														hasSome: tag,
+													},
+												}
+											: {},
+										{ NOT: { videoId: MOTETAIZU_VIDEO_ID } },
+									],
+								}),
+					},
+				}),
+			])
+
+			results = videos.map((video) => ({
+				id: video.videoId,
+				title: video.title,
+				link: video.link,
+				tags: video.tags,
+				liveDate: video.liveDate,
+				liveOrBand: 'band',
+				playlistId: video.playlistId,
+				playlistTitle: video.playlist.title,
+			}))
+			totalCount = count
+		}
+
+		return { results, totalCount }
+	} catch (error) {
+		throw error
 	}
+}
 
-	return { results, totalCount }
+export const updateTags = async ({
+	id,
+	tags,
+	liveOrBand,
+}: {
+	id: string // playlistId or videoId
+	tags: string[] // 既存のtagを含めて全てのtagを更新する、新規のtagは配列の最後に追加する
+	liveOrBand: liveOrBand
+}): Promise<void> => {
+	try {
+		if (liveOrBand === 'live') {
+			await prisma.playlist.update({
+				where: { playlistId: id },
+				data: {
+					tags: tags,
+				},
+			})
+		} else if (liveOrBand === 'band') {
+			await prisma.video.update({
+				where: { videoId: id },
+				data: {
+					tags: tags,
+				},
+			})
+		}
+	} catch (error) {
+		throw error
+	}
 }

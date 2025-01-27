@@ -9,7 +9,7 @@ const Tags = ({
 }) => {
 	const effectiveSize = size || 'text-xs'
 	return (
-		<div className="flex flex-row gap-x-1">
+		<div className="flex flex-row flex-wrap gap-x-1">
 			{tags.map((tag: string) => (
 				<a
 					key={tag}
