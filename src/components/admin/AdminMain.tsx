@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 import { LuLockKeyhole } from 'react-icons/lu'
-import { FaRegUserCircle } from 'react-icons/fa'
+import { FaRegUserCircle, FaYoutube } from 'react-icons/fa'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import { RxCrossCircled } from 'react-icons/rx'
 
@@ -36,6 +36,14 @@ const AdminMain = () => {
 							</th>
 							<td>
 								<Link href="/admin/forbidden">部室予約禁止日設定</Link>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<FaYoutube size={25} />
+							</th>
+							<td>
+								<Link href="/admin/youtube">YouTube管理</Link>
 							</td>
 						</tr>
 						{/* <tr>

@@ -5,7 +5,7 @@ import LabelInputField from '@/components/atoms/LabelInputField'
 interface SelectFieldProps
 	extends React.SelectHTMLAttributes<HTMLSelectElement> {
 	register?: UseFormRegisterReturn
-	options: Record<string, string> // key-value形式で表示するオプションけど順番的にvalue-keyになってるね
+	options: Record<string, number> // key-value形式で表示するオプションけど順番的にvalue-keyになってるね
 	label?: string // ラベルをオプションで追加
 	isMultiple?: boolean // multiple選択を許可するかどうか
 	setValue?: UseFormSetValue<any> // react-hook-formのsetValue
@@ -26,7 +26,7 @@ interface SelectFieldProps
  * @param name フォームフィールドの名前
  * @param props その他のprops
  */
-const SelectField = ({
+const SelectFieldNumber = ({
 	register,
 	options,
 	label,
@@ -121,8 +121,8 @@ const SelectField = ({
 						選択してください
 					</option>
 					{Object.entries(options).map(([key, value]) => (
-						<option key={value} value={key}>
-							{value}
+						<option key={value} value={value}>
+							{key}
 						</option>
 					))}
 				</select>
@@ -136,4 +136,4 @@ const SelectField = ({
 	)
 }
 
-export default SelectField
+export default SelectFieldNumber

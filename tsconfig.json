@@ -28,7 +28,8 @@
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts",
-		"./src/**/*"
+		"./src/**/*",
+		"types/lite-youtube.d.ts"
 	],
 	"exclude": ["node_modules"]
 }
