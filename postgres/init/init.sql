@@ -169,8 +169,9 @@ CREATE TABLE "youtube_auth" (
 
 CREATE TABLE "playlist" (
   "playlist_id" TEXT PRIMARY KEY UNIQUE,
-  "title" TEXT,
-  "link" TEXT,
+  "title" TEXT NOT NULL,
+  "link" TEXT NOT NULL,
+  "live_date" TEXT NOT NULL,
   "tags" TEXT[] DEFAULT '{}',
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW()
@@ -178,9 +179,10 @@ CREATE TABLE "playlist" (
 
 CREATE TABLE "video" (
   "video_id" TEXT PRIMARY KEY UNIQUE,
-  "playlist_id" TEXT,
-  "title" TEXT,
-  "link" TEXT,
+  "playlist_id" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "link" TEXT NOT NULL,
+  "live_date" TEXT NOT NULL,
   "tags" TEXT[] DEFAULT '{}',
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),

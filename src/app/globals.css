@@ -39,6 +39,15 @@
 	.btn.btn-outline.btn-base:hover {
 		@apply border-base-300 text-base-300;
 	} */
+	input.btn.btn-tetiary:checked {
+		@apply bg-tetiary-light text-bg-white border-tetiary-light;
+	}
+	.btn.btn-tetiary.btn-outline {
+		@apply text-tetiary bg-bg-white border-tetiary;
+	}
+	.w-92 {
+		width: 23rem;
+	}
 }
 
 @font-face {

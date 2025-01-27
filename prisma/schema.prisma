@@ -186,6 +186,7 @@ model Playlist {
   playlistId String   @id @unique @map("playlist_id")
   title      String
   link       String
+  liveDate   String   @map("live_date")
   videos     Video[]
   tags       String[] @default([])
   createdAt  DateTime @default(now()) @map("created_at")
@@ -198,11 +199,12 @@ model Video {
   videoId     String   @id @map("video_id")
   title       String
   link        String
+  liveDate    String   @map("live_date")
   tags        String[] @default([])
   playlistId  String   @map("playlist_id")
   playlist    Playlist @relation(fields: [playlistId], references: [playlistId])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("video")
 }

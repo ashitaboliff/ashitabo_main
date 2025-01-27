@@ -83,7 +83,13 @@ const YoutubeManagement = ({
 				Youtube認証
 			</button>
 			<div className="flex flex-row gap-x-2">
-				<button className="btn btn-primary" onClick={onPlaylist}>
+				<button
+					className="btn btn-primary"
+					onClick={() => {
+						onPlaylist()
+						setError(undefined)
+					}}
+				>
 					{isLoading ? '処理中...' : 'Youtubeから取得'}
 				</button>
 				<button
@@ -176,7 +182,14 @@ const YoutubeManagement = ({
 				open={isSuccessPopupOpen}
 				onClose={() => setIsSuccessPopupOpen(false)}
 			>
-				<button onClick={() => setIsSuccessPopupOpen(false)}>閉じる</button>
+				<div className="flex flex-col gap-y-2 justify-center">
+					<button
+						className="btn btn-primary"
+						onClick={() => setIsSuccessPopupOpen(false)}
+					>
+						閉じる
+					</button>
+				</div>
 			</Popup>
 			<Popup
 				ref={popupRef}

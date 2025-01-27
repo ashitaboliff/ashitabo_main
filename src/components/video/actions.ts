@@ -3,12 +3,18 @@
 import { google, youtube_v3 } from 'googleapis'
 import { GaxiosResponse } from 'gaxios'
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
-import { Playlist, Token } from '@/types/YoutubeTypes'
+import {
+	Playlist,
+	Token,
+	YoutubeDetail,
+	YoutubeSearchQuery,
+} from '@/types/YoutubeTypes'
 import {
 	createPlaylist,
 	getPlaylist,
 	getAccessToken,
 	upsertAccessToken,
+	searchYoutubeDetails,
 } from '@/db/Youtube'
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
@@ -133,6 +139,13 @@ export async function createPlaylistAction(): Promise<ApiResponse<string>> {
 			const playlistTitle = playlist.snippet?.title || 'No Title'
 			const playlistLink = `https://www.youtube.com/playlist?list=${playlistId}`
 
+			const dateMatch = playlistTitle.match(/\d{4}\/\d{1,2}\/\d{1,2}/)
+			let liveDate = ''
+			if (dateMatch) {
+				const [year, month, day] = dateMatch[0].split('/').map(Number)
+				liveDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+			}
+
 			const allVideos: youtube_v3.Schema$PlaylistItem[] = []
 			let nextVidPageToken: string | undefined = undefined
 
@@ -156,12 +169,14 @@ export async function createPlaylistAction(): Promise<ApiResponse<string>> {
 				link: `https://www.youtube.com/watch?v=${video.snippet?.resourceId?.videoId}`,
 				videoId: video.snippet?.resourceId?.videoId || '',
 				playlistId,
+				liveDate: liveDate,
 			}))
 
 			results.push({
 				playlistId,
 				title: playlistTitle,
 				link: playlistLink,
+				liveDate,
 				videos,
 			})
 		}
@@ -178,6 +193,18 @@ export async function getPlaylistAction(): Promise<ApiResponse<Playlist[]>> {
 	try {
 		const playlist = await getPlaylist()
 		return { status: StatusCode.OK, response: playlist }
+	} catch (error) {
+		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	}
+}
+
+export async function searchYoutubeDetailsAction(
+	query: YoutubeSearchQuery,
+): Promise<ApiResponse<{ results: YoutubeDetail[]; totalCount: number }>> {
+	try {
+		console.log(query)
+		const results = await searchYoutubeDetails(query)
+		return { status: StatusCode.OK, response: results }
 	} catch (error) {
 		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
 	}

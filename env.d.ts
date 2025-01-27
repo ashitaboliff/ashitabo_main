@@ -18,5 +18,7 @@ declare namespace NodeJS {
 		YOUTUBE_CLIENT_SECRET: string
 		YOUTUBE_REDIRECT_URI: string
 		YOUTUBE_API_KEY: string
+		MOTETAIZU_PLAYLIST_ID: string
+		MOTETAIZU_VIDEO_ID: string
 	}
 }
