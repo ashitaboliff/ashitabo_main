@@ -18,6 +18,7 @@ import {
 	searchYoutubeDetails,
 	getPlaylistById,
 	getVideoById,
+	getPlaylist,
 	updateTags,
 } from '@/db/Youtube'
 import { revalidateTag } from 'next/cache'
@@ -233,6 +234,15 @@ export async function getVideoByIdAction(
 			}
 		}
 		return { status: StatusCode.OK, response: video }
+	} catch (error) {
+		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	}
+}
+
+export async function getPlaylistAction(): Promise<ApiResponse<Playlist[]>> {
+	try {
+		const playlists = await getPlaylist()
+		return { status: StatusCode.OK, response: playlists }
 	} catch (error) {
 		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
 	}

@@ -344,6 +344,26 @@ export async function searchYoutubeDetails(
 	}
 }
 
+export const getPlaylist = async () => {
+	async function getPlaylist() {
+		try {
+			const playlists = await prisma.playlist.findMany({
+				include: {
+					videos: true,
+				},
+			})
+			return playlists
+		} catch (error) {
+			throw error
+		}
+	}
+	const playlists = unstable_cache(getPlaylist, [], {
+		tags: ['youtube'],
+	})
+	const result = await playlists()
+	return result
+}
+
 export const updateTags = async ({
 	id,
 	tags,
