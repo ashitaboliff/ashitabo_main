@@ -66,45 +66,49 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 		playlists: Playlist[],
 		batchSize: number,
 	) => {
-		for (let i = 0; i < playlists.length; i += batchSize) {
-			const batch = playlists.slice(i, i + batchSize)
-			await prisma.$transaction(async (prisma) => {
-				for (const playlist of batch) {
-					await prisma.playlist.upsert({
-						where: { playlistId: playlist.playlistId },
-						update: {
-							title: playlist.title,
-							link: playlist.link,
-							liveDate: playlist.liveDate,
-						},
-						create: {
-							playlistId: playlist.playlistId,
-							title: playlist.title,
-							link: playlist.link,
-							liveDate: playlist.liveDate,
-						},
-					})
-
-					for (const video of playlist.videos) {
-						await prisma.video.upsert({
-							where: { videoId: video.videoId },
+		try {
+			for (let i = 0; i < playlists.length; i += batchSize) {
+				const batch = playlists.slice(i, i + batchSize)
+				await prisma.$transaction(async (prisma) => {
+					for (const playlist of batch) {
+						await prisma.playlist.upsert({
+							where: { playlistId: playlist.playlistId },
 							update: {
-								title: video.title,
-								link: video.link,
-								playlistId: playlist.playlistId,
-								liveDate: video.liveDate,
+								title: playlist.title,
+								link: playlist.link,
+								liveDate: playlist.liveDate,
 							},
 							create: {
-								videoId: video.videoId,
-								title: video.title,
-								link: video.link,
-								liveDate: video.liveDate,
 								playlistId: playlist.playlistId,
+								title: playlist.title,
+								link: playlist.link,
+								liveDate: playlist.liveDate,
 							},
 						})
+
+						for (const video of playlist.videos) {
+							await prisma.video.upsert({
+								where: { videoId: video.videoId },
+								update: {
+									title: video.title,
+									link: video.link,
+									playlistId: playlist.playlistId,
+									liveDate: video.liveDate,
+								},
+								create: {
+									videoId: video.videoId,
+									title: video.title,
+									link: video.link,
+									liveDate: video.liveDate,
+									playlistId: playlist.playlistId,
+								},
+							})
+						}
 					}
-				}
-			})
+				})
+			}
+		} catch (error) {
+			throw error
 		}
 	}
 
