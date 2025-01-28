@@ -5,7 +5,7 @@ import LabelInputField from '@/components/atoms/LabelInputField'
 interface SelectFieldProps
 	extends React.SelectHTMLAttributes<HTMLSelectElement> {
 	register?: UseFormRegisterReturn
-	options: Record<string, string> // key-value形式で表示するオプション
+	options: Record<string, string> // key-value形式で表示するオプションけど順番的にvalue-keyになってるね
 	label?: string // ラベルをオプションで追加
 	isMultiple?: boolean // multiple選択を許可するかどうか
 	setValue?: UseFormSetValue<any> // react-hook-formのsetValue

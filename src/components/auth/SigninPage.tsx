@@ -38,7 +38,10 @@ const SigninPage = () => {
 						<Image src="/login.jpg" alt="login" width={300} height={250} />
 					</figure>
 					<div className="flex flex-col items-center justify-center gap-y-2 p-4">
-						<div className={`text-3xl ${nicomoji.className}`}>ログイン</div>
+						<div className={`text-3xl ${nicomoji.className}`}>利用登録</div>
+						<div className="text-sm">
+							あしたぼの部員、およびOB,OGはこちらから利用登録、もしくはログインを行ってください。
+						</div>
 						<div
 							className={`btn btn-primary`}
 							onClick={async () =>
@@ -48,7 +51,7 @@ const SigninPage = () => {
 								})
 							}
 						>
-							LINEでログイン
+							LINEで登録
 						</div>
 					</div>
 				</div>

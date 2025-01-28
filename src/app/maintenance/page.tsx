@@ -10,7 +10,7 @@ export default function Maintenance() {
 		<div className="flex flex-col items-center justify-center text-center">
 			<div className="mb-8">
 				<Image
-					src="/maintenance.png"
+					src="/utils/test.jpg"
 					alt="メンテナンス中"
 					width={400}
 					height={225}

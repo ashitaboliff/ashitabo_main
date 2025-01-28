@@ -31,9 +31,9 @@ END$$;
 CREATE TABLE "user" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
   "name" TEXT,
-  "user_id" TEXT UNIQUE,
+  "user_id" TEXT,
   "password" TEXT,
-  "email" TEXT UNIQUE,
+  "email" TEXT,
   "email_verified" TIMESTAMP,
   "image" TEXT,
   "role" "AccountRole" DEFAULT 'USER',
@@ -71,7 +71,7 @@ CREATE TABLE "ex_booking" (
 -- Create BuyBookings table
 CREATE TABLE "buy_booking" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-  "booking_id" TEXT UNIQUE,
+  "booking_id" TEXT,
   "user_id" TEXT,
   "status" "BuyBookingStatus" DEFAULT 'UNPAID',
   "created_at" TIMESTAMP DEFAULT NOW(),
@@ -86,15 +86,26 @@ CREATE TABLE "buy_booking" (
 -- Create Profiles table
 CREATE TABLE "profile" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-  "user_id" TEXT UNIQUE,
+  "user_id" TEXT,
   "name" TEXT,
-  "student_id" TEXT UNIQUE,
+  "student_id" TEXT,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),
   "expected" TEXT,
   "role" "Role",
   "part" "Part"[],
   "is_deleted" BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
+);
+
+CREATE TABLE "user_gacha" (
+  "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
+  "user_id" TEXT,
+  "gacha_id" TEXT[],
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  "is_deleted" BOOLEAN DEFAULT FALSE,
+
   FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );
 
@@ -119,7 +130,7 @@ CREATE TABLE "account" (
 
 -- Create Sessions table
 CREATE TABLE "session" (
-  "session_token" TEXT UNIQUE NOT NULL,
+  "session_token" TEXT NOT NULL,
   "user_id" TEXT NOT NULL,
   "expires" TIMESTAMP NOT NULL,
   "created_at" TIMESTAMP DEFAULT NOW(),
@@ -144,3 +155,36 @@ CREATE TABLE "pad_lock" (
   "password" TEXT NOT NULL,
   "is_deleted" BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE "youtube_auth" (
+  "google_id" TEXT PRIMARY KEY,
+  "email" TEXT,
+  "access_token" TEXT,
+  "refresh_token" TEXT,
+  "token_expiry" TIMESTAMP,
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  "is_deleted" BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE "playlist" (
+  "playlist_id" TEXT PRIMARY KEY,
+  "title" TEXT NOT NULL,
+  "link" TEXT NOT NULL,
+  "live_date" TEXT NOT NULL,
+  "tags" TEXT[] DEFAULT '{}',
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE "video" (
+  "video_id" TEXT PRIMARY KEY,
+  "playlist_id" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "link" TEXT NOT NULL,
+  "live_date" TEXT NOT NULL,
+  "tags" TEXT[] DEFAULT '{}',
+  "created_at" TIMESTAMP DEFAULT NOW(),
+  "updated_at" TIMESTAMP DEFAULT NOW(),
+  FOREIGN KEY ("playlist_id") REFERENCES "playlist" ("playlist_id") ON DELETE CASCADE
+)

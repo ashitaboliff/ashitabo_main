@@ -6,6 +6,7 @@ import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction } from './actions'
 import { BookingLog, BuyBookingStatusMap } from '@/types/BookingTypes'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
+import Pagination from '@/components/atoms/Pagination'
 import SelectField from '@/components/atoms/SelectField'
 
 import { TiDeleteOutline } from 'react-icons/ti'
@@ -93,17 +94,11 @@ const BookingLogs = ({
 						))}
 					</tbody>
 				</table>
-				<div className="join justify-center">
-					{Array.from({ length: pageMax }, (_, i) => (
-						<button
-							key={i}
-							className={`join-item btn ${currentPage === i + 1 ? ' btn-primary' : 'btn-outline'}`}
-							onClick={() => setCurrentPage(i + 1)}
-						>
-							{i + 1}
-						</button>
-					))}
-				</div>
+				<Pagination
+					currentPage={currentPage}
+					totalPages={pageMax}
+					onPageChange={(page) => setCurrentPage(page)}
+				/>
 
 				<Popup
 					ref={popupRef}

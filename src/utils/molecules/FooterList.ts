@@ -7,10 +7,6 @@ const list = [
 				title: 'ホームページ',
 			},
 			{
-				url: '/video',
-				title: 'ライブ映像',
-			},
-			{
 				url: '/booking',
 				title: '部室予約ページ',
 			},

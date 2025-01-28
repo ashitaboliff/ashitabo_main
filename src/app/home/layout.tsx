@@ -1,4 +1,13 @@
 import type { Metadata } from 'next'
+import LocalFont from 'next/font/local'
+import HomePageHeader from '@/components/home/HomePageHeader'
+
+const gkktt = LocalFont({
+	src: '../../lib/fonts/851Gkktt_005.woff',
+	weight: 'normal',
+	style: 'normal',
+	variable: '--851-gkktt',
+})
 
 export const metadata: Metadata = {
 	title: 'あしたぼホームページ',
@@ -11,5 +20,10 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode
 }>) {
-	return <>{children}</>
+	return (
+		<div className={gkktt.className}>
+			<HomePageHeader />
+			{children}
+		</div>
+	)
 }
