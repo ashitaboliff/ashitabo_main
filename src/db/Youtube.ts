@@ -108,7 +108,7 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 		}
 	}
 
-	const batchSize = 5
+	const batchSize = 3
 	await createPlaylistBatch(playlists, batchSize)
 }
 
