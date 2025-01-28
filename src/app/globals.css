@@ -42,6 +42,9 @@
 	input.btn.btn-tetiary:checked {
 		@apply bg-tetiary-light text-bg-white border-tetiary-light;
 	}
+	input.btn.btn-tetiary:checked:hover {
+		@apply bg-tetiary text-bg-white border-tetiary;
+	}
 	.btn.btn-tetiary.btn-outline {
 		@apply text-tetiary bg-bg-white border-tetiary;
 	}
@@ -53,6 +56,22 @@
 	}
 	.h-52 {
 		height: 13rem;
+	}
+	.btn.btn-offwhite {
+		@apply bg-bg-white text-bg-dark border-none bg-opacity-60;
+	}
+	.btn.btn-twitter {
+		@apply bg-bg-dark text-bg-white border-none;
+	}
+	.btn.btn-instagram {
+		@apply text-bg-white border-none;
+		background: linear-gradient(
+			45deg,
+			#fed475 0%,
+			#e53d5d 50%,
+			#c23186 70%,
+			#9c38bb 100%
+		);
 	}
 }
 

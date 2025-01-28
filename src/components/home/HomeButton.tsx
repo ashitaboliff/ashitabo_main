@@ -40,7 +40,7 @@ const HomeButton = ({ device }: { device: string }) => {
 					<HomePageButton
 						color="lightyellow"
 						text="ライブ情報"
-						link="/live"
+						link="/home/live"
 						patting="pt-4"
 					/>
 					<HomePageButton
