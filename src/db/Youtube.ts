@@ -61,46 +61,46 @@ export const upsertAccessToken = async ({
 	}
 }
 
-export const createPlaylist = async (playlist: Playlist[]) => {
-	try {
-		for (const item of playlist) {
-			const playlist = await prisma.playlist.upsert({
-				where: { playlistId: item.playlistId },
+export const createPlaylistBatch = async (playlists: Playlist[]) => {
+	await Promise.all(
+		playlists.map(async (playlist) => {
+			await prisma.playlist.upsert({
+				where: { playlistId: playlist.playlistId },
 				update: {
-					title: item.title,
-					link: item.link,
-					liveDate: item.liveDate,
+					title: playlist.title,
+					link: playlist.link,
+					liveDate: playlist.liveDate,
 				},
 				create: {
-					playlistId: item.playlistId,
-					title: item.title,
-					link: item.link,
-					liveDate: item.liveDate,
+					playlistId: playlist.playlistId,
+					title: playlist.title,
+					link: playlist.link,
+					liveDate: playlist.liveDate,
 				},
 			})
 
-			for (const video of item.videos) {
-				await prisma.video.upsert({
-					where: { videoId: video.videoId },
-					update: {
-						title: video.title,
-						link: video.link,
-						playlistId: playlist.playlistId,
-						liveDate: video.liveDate,
-					},
-					create: {
-						videoId: video.videoId,
-						title: video.title,
-						link: video.link,
-						liveDate: video.liveDate,
-						playlistId: playlist.playlistId,
-					},
-				})
-			}
-		}
-	} catch (error) {
-		throw error
-	}
+			await Promise.all(
+				playlist.videos.map(async (video) => {
+					await prisma.video.upsert({
+						where: { videoId: video.videoId },
+						update: {
+							title: video.title,
+							link: video.link,
+							playlistId: playlist.playlistId,
+							liveDate: video.liveDate,
+						},
+						create: {
+							videoId: video.videoId,
+							title: video.title,
+							link: video.link,
+							liveDate: video.liveDate,
+							playlistId: playlist.playlistId,
+						},
+					})
+				}),
+			)
+		}),
+	)
 }
 
 export const getPlaylistById = async (id: string) => {

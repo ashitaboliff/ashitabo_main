@@ -12,7 +12,7 @@ import {
 	liveOrBand,
 } from '@/types/YoutubeTypes'
 import {
-	createPlaylist,
+	createPlaylistBatch,
 	getAccessToken,
 	upsertAccessToken,
 	searchYoutubeDetails,
@@ -186,7 +186,7 @@ export async function createPlaylistAction(): Promise<ApiResponse<string>> {
 			})
 		}
 
-		await createPlaylist(results)
+		await createPlaylistBatch(results)
 		revalidateTag('youtube')
 		return { status: StatusCode.OK, response: 'Playlist created successfully' }
 	} catch (error) {
