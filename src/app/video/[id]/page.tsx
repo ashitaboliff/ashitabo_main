@@ -10,9 +10,6 @@ import { getSession } from '@/app/actions'
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const session = await getSession()
-	if (!session) {
-		return notFound()
-	}
 	const id = (await params).id
 	const liveOrBand = id.startsWith('PL') && id.length > 12 ? 'live' : 'band'
 	if (liveOrBand === 'live') {

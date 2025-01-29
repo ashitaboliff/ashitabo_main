@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Controller, UseFormSetValue } from 'react-hook-form'
 import { HiMiniXMark } from 'react-icons/hi2'
 
@@ -33,6 +33,13 @@ const TagInputField = ({
 	) // タグ入力フィールドの数
 	const [tags, setTags] = useState<string[]>(defaultValue) // タグの状態
 
+	// タグの変更を監視し、setValueを呼び出す
+	useEffect(() => {
+		if (setValue) {
+			setValue(name, tags)
+		}
+	}, [tags, setValue, name])
+
 	// タグ入力フィールドを追加
 	const addTagField = () => {
 		setTagCount((prev) => prev + 1)
@@ -43,10 +50,6 @@ const TagInputField = ({
 		setTagCount((prev) => prev - 1)
 		setTags((prevTags) => {
 			const newTags = prevTags.filter((_, i) => i !== index)
-			// react-hook-form の値を更新（setValue が存在する場合のみ）
-			if (setValue) {
-				setValue(name, newTags)
-			}
 			return newTags
 		})
 	}
@@ -56,10 +59,6 @@ const TagInputField = ({
 		setTags((prevTags) => {
 			const newTags = [...prevTags]
 			newTags[index] = value
-			// react-hook-form の値を更新（setValue が存在する場合のみ）
-			if (setValue) {
-				setValue(name, newTags)
-			}
 			return newTags
 		})
 	}
