@@ -120,6 +120,11 @@ const Layout = ({ className }: { className: string }) => {
 							<RxCountdownTimer /> 予約ログ
 						</Link>
 					</li>
+					<li onClick={handleMenuClose} className="text-lg">
+						<Link href="/auth/signin">
+							<FaRegUserCircle /> 利用登録
+						</Link>
+					</li>
 				</ul>
 			</div>
 		</div>

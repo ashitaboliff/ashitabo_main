@@ -28,13 +28,13 @@ export function DateToDayISOstring(date: Date): string {
 }
 
 /**
- * 今年から10年前まで、5年後までの "XX年度" のオブジェクトを生成する
+ * 今年から10年前まで、7年後までの "XX年度" のオブジェクトを生成する
  * @returns "XX年度"のオブジェクト
  */
 export const generateFiscalYearObject = (): Record<string, string> => {
 	const currentYear = generateAcademicYear() // 現在の年を取得
 	const startYear = currentYear - 10 // 10年前
-	const endYear = currentYear + 5 // 5年後
+	const endYear = currentYear + 7 // 7年後
 
 	// "XX年度"のオブジェクトを生成
 	const fiscalYearObject: Record<string, string> = {}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
@@ -89,6 +89,39 @@ const SigninSetting = () => {
 
 	const watchPart = watch('part', [])
 	const watchRole = watch('role')
+	const watchStudentId = watch('student_id')
+
+	// student_idが変更されたときにexpectedのdefaultValueを設定
+	useEffect(() => {
+		if (watchStudentId && watchRole === 'STUDENT') {
+			const yearPrefix = watchStudentId.substring(0, 2) // 最初の2桁を取得
+			const alphabet = watchStudentId.charAt(2).toUpperCase() // 3文字目のアルファベットを取得
+
+			let yearOffset = 4 // デフォルトのオフセット
+			switch (alphabet) {
+				case 'T' || 't':
+					yearOffset = 5
+					break
+				case 'E' || 'e':
+					yearOffset = 3
+					break
+				case 'G' || 'g':
+				case 'F' || 'f':
+				case 'C' || 'c':
+					yearOffset = 4
+					break
+				default:
+					yearOffset = 4
+			}
+
+			const expectedYearKey = `${(parseInt(yearPrefix) + yearOffset) % 100}` // 年度を計算
+
+			// expectedYearオブジェクトに存在するか確認
+			if (expectedYear[expectedYearKey]) {
+				setValue('expected', expectedYearKey) // expectedフィールドに値を設定
+			}
+		}
+	}, [watchStudentId, watchRole, setValue])
 
 	const onSubmit = async (data: any) => {
 		setIsLoading(true)
