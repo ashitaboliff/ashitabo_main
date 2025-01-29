@@ -586,7 +586,7 @@ export const getBuyBookingByUserId = async (userId: string) => {
 	}
 
 	const buyBookingCache = unstable_cache(getBuyBookingByUserId, [userId], {
-		tags: [`booking-${userId}`, 'booking'],
+		tags: [`booking-${userId}`, 'booking', 'buyBooking'],
 	})
 	const buyBookingCacheData = await buyBookingCache(userId)
 	return buyBookingCacheData
@@ -615,7 +615,7 @@ export const getBuyBookingByExpire = async (expireAt: string) => {
 	}
 
 	const buyBookingCache = unstable_cache(getBuyBookingByExpire, [expireAt], {
-		tags: [`booking-${expireAt}`, 'booking'],
+		tags: [`booking-${expireAt}`, 'booking', 'buyBooking'],
 	})
 	const buyBookingCacheData = await buyBookingCache(expireAt)
 	return buyBookingCacheData

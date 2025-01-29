@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -110,10 +110,10 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 			let yearOffset = 4 // デフォルトのオフセット
 			switch (alphabet) {
 				case 'T' || 't':
-					yearOffset = 5
+					yearOffset = 6
 					break
 				case 'E' || 'e':
-					yearOffset = 3
+					yearOffset = 4
 					break
 				case 'G' || 'g':
 				case 'F' || 'f':
@@ -162,7 +162,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center p-4">
+		<div className="flex flex-col items-center justify-center p-4 bg-bg-white shadow-lg rounded-lg">
 			<h1 className="text-2xl font-bold">プロフィール編集</h1>
 			<form
 				className="flex flex-col space-y-4 w-full max-w-xs"
@@ -246,6 +246,9 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 							}
 							errorMessage={errors.expected?.message}
 						/>
+						<p className="text-sm">
+							※学籍番号から工学部生は院進を想定し、留年を想定していない値が自動計算されます。変更したい場合は編集を行ってください
+						</p>
 					</>
 				)}
 

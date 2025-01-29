@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import LocalFont from 'next/font/local'
 import './globals.css'
+import ProgressBarProvider from '@/components/atoms/ProgressBarProvider'
 import Header from '@/components/molecules/Header'
 import Footer from '@/components/molecules/Footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
@@ -66,13 +67,15 @@ export default function RootLayout({
 					}}
 				/>
 				<NextAuthProvider>
-					<div className="relative">
-						<Header className={nicomoji.className} />
-						<LiffProvider liffId={process.env.LIFF_ID ?? ''}>
-							{children}
-						</LiffProvider>
-						<Footer />
-					</div>
+					<ProgressBarProvider>
+						<div className="relative">
+							<Header className={nicomoji.className} />
+							<LiffProvider liffId={process.env.LIFF_ID ?? ''}>
+								{children}
+							</LiffProvider>
+							<Footer />
+						</div>
+					</ProgressBarProvider>
 				</NextAuthProvider>
 			</body>
 			<GoogleAnalytics gaId={process.env.GA_ID ?? ''} />

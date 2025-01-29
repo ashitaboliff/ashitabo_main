@@ -233,6 +233,15 @@ export const updateBuyBooking = async ({
 				status: state,
 			},
 		})
+
+		await prisma.booking.update({
+			where: {
+				id: bookingId,
+			},
+			data: {
+				is_deleted: state === 'EXPIRED',
+			},
+		})
 	} catch (error) {
 		throw error
 	}

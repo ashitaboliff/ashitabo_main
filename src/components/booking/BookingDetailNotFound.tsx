@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import InfoMessage from '@/components/atoms/InfoMessage'
 
 /**

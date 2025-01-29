@@ -2,10 +2,9 @@
 
 import SigninPage from '@/components/auth/SigninPage'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import { padLockCookieAction } from '@/components/auth/actions'
 
 /**
- * cookieがあって、セッションがない場合、このページを表示
+ * セッションがない場合、このページを表示
  */
 const Signin = async () => {
 	const session = await getSession()
@@ -13,14 +12,10 @@ const Signin = async () => {
 
 	if (isSession === 'profile') {
 		await redirectFrom('/user', '/auth/signin')
+		return null
 	} else if (isSession === 'session') {
 		await redirectFrom('/auth/signin/setting', '/auth/signin')
-	} else {
-		if ((await padLockCookieAction()) === 'unlocked') {
-			return <SigninPage />
-		} else {
-			await redirectFrom('/auth/padlock', '/auth/signin')
-		}
+		return null
 	}
 
 	return <SigninPage />

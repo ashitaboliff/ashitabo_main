@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import { useForm } from 'react-hook-form'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'

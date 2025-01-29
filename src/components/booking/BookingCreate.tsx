@@ -43,6 +43,7 @@ export default function NewBooking({
 	session: Session
 }) {
 	const router = useRouter()
+	const [loading, setLoading] = useState(false)
 	const [noticePopupOpen, setNoticePopupOpen] = useState(false)
 	const [addCalendarPopupOpen, setAddCalendarPopupOpen] = useState(false)
 	const [error, setError] = useState<ErrorType>()
@@ -75,6 +76,7 @@ export default function NewBooking({
 	const onSubmit = async (data: any) => {
 		setNoticePopupOpen(false)
 		setAddCalendarPopupOpen(false)
+		setLoading(true)
 		const reservationData = {
 			bookingDate: DateToDayISOstring(bookingDate),
 			bookingTime: Number(bookingTime),
@@ -108,6 +110,7 @@ export default function NewBooking({
 					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
 			})
 		}
+		setLoading(false)
 	}
 
 	return (
@@ -159,8 +162,12 @@ export default function NewBooking({
 						</div>
 					)}
 					<div className="flex justify-center space-x-4">
-						<button type="submit" className="btn btn-primary">
-							予約する
+						<button
+							type="submit"
+							className="btn btn-primary"
+							disabled={loading}
+						>
+							{loading ? '処理中...' : '予約する'}
 						</button>
 						<button
 							type="button"

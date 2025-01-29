@@ -57,6 +57,9 @@
 	.h-52 {
 		height: 13rem;
 	}
+	.h-120 {
+		height: 30rem;
+	}
 	.btn.btn-offwhite {
 		@apply bg-bg-white text-bg-dark border-none bg-opacity-60;
 	}

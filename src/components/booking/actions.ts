@@ -365,7 +365,6 @@ export async function createBookingAction({
 		}
 
 		const BanBooking = await getBanBookingByDate(booking.bookingDate)
-		console.log(BanBooking)
 		if (BanBooking.length > 0) {
 			BanBooking.forEach((banBooking) => {
 				if (banBooking.end_time === null) {
@@ -405,6 +404,7 @@ export async function createBookingAction({
 		})
 
 		revalidateTag('booking')
+		revalidateTag('buyBooking')
 
 		return { status: StatusCode.CREATED, response: '予約が完了しました' }
 	} catch (error) {
