@@ -4,47 +4,36 @@ import { useState, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useRouter } from 'next/navigation'
-import Loading from '@/components/atoms/Loading'
+import { useRouter } from 'next-nprogress-bar'
+import { Session } from 'next-auth'
+import { Booking } from '@/types/BookingTypes'
+import { authBookingAction } from './actions'
+import { ErrorType } from '@/types/ResponseTypes'
+import InfoMessage from '@/components/atoms/InfoMessage'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import { Booking } from '@/types/BookingTypes'
-
-import {
-	Button,
-	Typography,
-	Container,
-	Stack,
-	Box,
-	Alert,
-	FormControl,
-	InputLabel,
-	IconButton,
-	InputAdornment,
-	OutlinedInput,
-} from '@mui/material'
-import { MdVisibilityOff, MdVisibility } from 'react-icons/md'
+import PasswordInputField from '@/components/molecules/PasswordInputField'
+import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 
 const passschema = yup.object({
 	password: yup.string().required('パスワードを入力してください'),
 })
 
-interface Props {
-	id: string
-	isAuth: boolean
+const BookingEditAuth = ({
+	handleSetAuth,
+	calendarTime,
+	bookingDetail,
+	session,
+}: {
 	handleSetAuth: (isAuth: boolean) => void
-}
-
-const BookingEditAuth = (props: Props) => {
+	calendarTime: string[]
+	bookingDetail: Booking
+	session: Session
+}) => {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [showPassword, setShowPassword] = useState<boolean>(false)
-	const [bookingDetail, setBookingDetail] = useState<Booking>()
-	const [isErrorMessages, setIsErrorMessages] = useState<string | undefined>(
-		undefined,
-	)
-	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false)
-	const errorPopupRef = useRef<PopupRef>(undefined)
+	const [error, setError] = useState<ErrorType>()
 	const {
 		register,
 		handleSubmit,
@@ -60,174 +49,90 @@ const BookingEditAuth = (props: Props) => {
 		event.preventDefault()
 	}
 
-	const fetchBookingDetail = async () => {
-		setIsLoading(true)
-		setIsErrorMessages(undefined)
-		setErrorPopupOpen(false)
-		try {
-			const response = await fetch(`/api/booking/detail?id=${props.id}`)
-			if (response.ok) {
-				const data = await response.json()
-				setBookingDetail(data.response)
-			} else {
-				setErrorPopupOpen(true)
-				setIsErrorMessages('予約情報が見つかりませんでした')
-			}
-		} catch (error) {
-			setErrorPopupOpen(true)
-			setIsErrorMessages('エラーが発生しました')
-		}
-		setIsLoading(false)
-	}
-
 	const onSubmit = async (data: { password: string }) => {
 		setIsLoading(true)
-		setIsErrorMessages(undefined)
-		setErrorPopupOpen(false)
 		try {
-			const response = await fetch('/api/booking/auth', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					booking_id: props.id,
-					password: data.password,
-				}),
+			const response = await authBookingAction({
+				bookingId: bookingDetail.id,
+				password: data.password,
 			})
-			if (response.ok) {
-				props.handleSetAuth(true)
-				router.push(`/booking/edit?id=${props.id}`)
+			if (response.status === 200) {
+				handleSetAuth(true)
+				router.push(`/booking/${bookingDetail.id}/edit`)
 			} else {
-				setErrorPopupOpen(true)
-				setIsErrorMessages('パスワードが違います')
+				setError(response)
 			}
-		} catch (error) {
-			setErrorPopupOpen(true)
-			setIsErrorMessages('エラーが発生しました')
+		} catch (e) {
+			setError({
+				status: 500,
+				response:
+					'このエラーが出た際はわたべに問い合わせてください。' + String(e),
+			})
 		}
-		setIsLoading(false)
 	}
 
 	useEffect(() => {
 		setIsLoading(false)
-		props.handleSetAuth(false)
-		fetchBookingDetail()
+		handleSetAuth(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	useEffect(() => {
-		props.handleSetAuth(false)
-		fetchBookingDetail()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props])
-
-	if (isLoading) {
-		return <Loading />
-	}
-
 	if (!bookingDetail) {
-		return (
-			<Box className="p-4 flex flex-col items-center justify-center">
-				<Box className="p-4 flex flex-col justify-center gap-2">
-					<Alert severity="error">エラー</Alert>
-					<Typography variant="body1">
-						予約情報が見つかりませんでした。
-						<br />
-						ホームに戻ってもう一度試してください。
-					</Typography>
-					<Button
-						variant="outlined"
-						color="inherit"
-						onClick={() => router.push('/booking')}
-					>
-						ホームに戻る
-					</Button>
-				</Box>
-			</Box>
-		)
+		return <BookingDetailNotFound />
 	}
 
 	return (
 		<>
-			<Typography variant="body1" className="text-center">
-				予約を編集するためにパスワードを入力してください。
-			</Typography>
-			<Container className="flex justify-center flex-col">
-				<Typography variant="h6" className="text-center">
-					予約詳細
-				</Typography>
-				<Stack spacing={2} direction="row" className="flex justify-center">
+			<p className="text-lg text-center">
+				予約編集用のパスワードを入力してください。
+			</p>
+			<div className="flex justify-center flex-col">
+				<div className="flex justify-center">
 					<BookingDetailBox
-						booking_date={bookingDetail.booking_date}
-						booking_time={bookingDetail.booking_time}
-						regist_name={bookingDetail.regist_name}
-						name={bookingDetail.name}
+						props={{
+							bookingDate: bookingDetail.bookingDate,
+							bookingTime: bookingDetail.bookingTime,
+							registName: bookingDetail.registName,
+							name: bookingDetail.name,
+						}}
+						calendarTime={calendarTime}
 					/>
-				</Stack>
+				</div>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
-					className="flex flex-col items-center"
+					className="flex flex-col items-center mt-4"
 				>
-					<FormControl variant="outlined" className="w-2/5 m-2">
-						<InputLabel htmlFor="password">パスワード</InputLabel>
-						<OutlinedInput
-							id="password"
-							label="パスワード"
-							type={showPassword ? 'text' : 'password'}
-							{...register('password')}
-							endAdornment={
-								<InputAdornment position="end">
-									<IconButton
-										onClick={handleClickShowPassword}
-										onMouseDown={handleMouseDownPassword}
-										edge="end"
-									>
-										{showPassword ? <MdVisibilityOff /> : <MdVisibility />}
-									</IconButton>
-								</InputAdornment>
-							}
+					<div className="form-control w-full max-w-xs my-2">
+						<label className="label" htmlFor="password">
+							<span className="label-text">パスワード</span>
+						</label>
+						<PasswordInputField
+							register={register('password')}
+							showPassword={showPassword}
+							handleClickShowPassword={handleClickShowPassword}
+							handleMouseDownPassword={handleMouseDownPassword}
+							errorMessage={errors.password?.message}
 						/>
-					</FormControl>
-					{errors.password && (
-						<Alert severity="error">{errors.password.message}</Alert>
-					)}
-					<Stack
-						spacing={2}
-						direction="row"
-						className="flex justify-center m-2"
-					>
-						<Button type="submit" variant="contained" color="success">
+					</div>
+					<div className="flex justify-center mt-4 space-x-4">
+						<button type="submit" className="btn btn-success">
 							ログイン
-						</Button>
-						<Button
-							variant="outlined"
-							color="inherit"
-							onClick={() => router.push(`/booking/detail?id=${props.id}`)}
+						</button>
+						<button
+							type="button"
+							className="btn btn-outline"
+							onClick={() => router.push(`/booking/${bookingDetail.id}`)}
 						>
 							予約詳細に戻る
-						</Button>
-					</Stack>
+						</button>
+					</div>
 				</form>
-			</Container>
-			<Popup
-				ref={errorPopupRef}
-				title="エラー"
-				maxWidth="sm"
-				open={errorPopupOpen}
-				onClose={() => setErrorPopupOpen(false)}
-			>
-				<Box className="p-4 flex flex-col justify-center gap-2">
-					<Alert severity="error">{isErrorMessages}</Alert>
-					<Button
-						variant="outlined"
-						color="inherit"
-						onClick={() => setErrorPopupOpen(false)}
-					>
-						閉じる
-					</Button>
-				</Box>
-			</Popup>
+				{error && (
+					<p className="text-sm text-error text-center">
+						エラーコード{error.status}:{error.response}
+					</p>
+				)}
+			</div>
 		</>
 	)
 }

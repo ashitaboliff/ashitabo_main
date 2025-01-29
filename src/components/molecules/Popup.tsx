@@ -1,5 +1,4 @@
 import React, { useImperativeHandle, forwardRef } from 'react'
-import { Modal, Box } from '@mui/material'
 import { ReactNode } from 'react'
 import clsx from 'clsx'
 
@@ -26,22 +25,18 @@ const Popup = forwardRef<
 	}))
 
 	return (
-		<Modal
-			open={open}
-			onClose={onClose}
-			className="flex items-center justify-center"
-		>
-			<Box
+		<div className={clsx('modal', open && 'modal-open')} onClick={onClose}>
+			<div
 				className={clsx(
-					'bg-base-100 rounded-lg shadow-lg p-6',
+					'modal-box bg-base-100 rounded-lg shadow-lg p-6',
 					maxWidth && `max-w-${maxWidth}`,
 				)}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<p className="text-center mb-4 text-xl">{title}</p>
+				<h3 className="text-center mb-4 text-xl">{title}</h3>
 				<div className="text-left">{children}</div>
-			</Box>
-		</Modal>
+			</div>
+		</div>
 	)
 })
 

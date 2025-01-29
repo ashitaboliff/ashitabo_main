@@ -33,10 +33,63 @@
 }
 
 @layer components {
-	.btn.btn-outline {
+	/* .btn.btn-outline.btn-base {
 		@apply bg-bg-white text-base-content border border-base-200;
 	}
-	.btn-outline:hover {
-		@apply border-seconday-light text-seconday-light;
+	.btn.btn-outline.btn-base:hover {
+		@apply border-base-300 text-base-300;
+	} */
+	input.btn.btn-tetiary:checked {
+		@apply bg-tetiary-light text-bg-white border-tetiary-light;
 	}
+	input.btn.btn-tetiary:checked:hover {
+		@apply bg-tetiary text-bg-white border-tetiary;
+	}
+	.btn.btn-tetiary.btn-outline {
+		@apply text-tetiary bg-bg-white border-tetiary;
+	}
+	.btn.btn-secondary-light {
+		@apply bg-secondary text-bg-white border-secondary;
+	}
+	.w-92 {
+		width: 23rem;
+	}
+	.h-52 {
+		height: 13rem;
+	}
+	.h-120 {
+		height: 30rem;
+	}
+	.btn.btn-offwhite {
+		@apply bg-bg-white text-bg-dark border-none bg-opacity-60;
+	}
+	.btn.btn-twitter {
+		@apply bg-bg-dark text-bg-white border-none;
+	}
+	.btn.btn-instagram {
+		@apply text-bg-white border-none;
+		background: linear-gradient(
+			45deg,
+			#fed475 0%,
+			#e53d5d 50%,
+			#c23186 70%,
+			#9c38bb 100%
+		);
+	}
+}
+
+@font-face {
+	font-family: 'nicomoji';
+	src: url('/fonts/nicomoji-plus_v2-5.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: '851Gkktt';
+	src: url('/fonts/851Gkktt_005.woff') format('woff');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
 }

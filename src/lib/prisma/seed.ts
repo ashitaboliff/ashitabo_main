@@ -1,3 +1,6 @@
+const { v4 } = require('uuid')
+
+const { hashSync } = require('bcryptjs')
 const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
@@ -10,57 +13,43 @@ function DateFormat(addDay) {
 			date.getUTCFullYear(),
 			date.getUTCMonth(),
 			date.getUTCDate(),
-			15,
+			0,
+			0,
 			0,
 			0,
 		),
 	)
 	utcDate.setUTCDate(utcDate.getUTCDate() + addDay)
 
-	return utcDate
+	return utcDate.toISOString()
 }
 
 async function main() {
 	console.log('Seeding data...')
 
-	// ユーザーを作成する例
-	await prisma.user.createMany({
+	await prisma.user.create({
+		data: {
+			id: 'admin',
+			role: 'ADMIN',
+		},
+	})
+
+	await prisma.padLock.createMany({
 		data: [
 			{
-				liff_id: '1',
-				name: 'User 1',
-				role: 'STUDENT',
-				expected: 2030,
-				part: [1],
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
+				name: 'test',
+				password: hashSync('1234', 5),
 			},
+		],
+	})
+
+	await prisma.profile.createMany({
+		data: [
 			{
-				liff_id: '2',
-				name: 'User 2',
-				role: 'GRADUATE',
-				expected: 2023,
-				part: [1, 2],
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
-			},
-			{
-				liff_id: 'Ub204e3d30a9ada4c261667699436afb6',
-				name: 'User 3',
+				id: v4(),
+				user_id: 'admin',
 				role: 'STUDENT',
-				expected: 2024,
-				part: [1, 2, 3],
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
-			},
-			{
-				liff_id: 'admin',
-				name: 'admin',
-				role: 'STUDENT',
-				expected: 2024,
-				part: [1, 2, 3],
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
+				part: ['BASS'],
 			},
 		],
 	})
@@ -72,18 +61,16 @@ async function main() {
 				booking_time: 0,
 				regist_name: 'サンプルバンド',
 				name: 'サンプルユーザー',
-				user_id: '1',
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
 			},
 			{
 				booking_date: DateFormat(1),
 				booking_time: 1,
 				regist_name: 'サンプルバンド',
 				name: 'サンプルユーザー',
-				user_id: '1',
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
 			},
 			{
 				booking_date: DateFormat(2),
@@ -91,21 +78,37 @@ async function main() {
 				regist_name:
 					'長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル長文バンド名サンプル',
 				name: '長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル長文ユーザー名サンプル',
-				user_id: '2',
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
 			},
 			{
 				booking_date: DateFormat(4),
 				booking_time: 1,
 				regist_name: 'わたべサンプルバンド',
 				name: 'わたべサンプルユーザー',
-				user_id: 'Ub204e3d30a9ada4c261667699436afb6',
-				password:
-					'$2a$05$UxevS4vImz/DMPPgVJQtQeWa.ai.LbtnE0C//hHl.Fy1D9jo0.3me',
+				user_id: 'admin',
+				password: hashSync('1234', 10),
 			},
 		],
 	})
+
+	await prisma.exBooking.createMany({
+		data: [
+			{
+				start_date: DateFormat(3),
+				start_time: 0,
+				end_time: 5,
+				description: 'サンプル禁止',
+			},
+			{
+				start_date: DateFormat(5),
+				start_time: 0,
+				end_time: 5,
+				description: 'サンプル禁止',
+			},
+		],
+	})
+
 	console.log('Data seeding complete.')
 }
 

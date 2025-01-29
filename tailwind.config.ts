@@ -37,6 +37,7 @@ const colorPalette = {
 		bg: '#D9D9D9',
 		blue: '#3C87E0', // リンク色とinfo
 		purple: '#9B59B6',
+		glay: '#E6E6E6',
 	},
 	other: {
 		google: '#2180FC',
@@ -52,6 +53,8 @@ const daisyLight = {
 	'primary-content': colorPalette['text']['dark'],
 	secondary: colorPalette['seconday']['main'],
 	'secondary-content': colorPalette['text']['light'],
+	tetiary: colorPalette['tertiary']['main'],
+	'tetiary-content': colorPalette['text']['light'],
 	accent: colorPalette['accent']['blue'],
 	'accent-content': colorPalette['text']['light'],
 	neutral: colorPalette['bg']['light'],
@@ -59,7 +62,14 @@ const daisyLight = {
 	'base-100': colorPalette['bg']['light'],
 	'base-200': colorPalette['border']['light'],
 	'base-300': colorPalette['accent']['bg'],
+	'base-400': colorPalette['accent']['glay'],
 	'base-content': colorPalette['text']['light'],
+	'primary-light': colorPalette['primary']['light'],
+	'primary-dark': colorPalette['primary']['dark'],
+	'secondary-light': colorPalette['seconday']['light'],
+	'secondary-dark': colorPalette['seconday']['dark'],
+	'tetiary-light': colorPalette['tertiary']['light'],
+	'tetiary-dark': colorPalette['tertiary']['dark'],
 	info: colorPalette['accent']['blue'],
 	'info-content': colorPalette['text']['light'],
 	success: colorPalette['primary']['main'],
@@ -95,7 +105,7 @@ const daisyDark = {
 }
 
 const screens = {
-	sm: '600px',
+	sm: '620px',
 	md: '768px',
 	lg: '900px',
 	xl: '1280px',
@@ -107,8 +117,9 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				nicoMoji: ['Nicomoji', 'sans-serif'],
+				nicoMoji: ['var(--nicomoji)', 'sans-serif'],
 				notojp: ['var(--font-noto-jp)', 'sans-serif'],
+				gkktt: ['var(--851-Gkktt)', 'sans-serif'],
 			},
 			fontSize: {
 				xxxs: ['0.375rem', { lineHeight: 'normal' }], // 6px
@@ -132,8 +143,15 @@ const config: Config = {
 			...colorPalette,
 			...daisyLight,
 			'bg-white': colorPalette['bg']['white'],
+			white: colorPalette['bg']['white'],
 		},
 		screens,
+		maxWidth: {
+			sm: '640px',
+			md: '768px',
+			lg: '900px',
+			xl: '1280px',
+		},
 	},
 	darkMode: 'class',
 	plugins: [require('daisyui')],
@@ -152,6 +170,19 @@ const config: Config = {
 				// },
 			},
 		],
+	},
+	async headers() {
+		return [
+			{
+				source: '/fonts/(.*)',
+				headers: [
+					{
+						key: 'Cache-Control',
+						value: 'public, max-age=31536000, immutable',
+					},
+				],
+			},
+		]
 	},
 }
 

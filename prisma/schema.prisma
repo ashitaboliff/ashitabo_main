@@ -6,7 +6,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
+  binaryTargets = ["debian-openssl-3.0.x", "linux-musl", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -15,35 +15,224 @@ datasource db {
   // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model booking {
+model Booking {
   id           String   @id @default(uuid())
   user_id      String
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
-  booking_date DateTime
+  booking_date String
   booking_time Int
   regist_name  String
   name         String
   password     String
   is_deleted   Boolean @default(false)
 
-  user user? @relation(fields: [user_id], references: [liff_id])
+  BuyBooking   BuyBooking?
+
+  user User? @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("booking")
 }
 
-model user {
-  liff_id       String         @id
-  name          String
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-  expected      Int
-  role          Role
-  part          Int[]
-  password      String
-  is_deleted    Boolean        @default(false)
-  bookings      booking[]
+model ExBooking { // 予約禁止日
+  id           String   @id @default(uuid())
+  start_date   String
+  start_time   Int
+  end_time     Int?
+  description  String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  is_deleted   Boolean @default(false)
+
+  @@map("ex_booking")
+}
+
+model BuyBooking { // 予約購入
+  id           String   @id @default(uuid())
+  booking_id   String   @unique
+  user_id      String
+  status       BuyBookingStatus
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  expire_at    String
+  is_deleted   Boolean  @default(false)
+
+  user         User?    @relation(fields: [user_id], references: [id])
+  booking      Booking? @relation(fields: [booking_id], references: [id])
+
+  @@map("buy_booking")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  user_id       String?   @unique
+  password      String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  role          AccountRole? @default(USER)
+
+  accounts      Account[]
+  sessions      Session[]
+  profile       Profile?
+  bookings      Booking[]
+  buyBookings   BuyBooking[]
+  userGachas    UserGacha?
+
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model Profile {
+  id         String   @id @default(uuid())
+  user_id    String   @unique // UserのIDを外部キーとして利用
+  name       String?
+  student_id String?  @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  expected   String?                           // 卒業予定年度
+  role       Role
+  part       Part[]
+  is_deleted Boolean  @default(false)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade) // Userのidと1対1のリレーション
+  @@map("profile")
+}
+
+model UserGacha {
+  id         String   @id @default(uuid())
+  user_id    String   @unique
+  gacha_id   String[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  is_deleted Boolean  @default(false)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("user_gacha")
+}
+
+model Account {
+  userId            String   @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@map("account")
+}
+
+model Session {
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("session")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verification_token")
+}
+
+model PadLock {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  name       String
+  password   String
+  is_deleted Boolean  @default(false)
+
+  @@map("pad_lock")
+}
+
+model YoutubeAuth {
+  google_id     String   @id
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  email         String
+  access_token  String
+  refresh_token String
+  token_expiry  DateTime
+  is_deleted    Boolean  @default(false)
+
+  @@map("youtube_auth")
+}
+
+model Playlist {
+  playlistId String   @id @unique @map("playlist_id")
+  title      String
+  link       String
+  liveDate   String   @map("live_date")
+  videos     Video[]
+  tags       String[] @default([])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("playlist")
+}
+
+model Video {
+  videoId     String   @id @unique @map("video_id")
+  title       String
+  link        String
+  liveDate    String   @map("live_date")
+  tags        String[] @default([])
+  playlistId  String   @map("playlist_id")
+  playlist    Playlist @relation(fields: [playlistId], references: [playlistId])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("video")
 }
 
 enum Role {
   GRADUATE
   STUDENT
+}
+
+enum AccountRole {
+  TOPADMIN
+  ADMIN
+  USER
+}
+
+enum Part {
+  VOCAL
+  BACKING_GUITAR
+  LEAD_GUITAR
+  BASS
+  DRUMS
+  KEYBOARD
+  OTHER
+}
+
+enum BuyBookingStatus {
+  UNPAID
+  PAID
+  CANCELED
+  EXPIRED
 }

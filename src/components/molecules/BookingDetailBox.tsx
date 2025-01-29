@@ -1,69 +1,51 @@
-import { TIME_LIST } from '@/lib/enum/BookingEnum'
-import {
-	Table,
-	TableBody,
-	TableContainer,
-	TableRow,
-	TableCell,
-	Typography,
-} from '@mui/material'
+'use client'
+
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import BaseTable from '@/components/atoms/BaseTable'
+import { BuyBookingStatus, BuyBookingStatusMap } from '@/types/BookingTypes'
 
 interface BookingDetailProps {
-	booking_date: Date
-	booking_time: string
-	regist_name: string
+	bookingDate: string
+	bookingTime: number
+	registName: string
 	name: string
+	isPaidStatus?: BuyBookingStatus
 }
 
-const BookingDetailBox = (props: BookingDetailProps) => {
-	return (
-		<TableContainer className="p-4 flex flex-col justify-center gap-2 box-balance">
-			<Table size="small">
-				<TableBody>
-					<TableRow className="border-y border-gray-400 p-2 w-10">
-						<TableCell padding="none" className="w-16 bg-gray-300">
-							日時:
-						</TableCell>
-						<TableCell>
-							<Typography variant="body1">
-								{format(props.booking_date, 'yyyy年MM月dd日(E)', {
-									locale: ja,
-								})}
-							</Typography>
-						</TableCell>
-					</TableRow>
-					<TableRow className="border-b border-gray-400 p-2 w-10">
-						<TableCell padding="none" className="w-16 bg-gray-300">
-							時間:
-						</TableCell>
-						<TableCell>
-							<Typography variant="body1">
-								{TIME_LIST[Number(props.booking_time)]}
-							</Typography>
-						</TableCell>
-					</TableRow>
-					<TableRow className="border-b border-gray-400 p-2 w-10">
-						<TableCell padding="none" className="w-16 bg-gray-300">
-							バンド名:
-						</TableCell>
-						<TableCell>
-							<Typography variant="body1">{props.regist_name}</Typography>
-						</TableCell>
-					</TableRow>
-					<TableRow className="border-b border-gray-400 p-2 w-10">
-						<TableCell padding="none" className="w-16 bg-gray-300">
-							責任者:
-						</TableCell>
-						<TableCell>
-							<Typography variant="body1">{props.name}</Typography>
-						</TableCell>
-					</TableRow>
-				</TableBody>
-			</Table>
-		</TableContainer>
-	)
+const BookingDetailBox = ({
+	props,
+	calendarTime,
+}: {
+	props: BookingDetailProps
+	calendarTime: string[]
+}) => {
+	const data = [
+		{
+			label: '日時',
+			value: format(props.bookingDate, 'yyyy年MM月dd日(E)', { locale: ja }),
+		},
+		{
+			label: '時間',
+			value: calendarTime[props.bookingTime],
+		},
+		{
+			label: 'バンド名',
+			value: props.registName,
+		},
+		{
+			label: '責任者',
+			value: props.name,
+		},
+	]
+	if (props.isPaidStatus) {
+		data.push({
+			label: '支払状況',
+			value: BuyBookingStatusMap[props.isPaidStatus],
+		})
+	}
+
+	return <BaseTable data={data} title="予約詳細" />
 }
 
 export default BookingDetailBox

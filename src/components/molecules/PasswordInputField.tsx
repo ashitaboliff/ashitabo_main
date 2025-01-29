@@ -1,45 +1,54 @@
-import { useState } from 'react'
-import {
-	FormControl,
-	IconButton,
-	InputAdornment,
-	InputLabel,
-	OutlinedInput,
-} from '@mui/material'
-import { MdVisibility } from 'react-icons/md'
-import { MdVisibilityOff } from 'react-icons/md'
-import { useFormContext } from 'react-hook-form'
+import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
+import { UseFormRegisterReturn } from 'react-hook-form'
+import TextInputField from '@/components/atoms/TextInputField'
+import LabelInputField from '@/components/atoms/LabelInputField'
 
-const PasswordInputField = () => {
-	const [showPassword, setShowPassword] = useState(false)
-	const { register } = useFormContext()
-	const handleClickShowPassword = () => setShowPassword((show) => !show)
-	const handleMouseDownPassword = (
-		event: React.MouseEvent<HTMLButtonElement>,
-	) => {
-		event.preventDefault()
-	}
-
+/**
+ * パスワード入力フィールド
+ * @param register react-hook-formのregister
+ * @param showPassword パスワード表示の有無
+ * @param handleClickShowPassword パスワード表示の切り替え関数、見えるほう
+ * @param handleMouseDownPassword パスワード表示の切り替え関数、見えなくするほう
+ */
+const PasswordInputField = ({
+	label,
+	register,
+	showPassword,
+	handleClickShowPassword,
+	handleMouseDownPassword,
+	errorMessage,
+}: {
+	label?: string
+	register: UseFormRegisterReturn
+	showPassword: boolean
+	handleClickShowPassword: () => void
+	handleMouseDownPassword: (event: React.MouseEvent<HTMLButtonElement>) => void
+	errorMessage?: string
+}) => {
 	return (
-		<FormControl className="m-1" variant="outlined" fullWidth>
-			<InputLabel htmlFor="password">パスワード</InputLabel>
-			<OutlinedInput
-				id="password"
-				label="パスワード"
-				type={showPassword ? 'text' : 'password'}
-				endAdornment={
-					<InputAdornment position="end">
-						<IconButton
-							onClick={handleClickShowPassword}
-							onMouseDown={handleMouseDownPassword}
-							edge="end"
-						>
-							{showPassword ? <MdVisibilityOff /> : <MdVisibility />}
-						</IconButton>
-					</InputAdornment>
-				}
-			/>
-		</FormControl>
+		<div>
+			{label && <LabelInputField label={label} />}
+			<div className="relative">
+				<TextInputField
+					register={register}
+					type={showPassword ? 'text' : 'password'}
+					placeholder="パスワード"
+					errorMessage={errorMessage}
+				/>
+				<button
+					type="button"
+					className="absolute inset-y-0 right-0 flex items-center px-2"
+					onClick={handleClickShowPassword}
+					onMouseDown={handleMouseDownPassword}
+				>
+					{showPassword ? (
+						<MdVisibilityOff className="text-xl" />
+					) : (
+						<MdVisibility className="text-xl" />
+					)}
+				</button>
+			</div>
+		</div>
 	)
 }
 

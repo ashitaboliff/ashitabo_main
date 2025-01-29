@@ -12,6 +12,9 @@ new: ## Create a new project
 up: ## Start all or c=<name> containers in background
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
 
+build: ## Build all or c=<name> containers
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build
+
 stop: ## Stop all or c=<name> containers
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
 
@@ -26,25 +29,36 @@ renew: ## Restart all or c=<name> containers
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build --no-cache
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
-	npm run seed
+	node src/lib/prisma/seed.ts
+
+renew-log: ## Restart all or c=<name> containers
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) build --no-cache --progress=plain
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
 
 logs: ## Show logs for all or c=<name> containers
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) logs --tail=100 -f
 
 down: ## Clean all data
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) stop
-	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes --remove-orphans
+	docker volume prune -f
 
 clean: ## Clean all data
 	@$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down --volumes --remove-orphans
 	docker volume prune -f
 	sudo rm -rf ./node_modules
-	sudo rm -rf ./volume_postgres
 
 node: ## node.jsをインストールしている場合これで実行
 	npm install
 	npx prisma generate
 	npm run dev
+
+clean-cache:
+	sudo rm -rf ./.next/cache/fetch-cache/*
+
+clean-image:
+	sudo rm -rf ./.next/cache/images/*
 
 # Define the help target
 help:
