@@ -29,18 +29,24 @@ export const BookingTableBox = ({
 	const tdClassName =
 		new Date(bookingDate) > bookingAbleMaxDate
 			? 'border border-base-200 p-0 bg-tertiary-light'
-			: 'border border-base-200 p-0'
+			: new Date(bookingDate) < new Date()
+				? 'border border-base-200 p-0 bg-base-400'
+				: 'border border-base-200 p-0'
 
 	if (registName === undefined) {
 		return (
 			<td
 				key={index}
 				className={tdClassName}
-				onClick={() =>
-					router.push(
-						`/booking/new?date=${bookingDate.split('T')[0]}&time=${bookingTime}`,
-					)
-				}
+				onClick={() => {
+					if (new Date(bookingDate) < new Date()) {
+						return null
+					} else {
+						router.push(
+							`/booking/new?date=${bookingDate.split('T')[0]}&time=${bookingTime}`,
+						)
+					}
+				}}
 			>
 				<div className="w-11 h-13 flex flex-col justify-center items-center text-center break-words py-1">
 					<p className="text-xxxs text-base-content bold">
@@ -66,7 +72,13 @@ export const BookingTableBox = ({
 			<td
 				key={index}
 				className={tdClassName}
-				onClick={() => router.push(`/booking/${id}`)}
+				onClick={() => {
+					if (new Date(bookingDate) < new Date()) {
+						return null
+					} else {
+						router.push(`/booking/${id}`)
+					}
+				}}
 			>
 				<div className="w-11 h-13 flex flex-col justify-center items-center text-center break-words py-1">
 					<p className="text-xxxs text-base-content bold">

@@ -6,6 +6,7 @@ import { LuLockKeyhole } from 'react-icons/lu'
 import { FaRegUserCircle, FaYoutube } from 'react-icons/fa'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import { RxCrossCircled } from 'react-icons/rx'
+import { RiQuestionLine } from 'react-icons/ri'
 
 const AdminMain = () => {
 	return (
@@ -14,6 +15,14 @@ const AdminMain = () => {
 			<div className="overflow-x-auto">
 				<table className="table table-lg">
 					<tbody>
+						<tr>
+							<th>
+								<RiQuestionLine size={25} />
+							</th>
+							<td>
+								<Link href="/admin/usage">使い方</Link>
+							</td>
+						</tr>
 						<tr>
 							<th>
 								<FaRegUserCircle size={25} />
@@ -27,7 +36,7 @@ const AdminMain = () => {
 								<LuLockKeyhole size={25} />
 							</th>
 							<td>
-								<Link href="/admin/padlock">部室パスワード管理</Link>
+								<Link href="/admin/padlock">利用登録パスワード管理</Link>
 							</td>
 						</tr>
 						<tr>
@@ -35,7 +44,7 @@ const AdminMain = () => {
 								<RxCrossCircled size={25} />
 							</th>
 							<td>
-								<Link href="/admin/forbidden">部室予約禁止日設定</Link>
+								<Link href="/admin/forbidden">コマ表予約禁止日設定</Link>
 							</td>
 						</tr>
 						<tr>

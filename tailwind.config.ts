@@ -37,6 +37,7 @@ const colorPalette = {
 		bg: '#D9D9D9',
 		blue: '#3C87E0', // リンク色とinfo
 		purple: '#9B59B6',
+		glay: '#E6E6E6',
 	},
 	other: {
 		google: '#2180FC',
@@ -61,6 +62,7 @@ const daisyLight = {
 	'base-100': colorPalette['bg']['light'],
 	'base-200': colorPalette['border']['light'],
 	'base-300': colorPalette['accent']['bg'],
+	'base-400': colorPalette['accent']['glay'],
 	'base-content': colorPalette['text']['light'],
 	'primary-light': colorPalette['primary']['light'],
 	'primary-dark': colorPalette['primary']['dark'],

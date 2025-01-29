@@ -9,6 +9,7 @@ import LocalFont from 'next/font/local'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import 'lite-youtube-embed/src/lite-yt-embed.css'
 import { liveOrBand, Playlist, Video } from '@/types/YoutubeTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import { Session } from 'next-auth'
 import Tags from '@/components/atoms/Tags'
 import TagInputField from '@/components/molecules/TagsInputField'
@@ -26,29 +27,39 @@ const gkktt = LocalFont({
 })
 
 type Props = {
-	session: Session
+	session: Session | null
 	liveOrBand: liveOrBand
 } & (
 	| { liveOrBand: 'live'; playlist?: Playlist; detail: Playlist }
 	| { liveOrBand: 'band'; playlist: Playlist; detail: Video }
 )
 
-const YoutubeIdPage = ({ detail, liveOrBand, playlist }: Props) => {
+const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
+	const [isSessionOpen, setIsSessionOpen] = useState<boolean>(false)
+	const [error, setError] = useState<ErrorType>()
 	const popupRef = useRef<PopupRef>()
+	const sessionPopupRef = useRef<PopupRef>()
 
-	const { handleSubmit, register, control, setValue } = useForm()
+	const { handleSubmit, control, setValue } = useForm()
 
 	const onSubmit = async (data: any) => {
-		console.log(data)
 		const id = liveOrBand === 'band' ? detail.videoId : detail.playlistId
 
 		const res = await updateTagsAction(id, data.tags, liveOrBand)
 		if (res.status === 200) {
 			setIsPopupOpen(false)
 		} else {
-			console.error(res)
+			setError(res)
+		}
+	}
+
+	const handlePopupOpen = () => {
+		if (!session) {
+			setIsSessionOpen(true)
+		} else {
+			setIsPopupOpen(true)
 		}
 	}
 
@@ -88,7 +99,7 @@ const YoutubeIdPage = ({ detail, liveOrBand, playlist }: Props) => {
 							<button
 								className="btn btn-outline btn-primary btn-sm"
 								onClick={() => {
-									setIsPopupOpen(true)
+									handlePopupOpen()
 								}}
 							>
 								<TbEdit size={15} />
@@ -180,7 +191,7 @@ const YoutubeIdPage = ({ detail, liveOrBand, playlist }: Props) => {
 							<button
 								className="btn btn-outline btn-primary btn-sm"
 								onClick={() => {
-									setIsPopupOpen(true)
+									handlePopupOpen()
 								}}
 							>
 								<TbEdit size={15} />
@@ -237,7 +248,42 @@ const YoutubeIdPage = ({ detail, liveOrBand, playlist }: Props) => {
 							キャンセル
 						</button>
 					</div>
+					{error && (
+						<div className="text-error text-sm text-center">
+							{error.response}
+						</div>
+					)}
 				</form>
+			</Popup>
+			<Popup
+				ref={sessionPopupRef}
+				title="利用登録が必要です"
+				open={isSessionOpen}
+				onClose={() => setIsSessionOpen(false)}
+			>
+				<div className="flex flex-col gap-y-2 justify-center max-w-sm m-auto">
+					<div className="text-sm text-center">
+						タグ編集を行うには利用登録が必要です
+					</div>
+					<div className="flex flex-row justify-center gap-x-2">
+						<button
+							className="btn btn-primary"
+							onClick={() => {
+								router.push('/auth/signin')
+							}}
+						>
+							ログイン
+						</button>
+						<button
+							className="btn btn-outline"
+							onClick={() => {
+								setIsSessionOpen(false)
+							}}
+						>
+							閉じる
+						</button>
+					</div>
+				</div>
 			</Popup>
 		</>
 	)

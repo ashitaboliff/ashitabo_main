@@ -167,13 +167,6 @@ export async function searchYoutubeDetails(
 
 		const pageNumber = Number(page) || 1
 		const videoPerPageNumber = Number(videoPerPage) || 10
-		const MOTETAIZU_PLAYLIST_ID = process.env.MOTETAIZU_PLAYLIST_ID
-		const MOTETAIZU_VIDEO_ID = process.env.MOTETAIZU_VIDEO_ID
-		const isSpecialCase =
-			liveName === 'マーシャル' ||
-			liveName === 'Marshall' ||
-			bandName === 'マーシャル' ||
-			bandName === 'Marshall'
 
 		let results: YoutubeDetail[] = []
 		let totalCount = 0
@@ -182,34 +175,27 @@ export async function searchYoutubeDetails(
 			const [playlists, count] = await Promise.all([
 				prisma.playlist.findMany({
 					where: {
-						...(isSpecialCase
-							? { playlistId: MOTETAIZU_PLAYLIST_ID }
-							: {
-									AND: [
-										liveName && liveName !== ''
-											? { title: { contains: liveName } }
-											: {},
-										bandName && bandName !== ''
-											? {
-													videos: {
-														some: {
-															title: { contains: bandName },
-														},
-													},
-												}
-											: {},
-										tag &&
-										!(tag.length === 1 && tag[0] === '') &&
-										tag.length > 0
-											? {
-													tags: {
-														hasSome: tag,
-													},
-												}
-											: {},
-										{ NOT: { playlistId: MOTETAIZU_PLAYLIST_ID } },
-									],
-								}),
+						AND: [
+							liveName && liveName !== ''
+								? { title: { contains: liveName } }
+								: {},
+							bandName && bandName !== ''
+								? {
+										videos: {
+											some: {
+												title: { contains: bandName },
+											},
+										},
+									}
+								: {},
+							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
+								? {
+										tags: {
+											hasSome: tag,
+										},
+									}
+								: {},
+						],
 					},
 					include: {
 						videos: true,
@@ -222,34 +208,27 @@ export async function searchYoutubeDetails(
 				}),
 				prisma.playlist.count({
 					where: {
-						...(isSpecialCase
-							? { playlistId: MOTETAIZU_PLAYLIST_ID }
-							: {
-									AND: [
-										liveName && liveName !== ''
-											? { title: { contains: liveName } }
-											: {},
-										bandName && bandName !== ''
-											? {
-													videos: {
-														some: {
-															title: { contains: bandName },
-														},
-													},
-												}
-											: {},
-										tag &&
-										!(tag.length === 1 && tag[0] === '') &&
-										tag.length > 0
-											? {
-													tags: {
-														hasSome: tag,
-													},
-												}
-											: {},
-										{ NOT: { playlistId: MOTETAIZU_PLAYLIST_ID } },
-									],
-								}),
+						AND: [
+							liveName && liveName !== ''
+								? { title: { contains: liveName } }
+								: {},
+							bandName && bandName !== ''
+								? {
+										videos: {
+											some: {
+												title: { contains: bandName },
+											},
+										},
+									}
+								: {},
+							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
+								? {
+										tags: {
+											hasSome: tag,
+										},
+									}
+								: {},
+						],
 					},
 				}),
 			])
@@ -270,32 +249,25 @@ export async function searchYoutubeDetails(
 			const [videos, count] = await Promise.all([
 				prisma.video.findMany({
 					where: {
-						...(isSpecialCase
-							? { videoId: MOTETAIZU_VIDEO_ID }
-							: {
-									AND: [
-										bandName && bandName !== ''
-											? { title: { contains: bandName } }
-											: {},
-										liveName && liveName !== ''
-											? {
-													playlist: {
-														title: { contains: liveName },
-													},
-												}
-											: {},
-										tag &&
-										!(tag.length === 1 && tag[0] === '') &&
-										tag.length > 0
-											? {
-													tags: {
-														hasSome: tag,
-													},
-												}
-											: {},
-										{ NOT: { videoId: MOTETAIZU_VIDEO_ID } },
-									],
-								}),
+						AND: [
+							bandName && bandName !== ''
+								? { title: { contains: bandName } }
+								: {},
+							liveName && liveName !== ''
+								? {
+										playlist: {
+											title: { contains: liveName },
+										},
+									}
+								: {},
+							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
+								? {
+										tags: {
+											hasSome: tag,
+										},
+									}
+								: {},
+						],
 					},
 					include: {
 						playlist: true,
@@ -308,32 +280,25 @@ export async function searchYoutubeDetails(
 				}),
 				prisma.video.count({
 					where: {
-						...(isSpecialCase
-							? { videoId: MOTETAIZU_VIDEO_ID }
-							: {
-									AND: [
-										bandName && bandName !== ''
-											? { title: { contains: bandName } }
-											: {},
-										liveName && liveName !== ''
-											? {
-													playlist: {
-														title: { contains: liveName },
-													},
-												}
-											: {},
-										tag &&
-										!(tag.length === 1 && tag[0] === '') &&
-										tag.length > 0
-											? {
-													tags: {
-														hasSome: tag,
-													},
-												}
-											: {},
-										{ NOT: { videoId: MOTETAIZU_VIDEO_ID } },
-									],
-								}),
+						AND: [
+							bandName && bandName !== ''
+								? { title: { contains: bandName } }
+								: {},
+							liveName && liveName !== ''
+								? {
+										playlist: {
+											title: { contains: liveName },
+										},
+									}
+								: {},
+							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
+								? {
+										tags: {
+											hasSome: tag,
+										},
+									}
+								: {},
+						],
 					},
 				}),
 			])

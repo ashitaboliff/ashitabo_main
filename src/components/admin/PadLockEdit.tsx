@@ -6,10 +6,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
-import { ja, se } from 'date-fns/locale'
+import { ja } from 'date-fns/locale'
 import { createPadLockAction, deletePadLockAction } from './action'
 import { PadLock } from '@/types/AdminTypes'
 import { ErrorType } from '@/types/ResponseTypes'
+import Pagination from '@/components/atoms/Pagination'
 import TextInputField from '@/components/atoms/TextInputField'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
@@ -257,19 +258,11 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 					)}
 				</form>
 			</Popup>
-			<div className="join justify-center">
-				{Array.from({ length: pageMax }, (_, i) => (
-					<button
-						key={i}
-						className={`join-item btn ${
-							currentPage === i + 1 ? 'btn-primary' : 'btn-outline'
-						}`}
-						onClick={() => setCurrentPage(i + 1)}
-					>
-						{i + 1}
-					</button>
-				))}
-			</div>
+			<Pagination
+				currentPage={currentPage}
+				totalPages={pageMax}
+				onPageChange={(page) => setCurrentPage(page)}
+			/>
 			<button className="btn btn-outline" onClick={() => router.push('/admin')}>
 				戻る
 			</button>

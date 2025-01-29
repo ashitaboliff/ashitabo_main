@@ -350,20 +350,6 @@ export async function createBookingAction({
 				response: '過去の日付は予約できません',
 			}
 
-		if (!isPaid) {
-			const sameUserBooking = await getBookingByUserIdAndDate({
-				userId,
-				startDate: toDay,
-				endDate: isPaidBookingDateMin,
-			})
-			if (sameUserBooking.length > 5) {
-				return {
-					status: StatusCode.FORBIDDEN,
-					response: '同一ユーザの無料予約は4件までです。',
-				}
-			}
-		}
-
 		const BanBooking = await getBanBookingByDate(booking.bookingDate)
 		if (BanBooking.length > 0) {
 			BanBooking.forEach((banBooking) => {

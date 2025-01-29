@@ -11,6 +11,10 @@ const list = [
 				title: 'コマ表',
 			},
 			{
+				url: '/video',
+				title: '過去動画',
+			},
+			{
 				url: '/blogs',
 				title: 'お知らせ',
 			},

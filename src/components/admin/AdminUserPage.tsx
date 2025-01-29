@@ -18,6 +18,7 @@ import {
 } from '@/types/UserTypes'
 import { ErrorType } from '@/types/ResponseTypes'
 import { Session } from 'next-auth'
+import Pagination from '@/components/atoms/Pagination'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 
@@ -225,19 +226,11 @@ const AdminUserPage = ({
 					)}
 				</div>
 			</Popup>
-			<div className="join justify-center">
-				{Array.from({ length: pageMax }, (_, i) => (
-					<button
-						key={i}
-						className={`join-item btn ${
-							currentPage === i + 1 ? 'btn-primary' : 'btn-outline'
-						}`}
-						onClick={() => setCurrentPage(i + 1)}
-					>
-						{i + 1}
-					</button>
-				))}
-			</div>
+			<Pagination
+				currentPage={currentPage}
+				totalPages={pageMax}
+				onPageChange={(page) => setCurrentPage(page)}
+			/>
 			<div className="flex flex-row justify-center mt-2">
 				<button
 					className="btn btn-outline"

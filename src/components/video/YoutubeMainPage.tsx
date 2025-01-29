@@ -37,7 +37,7 @@ const YoutubeMainPage = () => {
 	const [pageMax, setPageMax] = useState<number>(1)
 	const [youtubeDetails, setYoutubeDetails] = useState<YoutubeDetail[]>([])
 	const [isSearching, setIsSearching] = useState<boolean>(false)
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(null)
 
@@ -205,6 +205,11 @@ const YoutubeMainPage = () => {
 								liveOrBand={query.liveOrBand}
 							/>
 						))
+					)}
+					{youtubeDetails.length === 0 && !isLoading && (
+						<div className="text-base-content w-92 text-center">
+							該当する動画がありません
+						</div>
 					)}
 				</div>
 				<Pagination

@@ -22,33 +22,37 @@ const YoutubeDetailBox = ({
 		<div className="flex flex-col items-center">
 			<div className="flex flex-col gap-y-1 justify-center">
 				{liveOrBand === 'live' ? (
-					<>
-						<lite-youtube
-							videoid={youtubeDetail.videoId ?? ''}
-							playlistid={youtubeDetail.id}
-							style={{ width: '368px', height: '207px' }}
-						></lite-youtube>
-					</>
+					<YouTubeEmbed videoid={youtubeDetail.videoId ?? ''} width={368} />
 				) : (
 					<YouTubeEmbed videoid={youtubeDetail.id} width={368} />
 				)}
 			</div>
-			<div
-				className="flex flex-col gap-y-1 justify-center w-92 link link-hover"
-				onClick={() => router.push(`/video/${youtubeDetail.id}`)}
-			>
-				<div className="text-base font-bold">
-					{youtubeDetail.title.split('(')[0]}
-				</div>
-				{liveOrBand === 'band' && (
-					<div className="text-sm">
-						ライブ名: {youtubeDetail.playlistTitle?.split('(')[0]}
+			<div className="flex flex-row gap-x-2 w-92 justify-between">
+				<div
+					className="flex flex-col gap-y-1 justify-center w-92 link link-hover"
+					onClick={() => router.push(`/video/${youtubeDetail.id}`)}
+				>
+					<div className="text-base font-bold">
+						{youtubeDetail.title.split('(')[0]}
 					</div>
-				)}
-				<div className="text-sm">
-					{format(youtubeDetail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
+					{liveOrBand === 'band' && (
+						<div className="text-sm">
+							ライブ名: {youtubeDetail.playlistTitle?.split('(')[0]}
+						</div>
+					)}
+					<div className="text-sm">
+						{format(youtubeDetail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
+					</div>
+					<Tags tags={youtubeDetail.tags} />
 				</div>
-				<Tags tags={youtubeDetail.tags} />
+				<div className="flex flex-col gap-y-1 justify-center">
+					<button
+						className="btn btn-outline text-sm whitespace-nowrap"
+						onClick={() => router.push(`/video/${youtubeDetail.id}`)}
+					>
+						詳細
+					</button>
+				</div>
 			</div>
 		</div>
 	)
