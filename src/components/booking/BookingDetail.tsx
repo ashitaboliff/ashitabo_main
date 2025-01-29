@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import { BookingDetailProps } from '@/types/BookingTypes'
 import { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'

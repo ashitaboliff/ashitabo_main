@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import { addWeeks } from 'date-fns'
 
 import { PiCircle as CircleIcon } from 'react-icons/pi'

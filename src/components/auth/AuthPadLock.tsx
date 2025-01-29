@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Loading from '@/components/atoms/Loading'

@@ -8,7 +8,7 @@ const list = [
 			},
 			{
 				url: '/booking',
-				title: '部室予約ページ',
+				title: 'コマ表',
 			},
 			{
 				url: '/blogs',

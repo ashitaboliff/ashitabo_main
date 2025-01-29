@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import { YouTubeEmbed } from '@next/third-parties/google'
 import 'lite-youtube-embed/src/lite-yt-embed.css'
 import { format } from 'date-fns'

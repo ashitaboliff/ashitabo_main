@@ -1,11 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import Image from 'next/image'
 import LocalFont from 'next/font/local'
-import Loading from '@/components/atoms/Loading'
-import HomePageHeader from '@/components/home/HomePageHeader'
 
 const nicomoji = LocalFont({
 	src: '../../lib/fonts/nicomoji-plus_v2-5.woff',
@@ -16,11 +13,6 @@ const nicomoji = LocalFont({
 
 const SigninPage = () => {
 	const router = useRouter()
-	const [isLoading, setIsLoading] = useState<boolean>(false)
-
-	if (isLoading) {
-		return <Loading />
-	}
 
 	return (
 		<div className="flex flex-col items-center justify-center">

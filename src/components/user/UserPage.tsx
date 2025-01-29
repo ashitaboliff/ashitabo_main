@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
 import { format } from 'date-fns'
