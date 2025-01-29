@@ -26,7 +26,6 @@ export async function padLockAction(
 
 		if (match) {
 			cookieStore.set('failCount', '0', { maxAge: oneDay }) // 一日持つ
-			cookieStore.set('isLocked', 'false', { maxAge: oneMonth }) // 一か月持つ
 			return { status: StatusCode.NO_CONTENT }
 		} else {
 			if (failCount >= 5) {
@@ -50,18 +49,6 @@ export async function padLockAction(
 			response: String(error),
 		}
 	}
-}
-
-export async function padLockCookieAction(): Promise<
-	'locked' | 'unlocked' | 'no-cookie'
-> {
-	const cookieStore = await cookies()
-	const existCookie = cookieStore.has('isLocked')
-	const isLocked = cookieStore.get('isLocked')?.value
-
-	if (!existCookie) return 'no-cookie'
-	if (isLocked === 'true') return 'locked'
-	return 'unlocked'
 }
 
 export async function getUserAction(
