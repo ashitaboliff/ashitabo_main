@@ -9,6 +9,7 @@ import { ja } from 'date-fns/locale'
 import Image from 'next/image'
 import { Profile, RoleMap } from '@/types/UserTypes'
 import { BookingDetailProps, BuyBookingStatusMap } from '@/types/BookingTypes'
+import Pagination from '@/components/atoms/Pagination'
 import InstIcon from '@/components/atoms/InstIcon'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
@@ -151,17 +152,11 @@ const UserPage = ({
 								))}
 							</tbody>
 						</table>
-						<div className="join justify-center">
-							{Array.from({ length: pageMax }, (_, i) => (
-								<button
-									key={i}
-									className={`join-item btn ${currentPage === i + 1 ? ' btn-primary' : 'btn-outline'}`}
-									onClick={() => setCurrentPage(i + 1)}
-								>
-									{i + 1}
-								</button>
-							))}
-						</div>
+						<Pagination
+							currentPage={currentPage}
+							totalPages={pageMax}
+							onPageChange={(page) => setCurrentPage(page)}
+						/>
 
 						{popupData && (
 							<Popup

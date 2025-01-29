@@ -157,7 +157,13 @@ export default function NewBooking({
 							<InfoMessage
 								messageType="warning"
 								IconColor="bg-white"
-								message="このコマを予約するには600円の支払いが必要です。"
+								message={
+									<>
+										このコマを予約するには600円の支払いが必要です。
+										<br />
+										支払いは現金およびPayPayでお願いします。
+									</>
+								}
 							/>
 						</div>
 					)}
