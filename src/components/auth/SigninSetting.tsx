@@ -100,11 +100,9 @@ const SigninSetting = () => {
 			let yearOffset = 4 // デフォルトのオフセット
 			switch (alphabet) {
 				case 'T' || 't':
-					yearOffset = 5
+					yearOffset = 6
 					break
 				case 'E' || 'e':
-					yearOffset = 3
-					break
 				case 'G' || 'g':
 				case 'F' || 'f':
 				case 'C' || 'c':
@@ -154,7 +152,7 @@ const SigninSetting = () => {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center p-4">
+		<div className="flex flex-col items-center justify-center p-4 bg-bg-white shadow-lg rounded-lg">
 			<h1 className="text-2xl font-bold">ユーザ設定</h1>
 			<form
 				className="flex flex-col space-y-4 w-full max-w-xs"
@@ -238,6 +236,9 @@ const SigninSetting = () => {
 							}
 							errorMessage={errors.expected?.message}
 						/>
+						<p className="text-sm">
+							※学籍番号から工学部生は院進を想定し、留年を想定していない値が自動計算されます。変更したい場合は編集を行ってください
+						</p>
 					</>
 				)}
 
