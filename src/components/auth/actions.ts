@@ -13,7 +13,6 @@ import { Profile, User } from '@/types/UserTypes'
 import { revalidateTag } from 'next/cache'
 
 const oneDay = 60 * 60 * 24
-const oneMonth = 60 * 60 * 24 * 30
 
 export async function padLockAction(
 	password: string,
@@ -29,7 +28,6 @@ export async function padLockAction(
 			return { status: StatusCode.NO_CONTENT }
 		} else {
 			if (failCount >= 5) {
-				cookieStore.set('isLocked', 'true', { maxAge: oneDay }) // 一日持つ
 				return {
 					status: StatusCode.FORBIDDEN,
 					response: 'パスワードを5回以上間違えたため、ログインできません',

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
@@ -90,69 +91,89 @@ const AuthPadLock = ({ setAuth }: { setAuth: (isAuth: boolean) => void }) => {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center space-y-2">
-			<div className="text-base font-bold mx-2 text-center">
-				部室のパスワードを入力してください
+		<div className="flex flex-col items-center justify-center space-y-2 h-full">
+			<div className="card bg-bg-white shadow-lg w-96 h-120 my-6">
+				<figure>
+					<Image
+						src="/activity/activity-2.jpg"
+						alt="padlock"
+						width={384}
+						height={250}
+					/>
+				</figure>
+				<div className="flex flex-col items-center justify-center gap-y-2 p-4">
+					<div className="text-base font-bold mx-2 text-center">
+						部室のパスワードを入力してください
+					</div>
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="flex flex-col items-center gap-y-2"
+					>
+						<div className="flex flex-row justify-center">
+							<input
+								type="tel"
+								{...register('digit1')}
+								className="input input-bordered w-16 h-16 text-center text-2xl"
+								maxLength={1}
+								onChange={(e) => handleChange(e, 'digit2')}
+							/>
+							<input
+								type="tel"
+								{...register('digit2')}
+								className="input input-bordered w-16 h-16 text-center text-2xl"
+								maxLength={1}
+								onChange={(e) => handleChange(e, 'digit3')}
+								onKeyDown={(e) => handleKeyDown(e, 'digit1')}
+							/>
+							<input
+								type="tel"
+								{...register('digit3')}
+								className="input input-bordered w-16 h-16 text-center text-2xl"
+								maxLength={1}
+								onChange={(e) => handleChange(e, 'digit4')}
+								onKeyDown={(e) => handleKeyDown(e, 'digit2')}
+							/>
+							<input
+								type="tel"
+								{...register('digit4')}
+								className="input input-bordered w-16 h-16 text-center text-2xl"
+								maxLength={1}
+								onKeyDown={(e) => handleKeyDown(e, 'digit3')}
+							/>
+						</div>
+						<div className="flex flex-row justify-center space-x-2">
+							<button
+								type="submit"
+								className="btn btn-primary"
+								disabled={error?.status === (403 || 401)}
+							>
+								送信
+							</button>
+							<button
+								type="button"
+								className="btn btn-outline"
+								onClick={() => reset()}
+							>
+								入力をクリア
+							</button>
+						</div>
+					</form>
+				</div>
 			</div>
-			<form
-				onSubmit={handleSubmit(onSubmit)}
-				className="flex flex-col items-center gap-y-2"
-			>
-				<div className="flex flex-row justify-center">
-					<input
-						type="tel"
-						{...register('digit1')}
-						className="input input-bordered w-16 h-16 text-center text-2xl"
-						maxLength={1}
-						onChange={(e) => handleChange(e, 'digit2')}
-					/>
-					<input
-						type="tel"
-						{...register('digit2')}
-						className="input input-bordered w-16 h-16 text-center text-2xl"
-						maxLength={1}
-						onChange={(e) => handleChange(e, 'digit3')}
-						onKeyDown={(e) => handleKeyDown(e, 'digit1')}
-					/>
-					<input
-						type="tel"
-						{...register('digit3')}
-						className="input input-bordered w-16 h-16 text-center text-2xl"
-						maxLength={1}
-						onChange={(e) => handleChange(e, 'digit4')}
-						onKeyDown={(e) => handleKeyDown(e, 'digit2')}
-					/>
-					<input
-						type="tel"
-						{...register('digit4')}
-						className="input input-bordered w-16 h-16 text-center text-2xl"
-						maxLength={1}
-						onKeyDown={(e) => handleKeyDown(e, 'digit3')}
-					/>
-				</div>
-				<div className="flex flex-row justify-center space-x-2">
-					<button
-						type="submit"
-						className="btn btn-primary"
-						disabled={error?.status === (403 || 401)}
-					>
-						送信
-					</button>
-					<button
-						type="button"
-						className="btn btn-outline"
-						onClick={() => reset()}
-					>
-						入力をクリア
-					</button>
-				</div>
-				{loading && <Loading />}
-				{error && (
-					<p className="text-seconday">
-						エラーコード{error.status}:{error.response}
-					</p>
-				)}
-			</form>
+			{loading && <Loading />}
+			{error && (
+				<p className="text-secondary">
+					エラーコード{error.status}:{error.response}
+				</p>
+			)}
+			{errors && (
+				<p className="text-secondary">
+					{errors.digit1?.message ||
+						errors.digit2?.message ||
+						errors.digit3?.message ||
+						errors.digit4?.message}
+				</p>
+			)}
 		</div>
 	)
 }

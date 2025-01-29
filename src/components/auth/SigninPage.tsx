@@ -1,12 +1,10 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import LocalFont from 'next/font/local'
-import { signIn, useSession } from 'next-auth/react'
 import Loading from '@/components/atoms/Loading'
-import Popup, { PopupRef } from '@/components/molecules/Popup'
 import HomePageHeader from '@/components/home/HomePageHeader'
 
 const nicomoji = LocalFont({
@@ -19,8 +17,6 @@ const nicomoji = LocalFont({
 const SigninPage = () => {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [popupOpen, setPopupOpen] = useState<boolean>(false)
-	const popupRef = useRef<PopupRef>(undefined)
 
 	if (isLoading) {
 		return <Loading />
@@ -28,7 +24,6 @@ const SigninPage = () => {
 
 	return (
 		<div className="flex flex-col items-center justify-center">
-			<HomePageHeader />
 			<div className="flex flex-col items-center justify-center card bg-bg-white shadow-lg w-72 h-96 my-6">
 				<figure>
 					<Image src="/login.jpg" alt="login" width={300} height={250} />
