@@ -7,6 +7,7 @@ import LocalFont from 'next/font/local'
 import { signIn, useSession } from 'next-auth/react'
 import Loading from '@/components/atoms/Loading'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
+import HomePageHeader from '@/components/home/HomePageHeader'
 
 const nicomoji = LocalFont({
 	src: '../../lib/fonts/nicomoji-plus_v2-5.woff',
@@ -32,8 +33,9 @@ const SigninPage = () => {
 
 	return (
 		<>
-			<div className="flex items-center justify-center h-96">
-				<div className="flex flex-col items-center justify-center card bg-bg-white shadow-lg w-72">
+			<div className="flex flex-col items-center justify-center">
+				<HomePageHeader />
+				<div className="flex flex-col items-center justify-center card bg-bg-white shadow-lg w-72 h-96 my-6">
 					<figure>
 						<Image src="/login.jpg" alt="login" width={300} height={250} />
 					</figure>
@@ -54,6 +56,9 @@ const SigninPage = () => {
 							LINEで登録
 						</div>
 					</div>
+				</div>
+				<div className="text-seconday-main text-center">
+					<p>※ 利用登録にはあしたぼの部室パスワードが必要です</p>
 				</div>
 			</div>
 			<Popup

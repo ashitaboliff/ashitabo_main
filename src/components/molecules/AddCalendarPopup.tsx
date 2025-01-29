@@ -36,6 +36,10 @@ const AddCalendarPopup = ({
 				),
 		)
 
+	const googleCalendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(bookingDetail.registName)}&dates=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}/${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&details=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&location=あしたぼ`
+	const yahooCalendarUrl = `https://calendar.yahoo.co.jp/?v=60&title=${encodeURIComponent(bookingDetail.registName)}&st=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&et=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&desc=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&in_loc=あしたぼ`
+	const appleCalendarUrl = `/api/generate-ics?start=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&end=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&summary=${encodeURIComponent(bookingDetail.registName)}&description=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&openExternalBrowser=1`
+
 	return (
 		<Popup
 			ref={calendarAddPopupRef}
@@ -50,46 +54,21 @@ const AddCalendarPopup = ({
 					<div className="flex justify-center gap-1">
 						<button
 							className="btn btn-outline btn-sm"
-							onClick={() =>
-								open(
-									`https://www.google.com/calendar/render?
-                  action=TEMPLATE&
-                  text=${encodeURIComponent(bookingDetail.registName)}&
-                  dates=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}/${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&
-                  details=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&
-                  location=あしたぼ`,
-								)
-							}
+							onClick={() => open(googleCalendarUrl)}
 						>
 							<SiGooglecalendar color="#2180FC" />
 							Android
 						</button>
 						<button
-							className="btn btn-outline btn-sm btn-active"
-							onClick={() =>
-								(window.location.href = `/api/generate-ics?
-                  start=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&
-                  end=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&
-                  summary=${encodeURIComponent(bookingDetail.registName)}&
-                  description=${encodeURIComponent(bookingDetail.name)}&
-                  openExternalBrowser=1`)
-							}
+							className="btn btn-outline btn-sm"
+							onClick={() => (window.location.href = appleCalendarUrl)}
 						>
 							<FaApple color="#000" />
 							iPhone
 						</button>
 						<button
 							className="btn btn-outline btn-sm"
-							onClick={() =>
-								open(
-									`https://calendar.yahoo.co.jp/?v=60&
-                  title=${encodeURIComponent(bookingDetail.registName)}&
-                  st=${encodeURIComponent(format(bookingDate[0], "yyyyMMdd'T'HHmmss"))}&
-                  et=${encodeURIComponent(format(bookingDate[1], "yyyyMMdd'T'HHmmss"))}&
-                  desc=${encodeURIComponent(bookingDetail.name)}による音楽室でのコマ予約&
-                  in_loc=あしたぼ`,
-								)
-							}
+							onClick={() => open(yahooCalendarUrl)}
 						>
 							<FaYahoo color="#720E9E" />
 							Yahoo!
