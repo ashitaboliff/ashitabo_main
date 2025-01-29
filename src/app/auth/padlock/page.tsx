@@ -1,6 +1,7 @@
 'use server'
 
 import PadLockMain from '@/components/auth/PadLockMain'
+import SessionForbidden from '@/components/atoms/SessionNotFound'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 
 const Page = async () => {
@@ -10,10 +11,10 @@ const Page = async () => {
 
 	if (isSession === 'profile') {
 		await redirectFrom('/user', '/auth/signin')
-		return null
+		return <SessionForbidden />
 	} else if (isSession === 'session') {
 		await redirectFrom('/auth/signin/setting', '/auth/signin')
-		return null
+		return <SessionForbidden />
 	}
 
 	return <PadLockMain />

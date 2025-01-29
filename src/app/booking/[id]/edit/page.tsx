@@ -7,16 +7,19 @@ import {
 	getCalendarTimeAction,
 } from '@/components/booking/actions'
 import { redirectFrom } from '@/app/actions'
-import { getSession } from '@/app/actions'
+import { getSession, sessionCheck } from '@/app/actions'
+import SessionForbidden from '@/components/atoms/SessionNotFound'
 import BookingEdit from '@/components/booking/BookingEdit'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 import { notFound } from 'next/navigation'
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const session = await getSession()
-	if (!session) {
-		redirectFrom('/auth/signin', `/booking/${(await params).id}/edit`)
-		return null
+	const isSession = await sessionCheck(session)
+
+	if (!session || isSession !== 'profile') {
+		await redirectFrom('/auth/signin', `/booking/${(await params).id}/edit`)
+		return <SessionForbidden />
 	}
 	let bookingDetailProps: BookingDetailProps
 	const calendarTime = await getCalendarTimeAction()
