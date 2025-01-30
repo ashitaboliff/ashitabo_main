@@ -1,14 +1,14 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { addDays, subDays, format } from 'date-fns'
+import { addDays, subDays, format, set } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
 import { useScreenSize, getMaxWidth } from '@/utils/ScreenSize'
 import { BookingResponse } from '@/types/BookingTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import BookingRule from '@/components/molecules/BookingRule'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import Loading from '@/components/atoms/Loading'
 import BookingCalendar from '@/components/booking/BookingCalendar'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 
@@ -22,6 +22,8 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const ReadMePopupRef = useRef<PopupRef>(undefined)
+	const [error, setError] = useState<ErrorType>()
+	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(false)
 
 	let nextAble =
 		addDays(viewDay, viewDayMax) <= addDays(yesterDate, ableViewDayMax)
@@ -62,8 +64,11 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 		if (res.status === 200) {
 			setBookingData({ ...res.response })
 		} else {
-			console.error('Failed to get booking data')
-			return null
+			setError({
+				status: res.status,
+				response: String(res.response),
+			})
+			setErrorPopupOpen(true)
 		}
 		setIsLoading(false)
 	}
@@ -80,7 +85,7 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 		<div>
 			<div className="flex justify-center space-x-2 m-2">
 				<button
-					className="btn btn-primary"
+					className="btn btn-blue"
 					onClick={async () => {
 						getBooking({
 							startDate: viewDay,
@@ -93,7 +98,7 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 					カレンダーを更新
 				</button>
 				<button
-					className="btn btn-outline btn-primary"
+					className="btn btn-outline btn-tetiary"
 					onClick={() => setIsPopupOpen(true)}
 				>
 					使い方の表示
@@ -154,6 +159,28 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 					>
 						閉じる
 					</button>
+				</div>
+			</Popup>
+			<Popup
+				title="エラー"
+				maxWidth="sm"
+				open={errorPopupOpen}
+				onClose={() => setErrorPopupOpen(false)}
+			>
+				<div className="flex flex-col items-center space-y-4">
+					<div className="text-error text-lg font-bold">
+						{error?.status}{' '}
+						エラーが発生しました。このエラーが何度も発生する場合は、管理者にお問い合わせください。
+					</div>
+					<div className="flex justify-center space-x-2">
+						<button
+							type="button"
+							className="btn btn-outline"
+							onClick={() => setErrorPopupOpen(false)}
+						>
+							閉じる
+						</button>
+					</div>
 				</div>
 			</Popup>
 		</div>
