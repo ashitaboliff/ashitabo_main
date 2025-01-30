@@ -335,6 +335,7 @@ export async function updateBuyBookingAction({
 }): Promise<ApiResponse<string>> {
 	try {
 		await updateBuyBooking({ bookingId, state })
+		revalidateTag('booking')
 		revalidateTag('buyBooking')
 		return {
 			status: StatusCode.OK,
