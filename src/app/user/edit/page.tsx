@@ -6,6 +6,14 @@ import { getProfileAction } from '@/app/actions'
 import { Profile } from '@/types/UserTypes'
 import ProfileEdit from '@/components/user/ProfileEdit'
 
+export async function metadata() {
+	return {
+		title: 'プロフィール編集',
+		description: 'プロフィールを編集します',
+		url: '/user/edit',
+	}
+}
+
 const userPage = async () => {
 	const session = await getSession()
 	const isSession = await sessionCheck(session)

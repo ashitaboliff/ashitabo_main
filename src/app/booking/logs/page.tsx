@@ -6,6 +6,14 @@ import {
 	getCalendarTimeAction,
 	getAllBookingAction,
 } from '@/components/booking/actions'
+import { createMetaData } from '@/utils/MetaData'
+
+export async function metadata() {
+	return createMetaData({
+		title: 'あしたぼコマ表予約ログ',
+		url: '/booking/logs',
+	})
+}
 
 const BookingLog = async () => {
 	const calendarTime = await getCalendarTimeAction()

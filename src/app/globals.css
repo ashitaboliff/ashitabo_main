@@ -49,7 +49,7 @@
 		@apply text-tetiary bg-bg-white border-tetiary;
 	}
 	.btn.btn-tetiary.btn-outline:hover {
-		@apply text-tetiary-dark bg-tetiary border-tetiary-dark;
+		@apply text-tetiary-light bg-bg-white border-tetiary-light;
 	}
 	.btn.btn-secondary-light {
 		@apply bg-secondary text-bg-white border-secondary;

@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import { HiOutlineSearch } from 'react-icons/hi'
 import { UseFormRegisterReturn } from 'react-hook-form'
 import TextInputField from '@/components/atoms/TextInputField'
+import LabelInputField from '@/components/atoms/LabelInputField'
 
 /**
  * テキスト検索フィールド
@@ -28,19 +29,20 @@ const TextSearchField = ({
 }) => {
 	const defaultPlaceholder = placeholder || '検索'
 	return (
-		<div className={`relative ${className}`}>
-			<TextInputField
-				name={name}
-				register={register}
-				placeholder={defaultPlaceholder}
-				type="text"
-				label={label}
-				infoDropdown={infoDropdown}
-				disabled={disabled}
-				defaultValue={defaultValue} // 修正: defaultValue を使用
-			/>
-			<div className="absolute inset-y-0 right-0 flex items-center px-2">
-				<HiOutlineSearch className="text-xl" />
+		<div>
+			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
+			<div className={`relative ${className}`}>
+				<TextInputField
+					name={name}
+					register={register}
+					placeholder={defaultPlaceholder}
+					type="text"
+					disabled={disabled}
+					defaultValue={defaultValue}
+				/>
+				<div className="absolute inset-y-0 right-0 flex items-center px-2">
+					<HiOutlineSearch className="text-xl" />
+				</div>
 			</div>
 		</div>
 	)

@@ -7,6 +7,7 @@ import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap } from '@/types/UserTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import {
 	generateFiscalYearObject,
 	generateAcademicYear,
@@ -69,7 +70,7 @@ const SigninSetting = () => {
 	const router = useRouter()
 	const session = useSession()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [error, setIsError] = useState<string>('')
+	const [error, setIsError] = useState<ErrorType>()
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
 
@@ -125,9 +126,15 @@ const SigninSetting = () => {
 		setIsLoading(true)
 		const isSession = await sessionCheck(session.data)
 		if (isSession === 'no-session') {
-			setIsError('ログイン情報がありません')
+			setIsError({
+				status: 401,
+				response: 'ログイン情報がありません',
+			})
 		} else if (isSession === 'profile') {
-			setIsError('プロフィールが既に設定されています')
+			setIsError({
+				status: 403,
+				response: 'プロフィールが既に作成されています',
+			})
 		} else {
 			const userId = session.data?.user.id || ''
 			try {
@@ -135,13 +142,14 @@ const SigninSetting = () => {
 				if (res.status === 201) {
 					setPopupOpen(true)
 				} else {
-					console.error(res)
-					setIsError(`${res.response}`)
+					setIsError(res)
 				}
 			} catch (error) {
-				setIsError(
-					'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
-				)
+				setIsError({
+					status: 500,
+					response:
+						'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
+				})
 			}
 		}
 		setIsLoading(false)
@@ -246,12 +254,10 @@ const SigninSetting = () => {
 					保存
 				</button>
 			</form>
-			{error !== '' && (
-				<InfoMessage
-					message={`${error}`}
-					messageType="error"
-					IconColor="bg-white"
-				/>
+			{error && (
+				<p className="text-sm text-error text-center">
+					エラーコード{error.status}:{error.response}
+				</p>
 			)}
 			<Popup
 				ref={popupRef}
