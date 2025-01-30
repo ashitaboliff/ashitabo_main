@@ -11,6 +11,15 @@ import { getUserRoleAction } from '@/components/admin/action'
 import { Profile } from '@/types/UserTypes'
 import UserPage from '@/components/user/UserPage'
 import { notFound } from 'next/navigation'
+import { createMetaData } from '@/utils/MetaData'
+
+export async function metadata() {
+	return createMetaData({
+		title: 'ユーザーページ',
+		description: '自分のした予約などを確認できます',
+		url: '/user',
+	})
+}
 
 const userPage = async () => {
 	const session = await getSession()

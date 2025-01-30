@@ -13,6 +13,20 @@ import BookingEdit from '@/components/booking/BookingEdit'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 import { notFound } from 'next/navigation'
 
+export async function metadata({
+	params,
+}: {
+	params: Promise<{ id: string }>
+}) {
+	const id = (await params).id
+	const bookingDetail = await getBookingByIdAction(id)
+	return {
+		title: 'あしたぼコマ表予約編集',
+		description: `${typeof bookingDetail.response === 'object' ? `${bookingDetail.response?.name}` : '不明'}による${typeof bookingDetail.response === 'object' ? `${bookingDetail.response?.registName}` : '不明'}の予約編集です。`,
+		url: `/booking/${id}/edit`,
+	}
+}
+
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const session = await getSession()
 	const isSession = await sessionCheck(session)

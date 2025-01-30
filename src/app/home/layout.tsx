@@ -1,6 +1,6 @@
-import type { Metadata } from 'next'
 import LocalFont from 'next/font/local'
 import HomePageHeader from '@/components/home/HomePageHeader'
+import { createMetaData } from '@/utils/MetaData'
 
 const gkktt = LocalFont({
 	src: '../../lib/fonts/851Gkktt_005.woff',
@@ -9,11 +9,10 @@ const gkktt = LocalFont({
 	variable: '--851-gkktt',
 })
 
-export const metadata: Metadata = {
+export const metadata = createMetaData({
 	title: 'あしたぼホームページ',
-	description:
-		'信州大学工学部の軽音サークル、あしたぼの公式ホームページです。信州大学工学部の生徒の他に信州大学教育学部、長野県立大学の生徒が活動しています。',
-}
+	url: '/home',
+})
 
 export default function RootLayout({
 	children,

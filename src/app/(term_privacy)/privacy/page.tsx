@@ -3,8 +3,16 @@
 import privacy from '@/app/(term_privacy)/privacy/privacyJson'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import parse from 'html-react-parser'
+import { createMetaData } from '@/utils/MetaData'
 
-const Page = () => {
+export async function metadata() {
+	return createMetaData({
+		title: 'プライバシーポリシー',
+		url: '/privacy',
+	})
+}
+
+const Page = async () => {
 	return (
 		<div className="container mx-auto bg-bg-white p-4 pb-8 rounded-lg">
 			<h1 className="text-4xl font-bold text-center mt-4">

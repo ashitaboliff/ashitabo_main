@@ -1,4 +1,3 @@
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import LocalFont from 'next/font/local'
 import './globals.css'
@@ -8,6 +7,7 @@ import Footer from '@/components/molecules/Footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { LiffProvider } from '@/lib/liff/LiffOption'
 import NextAuthProvider from '@/lib/auth/AuthProvider'
+import { createMetaData } from '@/utils/MetaData'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -25,10 +25,10 @@ const gkktt = LocalFont({
 	variable: '--851-gkktt',
 })
 
-export const metadata: Metadata = {
+export const metadata = createMetaData({
 	title: 'あしたぼホームページ',
-	description: '信州大学工学部、軽音サークルのあしたぼ、公式ホームページです。',
-}
+	url: '/',
+})
 
 export default function RootLayout({
 	children,

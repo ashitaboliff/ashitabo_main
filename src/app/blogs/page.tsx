@@ -2,10 +2,19 @@
 
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
+import { createMetaData } from '@/utils/MetaData'
 
 const inter = Inter({ subsets: ['latin'] })
 
-const Page = () => {
+export async function metadata() {
+	return createMetaData({
+		title: 'あしたぼからのおしらせ',
+		description: '信州大学工学部軽音サークルあしたぼからのおしらせです。',
+		url: '/home/blogs',
+	})
+}
+
+const Page = async () => {
 	return (
 		<div
 			className={`flex flex-col items-center justify-center p-4 ${inter.className}`}

@@ -57,6 +57,7 @@ const UserPage = ({
 					width={150}
 					height={150}
 					className="rounded-full"
+					placeholder="blur"
 				/>
 				<div className="flex flex-col items-center justify-center">
 					<div className="text-4xl font-bold">{session.user.name}</div>
