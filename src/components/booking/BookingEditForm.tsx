@@ -224,6 +224,8 @@ const MemoBookingEditForm = memo(
 		const ableViewDayMin = 1 // 連続表示可能な最小日数
 		const [bookingResponse, setBookingResponse] = useState<BookingResponse>()
 
+		const [loading, setLoading] = useState<boolean>(false)
+
 		let nextAble =
 			addDays(viewDay, viewDayMax) <= addDays(yesterDate, ableViewDayMax)
 				? false
@@ -259,6 +261,7 @@ const MemoBookingEditForm = memo(
 
 		const onPutSubmit = async (data: any) => {
 			setSuccessPopupOpen(false)
+			setLoading(true)
 			let buyStatus: BuyBookingStatus | undefined = undefined
 			let isBuyUpdate = false
 			let isPaidExpired: string | undefined = undefined
@@ -302,6 +305,7 @@ const MemoBookingEditForm = memo(
 						'このエラーが出た際はわたべに問い合わせてください。' + String(e),
 				})
 			}
+			setLoading(false)
 		}
 
 		const getBooking = async ({
@@ -414,7 +418,7 @@ const MemoBookingEditForm = memo(
 
 						<div className="flex justify-center space-x-4">
 							<button type="submit" className="btn btn-primary">
-								予約を編集する
+								{loading ? '処理中...' : '予約を更新する'}
 							</button>
 							<button
 								type="button"

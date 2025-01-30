@@ -9,12 +9,13 @@ import { format, addDays, subDays } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { createBookingAction } from './actions'
+import ShareButton from '@/components/atoms/ShareButton'
 import TextInputField from '@/components/atoms/TextInputField'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
+import PasswordInputField from '@/components/molecules/PasswordInputField'
 import { Session } from 'next-auth'
-import PasswordInputField from '../molecules/PasswordInputField'
 import { ErrorType } from '@/types/ResponseTypes'
 
 const today = new Date(
@@ -158,11 +159,15 @@ export default function NewBooking({
 								messageType="warning"
 								IconColor="bg-white"
 								message={
-									<>
-										このコマを予約するには600円の支払いが必要です。
+									<p className="text-xs">
+										このコマには600円の支払いが必要です
 										<br />
-										支払いは現金およびPayPayでお願いします。
-									</>
+										支払いは現金およびPayPayのみです
+										<br />
+										支払期限は予約日の1週間前までです
+										<br />
+										過ぎたら予約はキャンセルされます
+									</p>
 								}
 							/>
 						</div>
@@ -213,24 +218,29 @@ export default function NewBooking({
 							</p>
 						</>
 					)}
-					<div className="flex flex-row justify-center gap-x-1">
+					<div className="flex flex-row justify-center gap-x-1 mt-4">
 						<button
 							type="button"
-							className="btn btn-primary mt-4"
+							className="btn btn-primary"
 							onClick={() => {
 								setNoticePopupOpen(false)
 								setAddCalendarPopupOpen(true)
 							}}
 						>
-							カレンダーに追加する
+							カレンダーに追加
 						</button>
 						<button
 							type="button"
-							className="btn btn-outline mt-4"
+							className="btn btn-outline"
 							onClick={() => router.push('/booking')}
 						>
 							ホームに戻る
 						</button>
+						<ShareButton
+							url={window.location.href}
+							title="新規予約"
+							text="この予約を友達に共有"
+						/>
 					</div>
 				</div>
 			</Popup>

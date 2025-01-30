@@ -5,6 +5,14 @@ import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import { getCalendarTimeAction } from '@/components/booking/actions'
 import { notFound } from 'next/navigation'
 import SessionForbidden from '@/components/atoms/SessionNotFound'
+import { createMetaData } from '@/utils/MetaData'
+
+export async function metadata() {
+	return createMetaData({
+		title: 'あしたぼコマ表新規予約',
+		url: '/booking/new',
+	})
+}
 
 const Page = async () => {
 	const session = await getSession()

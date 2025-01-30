@@ -4,6 +4,8 @@ import LocalFont from 'next/font/local'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/types/YoutubeTypes'
+import { ErrorType } from '@/types/ResponseTypes'
+import ShareButton from '@/components/atoms/ShareButton'
 import SelectFieldNumber from '@/components/atoms/SelectFieldNumber'
 import Pagination from '@/components/atoms/Pagination'
 import TextSearchField from '@/components/molecules/TextSearchField'
@@ -13,6 +15,7 @@ import YoutubeDetailBox from '@/components/video/YoutubeDetailBox'
 import { searchYoutubeDetailsAction } from './actions'
 
 import { VscSettings } from 'react-icons/vsc'
+import { RiQuestionLine } from 'react-icons/ri'
 
 const gkktt = LocalFont({
 	src: '../../lib/fonts/851Gkktt_005.woff',
@@ -39,7 +42,10 @@ const YoutubeMainPage = () => {
 	const [isSearching, setIsSearching] = useState<boolean>(false)
 	const [isLoading, setIsLoading] = useState<boolean>(true)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
-	const popupRef = useRef<PopupRef>(null)
+	const popupRef = useRef<PopupRef>()
+	const [isUsagePopupOpen, setIsUsagePopupOpen] = useState<boolean>(false)
+	const usagePopupRef = useRef<PopupRef>()
+	const [error, setError] = useState<ErrorType>()
 
 	// 初回読み込み時に searchParams を取得してクエリを設定
 	useEffect(() => {
@@ -70,8 +76,10 @@ const YoutubeMainPage = () => {
 			setYoutubeDetails(res.response.results)
 			setPageMax(Math.ceil(res.response.totalCount / query.videoPerPage))
 		} else {
-			console.error('Failed to get youtube details')
-			console.error(res)
+			setError({
+				status: res.status,
+				response: String(res.response),
+			})
 		}
 		setIsLoading(false)
 	}
@@ -116,15 +124,28 @@ const YoutubeMainPage = () => {
 			<div className={`text-3xl font-bold ${gkktt.className}`}>
 				過去ライブ映像
 			</div>
-			<button
-				className={`btn btn-outline w-80 ${isSearching ? 'btn-tetiary' : ''}`}
-				onClick={() => setIsPopupOpen(true)}
-			>
-				<div className="flex flex-row items-center space-x-2">
-					<VscSettings size={25} />
-					条件検索
-				</div>
-			</button>
+			<div className="flex flex-row items-center justify-between gap-x-2">
+				<button
+					className="btn btn-ghost w-16"
+					onClick={() => setIsUsagePopupOpen(true)}
+				>
+					<RiQuestionLine size={25} />
+				</button>
+				<button
+					className={`btn btn-outline w-64 ${isSearching ? 'btn-tetiary' : ''}`}
+					onClick={() => setIsPopupOpen(true)}
+				>
+					<div className="flex flex-row items-center space-x-2">
+						<VscSettings size={25} />
+						条件検索
+					</div>
+				</button>
+				<ShareButton
+					title="ライブ映像をシェアする"
+					text="あしたぼライブ映像を共有しよう"
+					url={window.location.href}
+				/>
+			</div>
 			<div className="flex flex-col items-center justify-center gap-y-2">
 				<div className="flex flex-row items-center ml-auto space-x-2 w-1/2">
 					<p className="text-sm whitespace-nowrap">表示件数:</p>
@@ -158,6 +179,12 @@ const YoutubeMainPage = () => {
 							onChange={() => updateQuery({ sort: 'old' })}
 						/>
 					</div>
+					{error && (
+						<p className="text-sm text-error text-center">
+							エラーコード{error.status}:{error.response}
+						</p>
+					)}
+
 					{isLoading ? (
 						<>
 							<div className="flex flex-col items-center">
@@ -247,16 +274,22 @@ const YoutubeMainPage = () => {
 						/>
 					</div>
 					<TextSearchField
+						label="バンド名"
+						infoDropdown="Youtubeの動画タイトルになっているバンド名での検索です"
 						name="bandName"
 						placeholder="バンド名"
 						defaultValue={query.bandName}
 					/>
 					<TextSearchField
+						label="ライブ名"
+						infoDropdown="Youtubeのプレイリストタイトルになっているライブ名での検索です"
 						name="liveName"
 						placeholder="ライブ名"
 						defaultValue={query.liveName}
 					/>
 					<TagInputField
+						label="タグ"
+						infoDropdown="みんなのつけたタグによる検索です"
 						name="tag"
 						placeholder="タグ"
 						defaultValue={query.tag}
@@ -286,6 +319,40 @@ const YoutubeMainPage = () => {
 						閉じる
 					</button>
 				</form>
+			</Popup>
+			<Popup
+				ref={usagePopupRef}
+				title="条件検索の使い方"
+				open={isUsagePopupOpen}
+				onClose={() => setIsUsagePopupOpen(false)}
+			>
+				<div className="flex flex-col gap-y-2">
+					<div className="text-base gap">
+						<p className="my-2">
+							<p className="font-bold text-lg">ライブ名: </p>Youtube
+							のプレイリストタイトルになっているライブ名での検索です
+						</p>
+						<p className="my-2">
+							<p className="font-bold text-lg">バンド名: </p>Youtube
+							の動画タイトルになっているバンド名での検索です
+						</p>
+						<p className="my-2">
+							<p className="font-bold text-lg">タグ: </p>
+							みんなのつけたタグによる検索です。自分の名前やバンドの正式名称、「
+							<span className="text-info">#わたべのお気に入り</span>
+							」など好きな名前をつけて共有とかしてみるといいです
+						</p>
+					</div>
+					<div className="flex flex-row justify-center gap-x-2">
+						<button
+							type="button"
+							className="btn btn-outline"
+							onClick={() => setIsUsagePopupOpen(false)}
+						>
+							閉じる
+						</button>
+					</div>
+				</div>
 			</Popup>
 		</div>
 	)

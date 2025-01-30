@@ -2,6 +2,15 @@
 
 import SigninSetting from '@/components/auth/SigninSetting'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
+import { createMetaData } from '@/utils/MetaData'
+
+export async function metadata() {
+	return createMetaData({
+		title: 'あしたぼコマ表ユーザー設定ページ',
+		description: 'あしたぼコマ表のユーザー設定ページ',
+		url: '/auth/signin/setting',
+	})
+}
 
 const Signin = async () => {
 	const session = await getSession()

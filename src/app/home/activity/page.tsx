@@ -2,14 +2,21 @@
 
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
+import { createMetaData } from '@/utils/MetaData'
 
 import { FaXTwitter, FaInstagram, FaYoutube } from 'react-icons/fa6'
 
-import { HiOutlineExternalLink } from 'react-icons/hi'
+export async function metadata() {
+	return createMetaData({
+		title: 'あしたぼの活動内容',
+		description: '信州大学工学部軽音サークルあしたぼの活動内容です！',
+		url: '/home/activity',
+	})
+}
 
 const inter = Inter({ subsets: ['latin'] })
 
-const Page = () => {
+const Page = async () => {
 	return (
 		<div className="flex flex-col gap-y-4 mt-6">
 			<div className="text-4xl text-center">あしたぼの活動内容</div>

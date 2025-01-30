@@ -1,10 +1,11 @@
-import type { Metadata } from 'next'
 import HomePageHeader from '@/components/home/HomePageHeader'
+import { createMetaData } from '@/utils/MetaData'
 
-export const metadata: Metadata = {
-	title: 'ライブ動画',
-	description: '過去のライブ動画はこちらから、映像の検索も可能です。',
-}
+export const metadata = createMetaData({
+	title: 'ライブ映像ページ',
+	description: 'あしたぼの過去のライブ映像はこちらから',
+	url: '/video',
+})
 
 export default function RootLayout({
 	children,

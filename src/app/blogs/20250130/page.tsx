@@ -1,40 +1,47 @@
 'use server'
 
-import privacy from '@/app/(term_privacy)/privacy/privacyJson'
+import blogs from '@/app/blogs/20250130/blogsJson'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import parse from 'html-react-parser'
 import { createMetaData } from '@/utils/MetaData'
 
 export async function metadata() {
 	return createMetaData({
-		title: 'プライバシーポリシー',
-		url: '/privacy',
+		title: 'アップデートのお知らせ(2025/01/30)',
+		description:
+			'あしたぼホームページ2025年1月の大型アップデートのお知らせです。',
+		url: '/blogs/20250130',
 	})
 }
 
 const Page = async () => {
 	return (
 		<div className="container mx-auto bg-bg-white p-4 pb-8 rounded-lg">
-			<h1 className="text-4xl font-bold text-center mt-4">
-				プライバシーポリシー
+			<h1 className="text-3xl font-bold text-center mt-4">
+				アップデートのお知らせ
 			</h1>
 			<div className="flex flex-col items-end">
 				<div className="text-center mt-4 flex flex-row items-center gap-x-2">
 					<LuCalendarSync />
-					{privacy[0].updatedAt}
+					{blogs[0].updatedAt}
 				</div>
 				<p className="text-center flex flex-row items-center gap-x-2">
 					<LuCalendar />
-					{privacy[0].createdAt}
+					{blogs[0].createdAt}
 				</p>
 			</div>
 			<div className="mt-8">
-				{privacy[0].body.map((privacy, index) => (
+				{blogs[0].body.map((blogs, index) => (
 					<div key={index} className="mt-6">
-						<h2 className="text-2xl font-bold mb-6">{privacy.subtitle}</h2>
-						<div>{parse(privacy.content)}</div>
+						<h2 className="text-lg font-bold mb-6">{blogs.subtitle}</h2>
+						<div>{parse(blogs.content)}</div>
 					</div>
 				))}
+			</div>
+			<div className="flex flex-row justify-center mt-5 gap-5">
+				<a className="btn btn-outline" href="/home">
+					ホームに戻る
+				</a>
 			</div>
 		</div>
 	)

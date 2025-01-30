@@ -28,6 +28,11 @@ const Page = () => {
 					</div>
 				))}
 			</div>
+			<div className="flex flex-row justify-center mt-5 gap-5">
+				<a className="btn btn-outline" href="/admin">
+					ホームに戻る
+				</a>
+			</div>
 		</div>
 	)
 }

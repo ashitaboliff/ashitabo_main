@@ -9,6 +9,15 @@ import {
 } from '@/components/booking/actions'
 import { BookingDetailProps } from '@/types/BookingTypes'
 import { notFound } from 'next/navigation'
+import { createMetaData } from '@/utils/MetaData'
+
+export async function metadata() {
+	return createMetaData({
+		title: 'あしたぼコマ表予約詳細',
+		description: `あしたぼコマ表の予約詳細です。`,
+		url: `/booking/id`,
+	})
+}
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	let bookingDetailProps: BookingDetailProps

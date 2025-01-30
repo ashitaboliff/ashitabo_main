@@ -87,7 +87,6 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 	const type = watch('type')
 
 	const onSubmit = async (data: any) => {
-		console.log(data)
 		if (data.type === 'single') {
 			const res = await createBookingBanDateAction({
 				startDate: DateToDayISOstring(data.startDate),
@@ -128,11 +127,10 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 				description: data.description,
 			})
 			if (res.status === 201) {
-				console.log(res)
 				reset()
 				setIsPopupOpen(true)
 			} else {
-				console.log(res)
+				setError(res)
 			}
 		}
 	}

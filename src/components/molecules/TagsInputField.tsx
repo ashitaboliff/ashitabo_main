@@ -1,10 +1,14 @@
+import { ReactNode } from 'react'
 import { useState, useEffect } from 'react'
 import { Controller, UseFormSetValue } from 'react-hook-form'
+import LabelInputField from '@/components/atoms/LabelInputField'
+
 import { HiMiniXMark } from 'react-icons/hi2'
 
 type TagInputFieldProps = {
 	name: string // react-hook-form で管理するフィールド名
 	label?: string // ラベルテキスト
+	infoDropdown?: ReactNode // ドロップダウン情報
 	placeholder?: string // プレースホルダーテキスト
 	control?: any
 	defaultValue?: string[] // 初期値として渡されるタグの配列
@@ -23,6 +27,7 @@ type TagInputFieldProps = {
 const TagInputField = ({
 	name,
 	label,
+	infoDropdown,
 	placeholder,
 	control,
 	defaultValue = [],
@@ -65,9 +70,7 @@ const TagInputField = ({
 
 	return (
 		<div className="space-y-2">
-			{label && (
-				<label className="text-sm font-medium text-gray-700">{label}</label>
-			)}
+			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
 
 			{Array.from({ length: tagCount }).map((_, index) => (
 				<div key={index} className="flex items-center space-x-2">

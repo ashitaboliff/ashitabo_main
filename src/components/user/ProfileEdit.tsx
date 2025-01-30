@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap, Profile, Part } from '@/types/UserTypes'
+import { ErrorType } from '@/types/ResponseTypes'
 import {
 	generateFiscalYearObject,
 	generateAcademicYear,
@@ -69,7 +70,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	const session = useSession()
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const [error, setIsError] = useState<string>('')
+	const [error, setIsError] = useState<ErrorType>()
 	const [popupOpen, setPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
 
@@ -137,7 +138,10 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 		setIsLoading(true)
 		const isSession = await sessionCheck(session.data)
 		if (isSession === 'no-session') {
-			setIsError('ログイン情報がありません')
+			setIsError({
+				status: 401,
+				response: 'ログイン情報がありません',
+			})
 		} else {
 			const userId = session.data?.user.id || ''
 			try {
@@ -145,13 +149,15 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 				if (res.status === 200) {
 					setPopupOpen(true)
 				} else {
-					console.error(res)
-					setIsError(`${res.response}`)
+					setIsError(res)
 				}
 			} catch (error) {
-				setIsError(
-					'エラーが発生しました、このエラーが何度も発生する場合はわたべにお問い合わせください',
-				)
+				setIsError({
+					status: 500,
+					response:
+						'このエラーが出た際はわたべに問い合わせてください。' +
+						String(error),
+				})
 			}
 		}
 		setIsLoading(false)
@@ -266,7 +272,9 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 				</div>
 			</form>
 			{error && (
-				<InfoMessage message={error} messageType="error" IconColor="bg-white" />
+				<p className="text-sm text-error text-center">
+					エラーコード{error.status}:{error.response}
+				</p>
 			)}
 			<Popup
 				ref={popupRef}

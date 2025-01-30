@@ -1,8 +1,12 @@
 import Image from 'next/image'
-import type { Metadata } from 'next'
+import { createMetaData } from '@/utils/MetaData'
 
-export const metadata: Metadata = {
-	title: 'メンテナンス中',
+export async function metadata() {
+	return createMetaData({
+		title: 'メンテナンス中',
+		description: 'ただいまメンテナンス中です。',
+		url: '/maintenance',
+	})
 }
 
 export default function Maintenance() {

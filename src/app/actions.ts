@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth/AuthOption'
 import { Session } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { getProfile, getUser } from '@/db/Auth'
+import { getAllBookingId, getAllYoutubeId } from '@/db/Root'
 import { Profile } from '@/types/UserTypes'
 
 export async function getSession() {
@@ -58,4 +59,14 @@ export async function sessionCheck(
 export async function redirectFrom(path: string, from: string): Promise<void> {
 	const redirectPath = `${path}?from=${encodeURIComponent(from)}`
 	redirect(redirectPath)
+}
+
+export async function getBookingIdAction(): Promise<string[]> {
+	const bookingId = await getAllBookingId()
+	return bookingId
+}
+
+export async function getYoutubeIdAction(): Promise<string[]> {
+	const youtubeId = await getAllYoutubeId()
+	return youtubeId
 }

@@ -3,6 +3,14 @@
 import terms from '@/app/(term_privacy)/terms/termsJson'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import parse from 'html-react-parser'
+import { createMetaData } from '@/utils/MetaData'
+
+export async function metadata() {
+	return createMetaData({
+		title: '利用規約',
+		url: '/terms',
+	})
+}
 
 const Page = () => {
 	return (
