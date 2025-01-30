@@ -23,7 +23,9 @@ export const checkPadLock = async (password: string) => {
 		let match = false
 
 		hashedPassword.forEach(async (padlock) => {
-			// ひとつでも一致すればtrue
+			if (match) {
+				return
+			}
 			match = compareSync(password, padlock.password)
 		})
 		return match
