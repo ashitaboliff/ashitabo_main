@@ -21,6 +21,9 @@ const Page = async () => {
 		>
 			<div className="text-2xl font-bold">未完成</div>
 			<p>間に合いませんでした。てへ</p>
+			<a className="underline" href="/blogs/20250130">
+				アップデート情報はこちらから
+			</a>
 			<Image
 				src="/utils/test.jpg"
 				alt="Under Construction"
