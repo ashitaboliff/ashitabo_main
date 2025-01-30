@@ -1,6 +1,7 @@
 'use server'
 
 import SigninPage from '@/components/auth/SigninPage'
+import SessionForbidden from '@/components/atoms/SessionNotFound'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 
 /**
@@ -12,10 +13,10 @@ const Signin = async () => {
 
 	if (isSession === 'profile') {
 		await redirectFrom('/user', '/auth/signin')
-		return null
+		return <SessionForbidden />
 	} else if (isSession === 'session') {
 		await redirectFrom('/auth/signin/setting', '/auth/signin')
-		return null
+		return <SessionForbidden />
 	}
 
 	return <SigninPage />

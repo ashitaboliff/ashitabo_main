@@ -48,8 +48,23 @@
 	.btn.btn-tetiary.btn-outline {
 		@apply text-tetiary bg-bg-white border-tetiary;
 	}
+	.btn.btn-tetiary.btn-outline:hover {
+		@apply text-tetiary-dark bg-tetiary border-tetiary-dark;
+	}
 	.btn.btn-secondary-light {
 		@apply bg-secondary text-bg-white border-secondary;
+	}
+	.btn.btn-secondary-light:hover {
+		@apply bg-secondary text-bg-white border-secondary;
+	}
+	.btn.btn-secondary-light {
+		@apply bg-secondary-light text-bg-white border-secondary-light;
+	}
+	.btn.btn-blue {
+		@apply bg-info text-bg-white border-info;
+	}
+	.btn.btn-blue:hover {
+		@apply bg-info text-bg-white border-info;
 	}
 	.w-92 {
 		width: 23rem;
