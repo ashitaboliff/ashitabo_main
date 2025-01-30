@@ -222,7 +222,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 						<>
 							使用楽器を選択してください、複数選択可能です
 							<br />
-							また、他の楽器経験があればその他を選択してください。
+							また、他の楽器経験があればその他を選択してください
 						</>
 					}
 					errorMessage={errors.part?.message}
