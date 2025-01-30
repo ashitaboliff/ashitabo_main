@@ -34,7 +34,7 @@ export const getAllUserProfiles = async () => {
 		}
 	}
 	const userProfiles = unstable_cache(getAllUserProfiles, [], {
-		tags: ['user'],
+		tags: ['users'],
 	})
 	const result = await userProfiles()
 	return result
