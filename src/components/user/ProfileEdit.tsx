@@ -220,7 +220,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					watchValue={watchPart}
 					infoDropdown={
 						<>
-							使用楽器を選択してください、複数選択可能です。
+							使用楽器を選択してください、複数選択可能です
 							<br />
 							また、他の楽器経験があればその他を選択してください。
 						</>
