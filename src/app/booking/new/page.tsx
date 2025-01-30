@@ -1,15 +1,18 @@
 'use server'
 
 import NewBooking from '@/components/booking/BookingCreate'
-import { getSession, redirectFrom } from '../../actions'
+import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import { getCalendarTimeAction } from '@/components/booking/actions'
 import { notFound } from 'next/navigation'
+import SessionForbidden from '@/components/atoms/SessionNotFound'
 
 const Page = async () => {
 	const session = await getSession()
-	if (!session) {
-		redirectFrom('/auth/signin', '/booking/new')
-		return null
+	const isSession = await sessionCheck(session)
+
+	if (isSession !== 'profile' || !session) {
+		await redirectFrom('/auth/signin', '/booking/new')
+		return <SessionForbidden />
 	}
 	const calendarTime = await getCalendarTimeAction()
 	if (calendarTime.status !== 200) {
