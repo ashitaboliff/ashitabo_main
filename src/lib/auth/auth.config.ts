@@ -4,7 +4,7 @@ import Line from 'next-auth/providers/line'
 export default {
 	providers: [
 		Line({
-			checks: ['state'],
+			checks: [],
 		}),
 	],
 } satisfies NextAuthConfig

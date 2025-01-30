@@ -11,7 +11,7 @@ const PadLockMain = () => {
 		await signIn('line', {
 			callbackUrl: '/auth/signin/setting',
 			maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
-			checks: ["state"],
+			checks: [],
 		})
 	}
 
