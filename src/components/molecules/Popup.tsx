@@ -33,7 +33,7 @@ const Popup = forwardRef<
 				)}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<h3 className="text-center mb-4 text-xl">{title}</h3>
+				<div className="text-center mb-4 text-xl font-bold">{title}</div>
 				<div className="text-left">{children}</div>
 			</div>
 		</div>

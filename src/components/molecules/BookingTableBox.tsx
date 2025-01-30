@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next-nprogress-bar'
-import { addWeeks } from 'date-fns'
+import { addWeeks, addDays } from 'date-fns'
 
 import { PiCircle as CircleIcon } from 'react-icons/pi'
 import { HiMiniXMark as ForbiddenIcon } from 'react-icons/hi2'
@@ -29,7 +29,7 @@ export const BookingTableBox = ({
 	const tdClassName =
 		new Date(bookingDate) > bookingAbleMaxDate
 			? 'border border-base-200 p-0 bg-tertiary-light'
-			: new Date(bookingDate) < new Date()
+			: new Date(bookingDate) < addDays(new Date(), -1)
 				? 'border border-base-200 p-0 bg-base-400'
 				: 'border border-base-200 p-0'
 
@@ -39,7 +39,7 @@ export const BookingTableBox = ({
 				key={index}
 				className={tdClassName}
 				onClick={() => {
-					if (new Date(bookingDate) < new Date()) {
+					if (new Date(bookingDate) < addDays(new Date(), -1)) {
 						return null
 					} else {
 						router.push(
@@ -73,7 +73,7 @@ export const BookingTableBox = ({
 				key={index}
 				className={tdClassName}
 				onClick={() => {
-					if (new Date(bookingDate) < new Date()) {
+					if (new Date(bookingDate) < addDays(new Date(), -1)) {
 						return null
 					} else {
 						router.push(`/booking/${id}`)
