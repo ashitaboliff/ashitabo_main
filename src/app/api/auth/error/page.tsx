@@ -7,3 +7,5 @@ const Page = () => {
     <AuthErrorPage error="Internal Server Error" />
   )
 }
+
+export default Page
