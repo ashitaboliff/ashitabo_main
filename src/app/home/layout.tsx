@@ -10,7 +10,7 @@ const gkktt = LocalFont({
 })
 
 export const metadata = createMetaData({
-	title: 'あしたぼホームページ',
+	title: 'ホーム',
 	url: '/home',
 })
 
