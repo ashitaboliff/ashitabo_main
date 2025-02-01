@@ -148,7 +148,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 					</div>
 					<button
 						className="btn btn-outline mt-4 w-92"
-						onClick={() => router.push('/video')}
+						onClick={() => router.back()}
 					>
 						戻る
 					</button>
@@ -211,7 +211,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 					</div>
 					<button
 						className="btn btn-outline mt-4 w-92"
-						onClick={() => router.push('/video')}
+						onClick={() => router.back()}
 					>
 						戻る
 					</button>

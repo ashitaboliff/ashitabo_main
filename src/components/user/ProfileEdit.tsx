@@ -114,12 +114,13 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 					yearOffset = 6
 					break
 				case 'E' || 'e':
-					yearOffset = 4
-					break
 				case 'G' || 'g':
 				case 'F' || 'f':
 				case 'C' || 'c':
 					yearOffset = 4
+					break
+				case 'W' || 'w':
+					yearOffset = 2
 					break
 				default:
 					yearOffset = 4
