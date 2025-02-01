@@ -19,13 +19,19 @@ const AuthErrorPage = ({ error }: { error: string }) => {
 				/>
 			</div>
 			<p className="text-4xl font-bold mb-4">500 Internal Server Error</p>
-			<p className="text-lg mb-2">
-				ログイン処理中にエラーが発生しました。Auth.js
-				v5のエラーで僕にはどうしようもないです。
+			<p className="text-base mb-2">
+				ログイン処理中にエラーが発生しました。
+        <a href="https://authjs.dev/" className="underline">
+          Auth.js v5
+        </a>
+        の不具合で僕にはどうしようもないです。
 				<br />
 				以下のボタンから再度ログインを試みてください。
 			</p>
-			<button onClick={() => router.push('/auth/signin')}>
+			<button
+        className="btn btn-primary"
+        onClick={() => router.push('/auth/signin')}
+      >
 				ログインしなおす
 			</button>
 		</div>
