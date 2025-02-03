@@ -96,4 +96,6 @@ const GachaPickup = forwardRef<
 	)
 })
 
+GachaPickup.displayName = 'GachaPickup'
+
 export default GachaPickup
