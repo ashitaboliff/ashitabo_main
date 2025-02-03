@@ -280,12 +280,13 @@ const UserPage = ({
 			</div>
 			<div className="mt-5 text-2xl text-center">---以下ガチャ開発中---</div>
 			<div className="flex flex-row justify-around">
-				<div
+				<button
 					className="btn btn-primary"
 					onClick={() => setIsGachaPopupOpen(true)}
+					disabled={true}
 				>
 					ガチャを引く
-				</div>
+				</button>
 			</div>
 			{isGachaPopupOpen && (
 				<GachaPickup
