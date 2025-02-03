@@ -110,16 +110,22 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 
 			let yearOffset = 4 // デフォルトのオフセット
 			switch (alphabet) {
-				case 'T' || 't':
+				case 'T':
+				case 't':
 					yearOffset = 6
 					break
-				case 'E' || 'e':
-				case 'G' || 'g':
-				case 'F' || 'f':
-				case 'C' || 'c':
+				case 'E':
+				case 'e':
+				case 'G':
+				case 'g':
+				case 'F':
+				case 'f':
+				case 'C':
+				case 'c':
 					yearOffset = 4
 					break
-				case 'W' || 'w':
+				case 'W':
+				case 'w':
 					yearOffset = 2
 					break
 				default:
