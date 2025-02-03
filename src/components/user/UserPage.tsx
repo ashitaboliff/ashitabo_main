@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { signOut } from 'next-auth/react'
@@ -14,6 +14,7 @@ import InstIcon from '@/components/atoms/InstIcon'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
+import GachaPickup, { GachaPickupRef } from '@/components/gacha/GachaPickup'
 import { bookingRevalidateTagAction } from '@/components/booking/actions'
 
 import { TiDeleteOutline } from 'react-icons/ti'
@@ -42,6 +43,9 @@ const UserPage = ({
 		useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
 	const addCalendarPopupRef = useRef<PopupRef>(undefined)
+
+	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
+	const gachaPopupRef = useRef<GachaPickupRef>(undefined)
 
 	const pageMax = Math.ceil(bookingDataByUser.length / logsPerPage)
 	const indexOfLastLog = currentPage * logsPerPage
@@ -274,6 +278,23 @@ const UserPage = ({
 			<div className="flex flex-row justify-around">
 				<div className="btn btn-error">アカウントを削除</div>
 			</div>
+			<div className="mt-5 text-2xl text-center">---以下ガチャ開発中---</div>
+			<div className="flex flex-row justify-around">
+				<button
+					className="btn btn-primary"
+					onClick={() => setIsGachaPopupOpen(true)}
+					disabled={true}
+				>
+					ガチャを引く
+				</button>
+			</div>
+			{isGachaPopupOpen && (
+				<GachaPickup
+					ref={gachaPopupRef}
+					open={isGachaPopupOpen}
+					onClose={() => setIsGachaPopupOpen(false)}
+				/>
+			)}
 		</div>
 	)
 }

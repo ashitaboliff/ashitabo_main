@@ -17,8 +17,9 @@ const Popup = forwardRef<
 		maxWidth?: string
 		open: boolean
 		onClose: () => void
+		className?: string
 	}
->(({ title, children, maxWidth, open, onClose }, ref) => {
+>(({ title, children, maxWidth, open, onClose, className }, ref) => {
 	useImperativeHandle(ref, () => ({
 		show: () => onClose(), // Note: It would be better to have a show and close function here
 		close: () => onClose(),
@@ -30,11 +31,12 @@ const Popup = forwardRef<
 				className={clsx(
 					'modal-box bg-base-100 rounded-lg shadow-lg p-6',
 					maxWidth && `max-w-${maxWidth}`,
+					className,
 				)}
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="text-center mb-4 text-xl font-bold">{title}</div>
-				<div className="text-left">{children}</div>
+				<div className={`text-left`}>{children}</div>
 			</div>
 		</div>
 	)
