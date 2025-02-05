@@ -14,7 +14,6 @@ export async function metadata() {
 }
 
 const Page = async () => {
-	// セッションをチェック
 	const session = await getSession()
 	const isSession = await sessionCheck(session)
 
