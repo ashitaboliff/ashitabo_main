@@ -2,7 +2,6 @@ import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { PrismaClient } from '@prisma/client'
 import authConfig from '@/lib/auth/auth.config'
-import { compare } from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
@@ -16,7 +15,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	secret: process.env.AUTH_SECRET,
 	...authConfig,
 	pages: {
-		signIn: '/auth/signin/setting',
 		signOut: '/home',
 	},
 	trustHost: true,

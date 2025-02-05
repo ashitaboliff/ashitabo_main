@@ -8,11 +8,24 @@ import {
 	createProfile,
 	updateProfile,
 } from '@/db/Auth'
+import { signIn } from '@/lib/auth/AuthOption'
 import { cookies } from 'next/headers'
 import { Profile, User } from '@/types/UserTypes'
 import { revalidateTag } from 'next/cache'
 
 const oneDay = 60 * 60 * 24
+
+export async function signInAction(): Promise<ApiResponse<string>> {
+	try {
+		await signIn()
+		return { status: StatusCode.NO_CONTENT }
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: String(error),
+		}
+	}
+}
 
 export async function padLockAction(
 	password: string,

@@ -6,9 +6,11 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { signIn } from 'next-auth/react'
 import Loading from '@/components/atoms/Loading'
 import { padLockAction } from './actions'
 import { ErrorType } from '@/types/ResponseTypes'
+import AuthErrorPage from '@/components/auth/AuthErrorPage'
 
 const PasswordSchema = yup.object().shape({
 	digit1: yup
@@ -31,7 +33,7 @@ const PasswordSchema = yup.object().shape({
 
 type digit = 'digit1' | 'digit2' | 'digit3' | 'digit4'
 
-const AuthPadLock = ({ setAuth }: { setAuth: (isAuth: boolean) => void }) => {
+const AuthPadLock = () => {
 	const router = useRouter()
 	const [error, setError] = useState<ErrorType>()
 	const [loading, setLoading] = useState<boolean>(false)
@@ -65,6 +67,17 @@ const AuthPadLock = ({ setAuth }: { setAuth: (isAuth: boolean) => void }) => {
 		}
 	}
 
+	const handleSignIn = async () => {
+		try {
+			await signIn('line', {
+				maxAge: 6 * 30 * 24 * 60 * 60, // 6 months
+				checks: ['state'],
+			})
+		} catch (error) {
+			return <AuthErrorPage error={String(error)} />
+		}
+	}
+
 	const onSubmit = async (data: {
 		digit1: string
 		digit2: string
@@ -78,8 +91,7 @@ const AuthPadLock = ({ setAuth }: { setAuth: (isAuth: boolean) => void }) => {
 			if (res.status !== 204) {
 				setError(res)
 			} else {
-				setAuth(true)
-				router.push('')
+				await handleSignIn()
 			}
 		} catch (error) {
 			setError({
