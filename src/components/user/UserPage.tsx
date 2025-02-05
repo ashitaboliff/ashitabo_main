@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
-import { signOut } from 'next-auth/react'
+import { signOutUser } from './action'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import Image from 'next/image'
@@ -75,7 +75,7 @@ const UserPage = ({
 				>
 					プロフィールを編集
 				</div>
-				<div className="btn btn-error" onClick={async () => await signOut()}>
+				<div className="btn btn-error" onClick={signOutUser}>
 					ログアウト
 				</div>
 			</div>
@@ -256,15 +256,14 @@ const UserPage = ({
 				</div>
 			</div>
 			<div className="flex flex-row justify-center mt-5 gap-5">
-				{userRole === 'ADMIN' ||
-					(userRole === 'TOPADMIN' && (
-						<button
-							className="btn btn-primary"
-							onClick={() => router.push('/admin')}
-						>
-							管理者ページへ
-						</button>
-					))}
+				{userRole !== 'USER' && (
+					<button
+						className="btn btn-primary"
+						onClick={() => router.push('/admin')}
+					>
+						管理者ページへ
+					</button>
+				)}
 				{userRole === 'TOPADMIN' && (
 					<button
 						className="btn btn-primary"

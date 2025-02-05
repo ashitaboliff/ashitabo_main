@@ -1,6 +1,6 @@
 'use server'
 
-import PadLockMain from '@/components/auth/PadLockMain'
+import AuthPadLock from '@/components/auth/AuthPadLock'
 import SessionForbidden from '@/components/atoms/SessionNotFound'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import { createMetaData } from '@/utils/MetaData'
@@ -14,7 +14,6 @@ export async function metadata() {
 }
 
 const Page = async () => {
-	// セッションをチェック
 	const session = await getSession()
 	const isSession = await sessionCheck(session)
 
@@ -26,7 +25,7 @@ const Page = async () => {
 		return <SessionForbidden />
 	}
 
-	return <PadLockMain />
+	return <AuthPadLock />
 }
 
 export default Page

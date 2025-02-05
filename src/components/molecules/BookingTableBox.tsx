@@ -28,7 +28,7 @@ export const BookingTableBox = ({
 
 	const tdClassName =
 		new Date(bookingDate) > bookingAbleMaxDate
-			? 'border border-base-200 p-0 bg-tertiary-light'
+			? 'border border-base-200 p-0 bg-base-400'
 			: new Date(bookingDate) < addDays(new Date(), -1)
 				? 'border border-base-200 p-0 bg-base-400'
 				: 'border border-base-200 p-0'
@@ -39,7 +39,7 @@ export const BookingTableBox = ({
 				key={index}
 				className={tdClassName}
 				onClick={() => {
-					if (new Date(bookingDate) < addDays(new Date(), -1)) {
+					if (new Date(bookingDate) < addDays(new Date(), -1) || new Date(bookingDate) > bookingAbleMaxDate) {
 						return null
 					} else {
 						router.push(
