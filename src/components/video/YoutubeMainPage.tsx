@@ -2,7 +2,7 @@
 
 import LocalFont from 'next/font/local'
 import { useState, useEffect, useRef } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/types/YoutubeTypes'
 import { ErrorType } from '@/types/ResponseTypes'
 import ShareButton from '@/components/atoms/ShareButton'
@@ -14,7 +14,7 @@ import Popup, { PopupRef } from '@/components/molecules/Popup'
 import YoutubeDetailBox from '@/components/video/YoutubeDetailBox'
 import { searchYoutubeDetailsAction } from './actions'
 
-import { VscSettings } from 'react-icons/vsc'
+import { BiSearch } from 'react-icons/bi'
 import { RiQuestionLine } from 'react-icons/ri'
 
 const gkktt = LocalFont({
@@ -25,15 +25,17 @@ const gkktt = LocalFont({
 })
 
 const defaultSearchQuery: YoutubeSearchQuery = {
-	liveOrBand: 'live',
+	liveOrBand: 'band',
 	bandName: '',
 	liveName: '',
+	tag: [],
 	sort: 'new',
 	page: 1,
 	videoPerPage: 10,
 }
 
 const YoutubeMainPage = () => {
+	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const [query, setQuery] = useState<YoutubeSearchQuery>(defaultSearchQuery)
@@ -46,6 +48,7 @@ const YoutubeMainPage = () => {
 	const [isUsagePopupOpen, setIsUsagePopupOpen] = useState<boolean>(false)
 	const usagePopupRef = useRef<PopupRef>()
 	const [error, setError] = useState<ErrorType>()
+	const [formKey, setFormKey] = useState<number>(0)
 
 	// 初回読み込み時に searchParams を取得してクエリを設定
 	useEffect(() => {
@@ -67,9 +70,16 @@ const YoutubeMainPage = () => {
 		executeSearch(initialQuery)
 	}, [])
 
+	useEffect(() => {
+		if (searchParams.toString() === '') {
+			setIsSearching(false)
+		} else {
+			setIsSearching(true)
+		}
+	}, [searchParams])
+
 	// 検索を実行する関数
 	const executeSearch = async (query: YoutubeSearchQuery) => {
-		setIsSearching(true)
 		setIsLoading(true)
 		const res = await searchYoutubeDetailsAction(query)
 		if (res.status === 200) {
@@ -86,6 +96,20 @@ const YoutubeMainPage = () => {
 
 	// クエリを更新し、searchParams に反映
 	const updateQuery = (newQuery: Partial<YoutubeSearchQuery>) => {
+		// page と videoPerPage を除いたオブジェクトを作成
+		const { page, videoPerPage, ...newQueryWithoutPagination } = newQuery
+		const {
+			page: defaultPage,
+			videoPerPage: defaultVideoPerPage,
+			...defaultQueryWithoutPagination
+		} = defaultSearchQuery
+
+		// newQueryWithoutPaginationが空の場合、またはデフォルトと一致している場合にisDefaultとする
+		const isDefault =
+			Object.keys(newQueryWithoutPagination).length === 0 ||
+			JSON.stringify(newQueryWithoutPagination) ===
+				JSON.stringify(defaultQueryWithoutPagination)
+
 		const updatedQuery = { ...query, ...newQuery }
 		setQuery(updatedQuery)
 
@@ -101,11 +125,14 @@ const YoutubeMainPage = () => {
 		if (updatedQuery.videoPerPage)
 			newParams.set('videoPerPage', String(updatedQuery.videoPerPage))
 
-		router.replace(`/video?${newParams.toString()}`)
+		if (isDefault) {
+			router.replace('/video')
+		} else {
+			router.replace(`/video?${newParams.toString()}`)
+		}
 		executeSearch(updatedQuery)
 	}
 
-	// フォーム送信時の処理
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		setIsPopupOpen(false)
 		event.preventDefault()
@@ -136,14 +163,14 @@ const YoutubeMainPage = () => {
 					onClick={() => setIsPopupOpen(true)}
 				>
 					<div className="flex flex-row items-center space-x-2">
-						<VscSettings size={25} />
+						<BiSearch size={25} />
 						条件検索
 					</div>
 				</button>
 				<ShareButton
 					title="ライブ映像をシェアする"
 					text="あしたぼライブ映像を共有しよう"
-					url={window.location.href}
+					url={`${pathname}?${searchParams.toString()}`}
 				/>
 			</div>
 			<div className="flex flex-col items-center justify-center gap-y-2">
@@ -164,7 +191,7 @@ const YoutubeMainPage = () => {
 							type="radio"
 							name="sort"
 							value="new"
-							defaultChecked={query.sort === 'new'}
+							checked={query.sort === 'new'}
 							className="btn btn-tetiary btn-sm"
 							aria-label="新しい順"
 							onChange={() => updateQuery({ sort: 'new' })}
@@ -173,7 +200,7 @@ const YoutubeMainPage = () => {
 							type="radio"
 							name="sort"
 							value="old"
-							defaultChecked={query.sort === 'old'}
+							checked={query.sort === 'old'}
 							className="btn btn-tetiary btn-sm"
 							aria-label="古い順"
 							onChange={() => updateQuery({ sort: 'old' })}
@@ -252,6 +279,7 @@ const YoutubeMainPage = () => {
 				onClose={() => setIsPopupOpen(false)}
 			>
 				<form
+					key={formKey}
 					onSubmit={handleSubmit}
 					className="flex flex-col gap-y-2 justify-center max-w-sm m-auto"
 				>
@@ -261,16 +289,16 @@ const YoutubeMainPage = () => {
 							name="liveOrBand"
 							value="live"
 							defaultChecked={query.liveOrBand === 'live'}
-							className="btn btn-tetiary"
-							aria-label="ライブを検索"
+							className="btn btn-tetiary w-5/12"
+							aria-label="再生リスト"
 						/>
 						<input
 							type="radio"
 							name="liveOrBand"
 							value="band"
 							defaultChecked={query.liveOrBand === 'band'}
-							className="btn btn-tetiary"
-							aria-label="バンドを検索"
+							className="btn btn-tetiary w-5/12"
+							aria-label="動画"
 						/>
 					</div>
 					<TextSearchField
@@ -305,6 +333,7 @@ const YoutubeMainPage = () => {
 							onClick={() => {
 								setQuery(defaultSearchQuery)
 								updateQuery(defaultSearchQuery)
+								setFormKey((prev) => prev + 1)
 								setIsPopupOpen(false)
 							}}
 						>
@@ -328,20 +357,20 @@ const YoutubeMainPage = () => {
 			>
 				<div className="flex flex-col gap-y-2">
 					<div className="text-base gap">
-						<p className="my-2">
-							<p className="font-bold text-lg">ライブ名: </p>Youtube
-							のプレイリストタイトルになっているライブ名での検索です
-						</p>
-						<p className="my-2">
-							<p className="font-bold text-lg">バンド名: </p>Youtube
-							の動画タイトルになっているバンド名での検索です
-						</p>
-						<p className="my-2">
+						<div className="my-2">
+							<p className="font-bold text-lg">ライブ名: </p>
+							Youtubeのプレイリストタイトルになっているライブ名での検索です
+						</div>
+						<div className="my-2">
+							<p className="font-bold text-lg">バンド名: </p>
+							Youtubeの動画タイトルになっているバンド名での検索です
+						</div>
+						<div className="my-2">
 							<p className="font-bold text-lg">タグ: </p>
-							みんなのつけたタグによる検索です。自分の名前やバンドの正式名称、「
-							<span className="text-info">#わたべのお気に入り</span>
-							」など好きな名前をつけて共有とかしてみるといいです
-						</p>
+							みんなのつけたタグによる検索です。自分の名前やバンドの正式名称、
+							「<span className="text-info">#わたべのお気に入り</span>
+							」など好きな名前をつけて共有してみるといいです
+						</div>
 					</div>
 					<div className="flex flex-row justify-center gap-x-2">
 						<button

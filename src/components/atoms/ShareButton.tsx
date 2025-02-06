@@ -1,3 +1,5 @@
+'use client'
+
 import { IoShareSocialSharp } from 'react-icons/io5'
 import { CiShare1 } from 'react-icons/ci'
 
