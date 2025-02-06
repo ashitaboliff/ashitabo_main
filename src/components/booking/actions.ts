@@ -308,21 +308,17 @@ export const getBookingByUserIdAction = async (
 }
 
 export async function createBookingAction({
+	bookingId,
 	userId,
 	booking,
-	isPaid,
-	isPaidExpired,
 	password,
 	toDay,
-	isPaidBookingDateMin,
 }: {
+	bookingId: string
 	userId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
-	isPaid: boolean
-	isPaidExpired?: string
 	password: string
 	toDay: string
-	isPaidBookingDateMin: string
 }): Promise<ApiResponse<string>> {
 	try {
 		const user = await getUser(userId)
@@ -365,11 +361,6 @@ export async function createBookingAction({
 						banBooking.start_time <= booking.bookingTime &&
 						booking.bookingTime <= banBooking.end_time
 					) {
-						console.log(
-							banBooking.start_time,
-							booking.bookingTime,
-							banBooking.end_time,
-						)
 						return {
 							status: StatusCode.FORBIDDEN,
 							response: '予約が禁止されています',
@@ -382,15 +373,13 @@ export async function createBookingAction({
 		const hashedPassword = hashSync(password, 10)
 
 		await createBooking({
+			bookingId,
 			booking,
 			userId,
-			isPaid,
-			isPaidExpired,
 			password: hashedPassword,
 		})
 
 		revalidateTag('booking')
-		revalidateTag('buyBooking')
 
 		return { status: StatusCode.CREATED, response: '予約が完了しました' }
 	} catch (error) {

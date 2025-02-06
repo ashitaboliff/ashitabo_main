@@ -16,8 +16,10 @@ const HomePageHeader = () => {
 	const { device } = getMaxWidth(width)
 
 	return (
-		<div className={`flex flex-col items-center relative ${gkktt.className}`}>
-			<div className={`absolute w-full place-items-center`}>
+		<div
+			className={`flex flex-col items-center relative mb-8 ${gkktt.className}`}
+		>
+			<div className={`absolute w-full flex justify-center`}>
 				{device === 'mobile' ? <HomePageBarSp /> : <HomePageBar />}
 			</div>
 			<div className="flex flex-col items-center justify-center mt-4 bg-bg-white bg-opacity-60 z-10">

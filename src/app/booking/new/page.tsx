@@ -9,7 +9,7 @@ import { createMetaData } from '@/utils/MetaData'
 
 export async function metadata() {
 	return createMetaData({
-		title: 'あしたぼコマ表新規予約',
+		title: 'コマ表新規予約',
 		url: '/booking/new',
 	})
 }

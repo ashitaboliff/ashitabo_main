@@ -5,7 +5,7 @@ import list from '@/utils/home/CarouselList'
 
 const Carousel = () => {
 	return (
-		<div className="carousel w-full mt-4">
+		<div className="carousel w-full">
 			{list.map((image, index) => (
 				<div
 					id={`slide${index + 1}`}

@@ -289,20 +289,16 @@ export const getBookingByUserId = async (userId: string) => {
  * @param userId ユーザID
  */
 export const createBooking = async ({
+	bookingId,
 	booking,
 	userId,
-	isPaid,
-	isPaidExpired,
 	password,
 }: {
+	bookingId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
 	userId: string
-	isPaid: boolean
-	isPaidExpired?: string
 	password: string
 }) => {
-	const bookingId = v4()
-
 	try {
 		await prisma.booking.create({
 			data: {
@@ -318,22 +314,6 @@ export const createBooking = async ({
 		})
 	} catch (error) {
 		throw error
-	}
-
-	if (isPaid) {
-		try {
-			await prisma.buyBooking.create({
-				data: {
-					id: v4(),
-					booking_id: bookingId,
-					user_id: userId,
-					status: 'UNPAID',
-					expire_at: isPaidExpired ?? '',
-				},
-			})
-		} catch (error) {
-			throw error
-		}
 	}
 }
 

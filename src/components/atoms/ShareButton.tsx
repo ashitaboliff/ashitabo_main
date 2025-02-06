@@ -1,13 +1,16 @@
 import { IoShareSocialSharp } from 'react-icons/io5'
+import { CiShare1 } from 'react-icons/ci'
 
 const ShareButton = ({
 	url,
 	title,
 	text,
+	isFullButton,
 }: {
 	url: string
 	title: string
 	text: string
+	isFullButton?: boolean
 }) => {
 	const handleShare = async () => {
 		if (navigator.share) {
@@ -25,8 +28,15 @@ const ShareButton = ({
 		}
 	}
 
-	return (
-		<button onClick={handleShare} className="btn btn-square btn-ghost w-16">
+	return isFullButton ? (
+		<button type="button" className="btn btn-outline" onClick={handleShare}>
+			<div className="flex items-center justify-center">
+				<CiShare1 size={15} />
+				<span className="ml-2">{text}</span>
+			</div>
+		</button>
+	) : (
+		<button type="button" className="btn btn-ghost" onClick={handleShare}>
 			<IoShareSocialSharp size={25} />
 		</button>
 	)
