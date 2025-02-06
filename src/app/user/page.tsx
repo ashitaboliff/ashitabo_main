@@ -39,20 +39,14 @@ const userPage = async () => {
 		}
 		const profile = await getProfileAction(session.user.id)
 		if (profile.status === 200) {
-			const booking = await getBookingByUserIdAction(session.user.id)
-			if (booking.status !== 200) {
-				return notFound()
-			} else {
-				return (
-					<UserPage
-						profile={profile.response as Profile}
-						session={session}
-						bookingDataByUser={booking.response}
-						calendarTime={calendarTime.response}
-						userRole={userRole.response}
-					/>
-				)
-			}
+			return (
+				<UserPage
+					profile={profile.response as Profile}
+					session={session}
+					calendarTime={calendarTime.response}
+					userRole={userRole.response}
+				/>
+			)
 		} else {
 			await redirectFrom('/auth/signin/setting', '/user')
 		}
