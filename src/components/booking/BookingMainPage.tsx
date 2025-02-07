@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { addDays, subDays, format, set } from 'date-fns'
+import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
 import { useScreenSize, getMaxWidth } from '@/utils/ScreenSize'
@@ -83,7 +83,7 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 
 	return (
 		<div>
-			<div className="flex justify-center space-x-2 m-2">
+			<div className="flex justify-center space-x-2 mx-2">
 				<button
 					className="btn btn-blue"
 					onClick={async () => {
@@ -95,7 +95,7 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 						await bookingRevalidateTagAction({ tag: 'banBooking' })
 					}}
 				>
-					カレンダーを更新
+					コマ表を更新
 				</button>
 				<button
 					className="btn btn-outline btn-tetiary"

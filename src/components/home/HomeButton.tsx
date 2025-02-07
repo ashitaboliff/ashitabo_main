@@ -72,7 +72,7 @@ const HomeButton = ({ device }: { device: string }) => {
 				<div className="absolute flex flex-row gap-5">
 					<HomePageButton
 						color="lightyellow"
-						text="音楽室予約"
+						text="コマ表予約"
 						link="/booking"
 						patting="pb-4"
 					/>

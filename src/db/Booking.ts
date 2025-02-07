@@ -245,41 +245,80 @@ export const getBookingByBooking = async ({
 	}
 }
 
-export const getBookingByUserId = async (userId: string) => {
-	function getBookingByUserId(userId: string) {
+export const getBookingByUserId = async ({
+	userId,
+	sort,
+	page,
+	perPage,
+}: {
+	userId: string
+	sort: 'new' | 'old'
+	page: number
+	perPage: number
+}) => {
+	async function getBookingByUserId({
+		userId,
+		sort,
+		page,
+		perPage,
+	}: {
+		userId: string
+		sort: 'new' | 'old'
+		page: number
+		perPage: number
+	}) {
 		try {
-			const bookings = prisma.booking.findMany({
-				where: {
-					AND: {
-						user_id: userId,
-						is_deleted: {
-							not: true,
+			const [bookings, count] = await Promise.all([
+				prisma.booking.findMany({
+					where: {
+						AND: {
+							user_id: userId,
+							is_deleted: {
+								not: true,
+							},
 						},
 					},
-				},
-				select: {
-					id: true,
-					user_id: true,
-					created_at: true,
-					updated_at: true,
-					booking_date: true,
-					booking_time: true,
-					regist_name: true,
-					name: true,
-					is_deleted: true,
-				},
-				orderBy: [{ updated_at: 'desc' }],
-			})
-			return bookings
+					select: {
+						id: true,
+						user_id: true,
+						created_at: true,
+						updated_at: true,
+						booking_date: true,
+						booking_time: true,
+						regist_name: true,
+						name: true,
+						is_deleted: true,
+					},
+					orderBy: [{ updated_at: sort === 'new' ? 'desc' : 'asc' }],
+					skip: (page - 1) * perPage,
+					take: perPage,
+				}),
+				prisma.booking.count({
+					where: {
+						AND: {
+							user_id: userId,
+							is_deleted: {
+								not: true,
+							},
+						},
+					},
+				}),
+			])
+			return { bookings, count }
 		} catch (error) {
 			throw error
 		}
 	}
 
 	const getBookingByUserIdCache = unstable_cache(getBookingByUserId, [userId], {
-		tags: [`booking-${userId}`, 'booking'],
+		tags: [`booking-${userId}`],
 	})
-	const bookingCacheData = await getBookingByUserIdCache(userId)
+	const bookingCacheData = await getBookingByUserIdCache({
+		userId,
+		sort,
+		page,
+		perPage,
+	})
 	return bookingCacheData
 }
 
@@ -289,20 +328,16 @@ export const getBookingByUserId = async (userId: string) => {
  * @param userId ユーザID
  */
 export const createBooking = async ({
+	bookingId,
 	booking,
 	userId,
-	isPaid,
-	isPaidExpired,
 	password,
 }: {
+	bookingId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
 	userId: string
-	isPaid: boolean
-	isPaidExpired?: string
 	password: string
 }) => {
-	const bookingId = v4()
-
 	try {
 		await prisma.booking.create({
 			data: {
@@ -318,22 +353,6 @@ export const createBooking = async ({
 		})
 	} catch (error) {
 		throw error
-	}
-
-	if (isPaid) {
-		try {
-			await prisma.buyBooking.create({
-				data: {
-					id: v4(),
-					booking_id: bookingId,
-					user_id: userId,
-					status: 'UNPAID',
-					expire_at: isPaidExpired ?? '',
-				},
-			})
-		} catch (error) {
-			throw error
-		}
 	}
 }
 

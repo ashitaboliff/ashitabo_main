@@ -11,7 +11,7 @@ const Footer = () => {
 		<footer className="footer bg-bg-white mt-8 flex flex-col items-center">
 			<nav className="py-8 px-4 md:p-8 pb-0 w-full max-w-screen-lg mx-auto justify-center relative">
 				<div
-					className={`absolute w-full place-items-center ${device === 'mobile' ? 'mt-36' : 'mt-8'}`}
+					className={`absolute w-full flex justify-center ${device === 'mobile' ? 'mt-36' : 'mt-8'}`}
 				>
 					{device === 'mobile' ? <HomePageBarSp /> : <HomePageBar />}
 				</div>

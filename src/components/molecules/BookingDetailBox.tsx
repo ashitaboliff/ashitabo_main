@@ -22,7 +22,7 @@ const BookingDetailBox = ({
 }) => {
 	const data = [
 		{
-			label: '日時',
+			label: '日付',
 			value: format(props.bookingDate, 'yyyy年MM月dd日(E)', { locale: ja }),
 		},
 		{

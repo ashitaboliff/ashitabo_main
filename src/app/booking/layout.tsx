@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google'
 import { createMetaData } from '@/utils/MetaData'
+import HomePageHeader from '@/components/home/HomePageHeader'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -14,5 +15,10 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode
 }>) {
-	return <>{children}</>
+	return (
+		<>
+			<HomePageHeader />
+			{children}
+		</>
+	)
 }

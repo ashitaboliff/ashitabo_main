@@ -30,6 +30,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			priority: 1,
 		},
 		{
+			url: `${URL}/home/activity`,
+			lastModified: new Date(),
+			priority: 1,
+		},
+		{
+			url: `${URL}/home/live`,
+			lastModified: new Date(),
+			priority: 1,
+		},
+		{
 			url: `${URL}/booking`,
 			lastModified: new Date(),
 			priority: 0.8,
@@ -46,5 +56,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		},
 		...bookingsMap,
 		...youtubeMap,
+		{
+			url: `${URL}/terms`,
+			lastModified: new Date(),
+			priority: 0.3,
+		},
+		{
+			url: `${URL}/privacy`,
+			lastModified: new Date(),
+			priority: 0.3,
+		},
 	]
 }

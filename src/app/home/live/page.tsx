@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export async function metadata() {
 	return createMetaData({
-		title: 'あしたぼのライブ予定',
+		title: 'ライブ予定',
 		description:
 			'あしたぼのライブ予定です。あしたぼ関係のライブ情報を随時更新していきます。見に来てね。',
 		url: '/home/live',
