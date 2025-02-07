@@ -19,7 +19,7 @@ type Props = {
 
 const BaseTable = (props: Props) => {
 	return (
-		<div className="p-4 flex flex-col justify-center gap-2 my-2 m-auto bg-bg-white shadow-md rounded-md">
+		<div className="p-4 flex flex-col justify-center gap-2 mb-4 bg-bg-white shadow-md rounded-md">
 			<div className="relative flex flex-row">
 				<p className="text-xl text-text-light text-center font-semibold m-auto">
 					{props.title}

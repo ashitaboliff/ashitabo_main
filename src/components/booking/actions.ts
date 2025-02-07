@@ -253,52 +253,45 @@ export async function getBookingByIdAction(
 	}
 }
 
-export const getBookingByUserIdAction = async (
-	userId: string,
-): Promise<ApiResponse<BookingDetailProps[]>> => {
+export const getBookingByUserIdAction = async ({
+	userId,
+	sort,
+	page,
+	perPage,
+}: {
+	userId: string
+	sort?: 'new' | 'old'
+	page?: number
+	perPage?: number
+}): Promise<ApiResponse<{ bookings: Booking[]; totalCount: number }>> => {
 	try {
-		const bookings = await getBookingByUserId(userId)
+		const pageNumber = Number(page) || 1
+		const perPageNumber = Number(perPage) || 10
+		const sorted = sort ?? 'new'
 
-		const transformedBookings: BookingDetailProps[] = bookings.map(
-			(booking) => ({
-				id: booking.id,
-				userId: booking.user_id,
-				createdAt: booking.created_at,
-				updatedAt: booking.updated_at,
-				bookingDate: booking.booking_date,
-				bookingTime: booking.booking_time,
-				registName: booking.regist_name,
-				name: booking.name,
-				isDeleted: booking.is_deleted,
-			}),
-		)
-
-		const buyBookings = await getBuyBookingByUserId(userId)
-
-		const transformedBuyBookings: BuyBooking[] = buyBookings.map(
-			(buyBooking) => ({
-				id: buyBooking.id,
-				bookingId: buyBooking.booking_id,
-				userId: buyBooking.user_id,
-				status: buyBooking.status,
-				createdAt: buyBooking.created_at,
-				updatedAt: buyBooking.updated_at,
-				expiredAt: buyBooking.expire_at,
-				isDeleted: buyBooking.is_deleted,
-			}),
-		)
-
-		transformedBookings.forEach((booking) => {
-			const buyBooking = transformedBuyBookings.find(
-				(buyBooking) => buyBooking.bookingId === booking.id,
-			)
-			if (buyBooking) {
-				booking.isPaidStatus = buyBooking.status
-				booking.isPaidExpired = buyBooking.expiredAt
-			}
+		const { bookings, count } = await getBookingByUserId({
+			userId,
+			sort: sorted,
+			page: pageNumber,
+			perPage: perPageNumber,
 		})
 
-		return { status: StatusCode.OK, response: transformedBookings }
+		const transformedBookings: Booking[] = bookings.map((booking) => ({
+			id: booking.id,
+			userId: booking.user_id,
+			createdAt: booking.created_at,
+			updatedAt: booking.updated_at,
+			bookingDate: booking.booking_date,
+			bookingTime: booking.booking_time,
+			registName: booking.regist_name,
+			name: booking.name,
+			isDeleted: booking.is_deleted,
+		}))
+
+		return {
+			status: StatusCode.OK,
+			response: { bookings: transformedBookings, totalCount: count },
+		}
 	} catch (error) {
 		return {
 			status: StatusCode.INTERNAL_SERVER_ERROR,
@@ -308,21 +301,17 @@ export const getBookingByUserIdAction = async (
 }
 
 export async function createBookingAction({
+	bookingId,
 	userId,
 	booking,
-	isPaid,
-	isPaidExpired,
 	password,
 	toDay,
-	isPaidBookingDateMin,
 }: {
+	bookingId: string
 	userId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
-	isPaid: boolean
-	isPaidExpired?: string
 	password: string
 	toDay: string
-	isPaidBookingDateMin: string
 }): Promise<ApiResponse<string>> {
 	try {
 		const user = await getUser(userId)
@@ -365,11 +354,6 @@ export async function createBookingAction({
 						banBooking.start_time <= booking.bookingTime &&
 						booking.bookingTime <= banBooking.end_time
 					) {
-						console.log(
-							banBooking.start_time,
-							booking.bookingTime,
-							banBooking.end_time,
-						)
 						return {
 							status: StatusCode.FORBIDDEN,
 							response: '予約が禁止されています',
@@ -382,15 +366,14 @@ export async function createBookingAction({
 		const hashedPassword = hashSync(password, 10)
 
 		await createBooking({
+			bookingId,
 			booking,
 			userId,
-			isPaid,
-			isPaidExpired,
 			password: hashedPassword,
 		})
 
 		revalidateTag('booking')
-		revalidateTag('buyBooking')
+		revalidateTag(`booking-${userId}`)
 
 		return { status: StatusCode.CREATED, response: '予約が完了しました' }
 	} catch (error) {
@@ -501,6 +484,7 @@ export async function updateBookingAction({
 
 		revalidateTag('booking')
 		revalidateTag(`booking-${bookingId}`)
+		revalidateTag(`booking-${userId}`)
 
 		return { status: StatusCode.OK, response: '予約情報を更新しました' }
 	} catch (error) {
@@ -535,6 +519,7 @@ export async function deleteBookingAction({
 
 		await deleteBooking(bookingId)
 		revalidateTag('booking')
+		revalidateTag(`booking-${userId}`)
 		return { status: StatusCode.OK, response: '予約を削除しました' }
 	} catch (error) {
 		return {

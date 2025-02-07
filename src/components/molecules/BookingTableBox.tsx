@@ -39,7 +39,10 @@ export const BookingTableBox = ({
 				key={index}
 				className={tdClassName}
 				onClick={() => {
-					if (new Date(bookingDate) < addDays(new Date(), -1) || new Date(bookingDate) > bookingAbleMaxDate) {
+					if (
+						new Date(bookingDate) < addDays(new Date(), -1) ||
+						new Date(bookingDate) > bookingAbleMaxDate
+					) {
 						return null
 					} else {
 						router.push(

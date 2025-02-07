@@ -5,13 +5,13 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { format, addDays, subDays } from 'date-fns'
+import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { v4 } from 'uuid'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { createBookingAction } from './actions'
 import ShareButton from '@/components/atoms/ShareButton'
 import TextInputField from '@/components/atoms/TextInputField'
-import InfoMessage from '@/components/atoms/InfoMessage'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/molecules/PasswordInputField'
@@ -26,7 +26,6 @@ const today = new Date(
 	0,
 	0,
 )
-const isPaidBookingDateMin = addDays(today, 14)
 
 const schema = yup.object().shape({
 	bookingDate: yup.string().required('日付を入力してください'),
@@ -58,7 +57,8 @@ export default function NewBooking({
 
 	const bookingDate = bookingDateParam ? new Date(bookingDateParam) : new Date()
 	const bookingTime = bookingTimeParam || '0'
-	const isPaid = bookingDate >= isPaidBookingDateMin
+
+	const [bookingId] = useState<string>(v4())
 
 	const {
 		register,
@@ -85,19 +85,13 @@ export default function NewBooking({
 			name: data.name,
 			isDeleted: false,
 		}
-		let isPaidExpired
-		if (isPaid) {
-			isPaidExpired = DateToDayISOstring(subDays(bookingDate, 7))
-		}
 		try {
 			const response = await createBookingAction({
+				bookingId: bookingId,
 				userId: session.user.id,
 				booking: reservationData,
-				isPaid,
-				isPaidExpired,
 				password: data.password,
 				toDay: today.toISOString(),
-				isPaidBookingDateMin: isPaidBookingDateMin.toISOString(),
 			})
 			if (response.status === 201) {
 				setNoticePopupOpen(true)
@@ -115,7 +109,7 @@ export default function NewBooking({
 	}
 
 	return (
-		<div className="p-8">
+		<div className="justify-center max-w-md mx-auto p-4 bg-bg-white shadow-md rounded-lg">
 			<h2 className="text-2xl font-bold text-center mb-8">新規予約</h2>
 			<div className="max-w-md mx-auto">
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
@@ -153,25 +147,6 @@ export default function NewBooking({
 						handleMouseDownPassword={(e) => e.preventDefault()}
 						errorMessage={errors.password?.message}
 					/>
-					{isPaid && (
-						<div className="flex justify-center">
-							<InfoMessage
-								messageType="warning"
-								IconColor="bg-white"
-								message={
-									<p className="text-xs">
-										このコマには600円の支払いが必要です
-										<br />
-										支払いは現金およびPayPayのみです
-										<br />
-										支払期限は予約日の1週間前までです
-										<br />
-										過ぎたら予約はキャンセルされます
-									</p>
-								}
-							/>
-						</div>
-					)}
 					<div className="flex justify-center space-x-4">
 						<button
 							type="submit"
@@ -207,28 +182,25 @@ export default function NewBooking({
 					<p>時間: {calendarTime[Number(bookingTime)]}</p>
 					<p>バンド名: {watch('registName')}</p>
 					<p>責任者: {watch('name')}</p>
-					{isPaid && (
-						<>
-							<p>支払い: 600円</p>
-							<p>
-								支払い期限:{' '}
-								{format(subDays(bookingDate, 7), 'yyyy/MM/dd(E)', {
-									locale: ja,
-								})}
-							</p>
-						</>
-					)}
-					<div className="flex flex-row justify-center gap-x-1 mt-4">
-						<button
-							type="button"
-							className="btn btn-primary"
-							onClick={() => {
-								setNoticePopupOpen(false)
-								setAddCalendarPopupOpen(true)
-							}}
-						>
-							カレンダーに追加
-						</button>
+					<div className="flex flex-col justify-center gap-y-2 mt-4">
+						<div className="flex flex-row justify-center space-x-2">
+							<button
+								type="button"
+								className="btn btn-primary"
+								onClick={() => {
+									setNoticePopupOpen(false)
+									setAddCalendarPopupOpen(true)
+								}}
+							>
+								スマホに予定追加
+							</button>
+							<ShareButton
+								url={`${window.location.origin}/booking/${bookingId}`}
+								title="新規予約"
+								text="予約をバンドに共有"
+								isFullButton
+							/>
+						</div>
 						<button
 							type="button"
 							className="btn btn-outline"
@@ -236,11 +208,6 @@ export default function NewBooking({
 						>
 							ホームに戻る
 						</button>
-						<ShareButton
-							url={window.location.href}
-							title="新規予約"
-							text="この予約を友達に共有"
-						/>
 					</div>
 				</div>
 			</Popup>

@@ -106,9 +106,9 @@ const Page = async () => {
 					<br />
 					<span className="font-bold">10月</span>：光芒祭
 					<br />
-					<span className="font-bold">12月</span>：うたかん
+					<span className="font-bold">11月</span>：光芒祭アフター
 					<br />
-					<span className="font-bold">1月</span>：あけおめジャンク
+					<span className="font-bold">12月</span>：うたかん
 					<br />
 					<span className="font-bold">3月</span>：ラスコン
 					<br />
