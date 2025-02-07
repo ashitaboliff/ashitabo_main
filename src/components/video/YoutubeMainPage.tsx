@@ -322,14 +322,13 @@ const YoutubeMainPage = () => {
 						placeholder="タグ"
 						defaultValue={query.tag}
 					/>
-					<div className="flex flex-row justify-center gap-x-2"></div>
+					<button type="submit" className="btn btn-primary mt-2">
+						検索
+					</button>
 					<div className="flex flex-row justify-center gap-x-2">
-						<button type="submit" className="btn btn-primary">
-							検索
-						</button>
 						<button
 							type="button"
-							className="btn btn-outline"
+							className="btn btn-outline w-1/2"
 							onClick={() => {
 								setQuery(defaultSearchQuery)
 								updateQuery(defaultSearchQuery)
@@ -339,14 +338,14 @@ const YoutubeMainPage = () => {
 						>
 							リセット
 						</button>
+						<button
+							type="button"
+							className="btn btn-outline w-1/2"
+							onClick={() => setIsPopupOpen(false)}
+						>
+							閉じる
+						</button>
 					</div>
-					<button
-						type="button"
-						className="btn btn-outline"
-						onClick={() => setIsPopupOpen(false)}
-					>
-						閉じる
-					</button>
 				</form>
 			</Popup>
 			<Popup

@@ -69,7 +69,7 @@ const TagInputField = ({
 	}
 
 	return (
-		<div className="space-y-2">
+		<div>
 			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
 
 			{Array.from({ length: tagCount }).map((_, index) => (
@@ -118,9 +118,9 @@ const TagInputField = ({
 			<button
 				type="button"
 				onClick={addTagField}
-				className="btn btn-sm btn-outline"
+				className="btn btn-sm btn-outline mt-2"
 			>
-				+ Add Tag
+				+ タグを追加する
 			</button>
 		</div>
 	)
