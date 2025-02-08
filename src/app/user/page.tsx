@@ -2,9 +2,7 @@
 
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
-import {
-	getCalendarTimeAction,
-} from '@/components/booking/actions'
+import { getCalendarTimeAction } from '@/components/booking/actions'
 import { getProfileAction } from '@/app/actions'
 import { getUserRoleAction } from '@/components/admin/action'
 import { Profile } from '@/types/UserTypes'
