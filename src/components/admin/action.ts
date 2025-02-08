@@ -5,8 +5,7 @@ import { revalidateTag } from 'next/cache'
 import { hashSync } from 'bcryptjs'
 import { getUser } from '@/db/Auth'
 import {
-	getAllUsers,
-	getAllUserProfiles,
+	getUserWithProfile,
 	deleteUser,
 	updateUserRole,
 	getAllPadLocks,
@@ -39,33 +38,34 @@ export async function adminRevalidateTagAction(
 	}
 }
 
-export async function getAllUserDetailsAction(): Promise<
-	ApiResponse<UserDetail[]>
-> {
+export async function getAllUserDetailsAction({
+	sort,
+	page,
+	perPage,
+}: {
+	sort: string
+	page: number
+	perPage: number
+}): Promise<ApiResponse<{ users: UserDetail[]; totalCount: number }>> {
 	try {
-		const users = await getAllUsers()
-		const userProfiles = await getAllUserProfiles()
-		const userDetails: UserDetail[] = users.map((user) => {
-			const userProfile = userProfiles.find(
-				(profile) => profile.user_id === user.id,
-			)
-			return {
-				id: user.id,
-				name: user.name,
-				fullName: userProfile?.name ?? undefined,
-				studentId: userProfile?.student_id ?? undefined,
-				expected: userProfile?.expected ?? undefined,
-				image: user.image,
-				createAt: user.createdAt,
-				updateAt: user.updatedAt,
-				AccountRole: user.role,
-				role: userProfile?.role,
-				part: userProfile?.part,
-			}
-		})
+		const { users, count } = await getUserWithProfile({ sort, page, perPage })
+		const userDetails: UserDetail[] = users.map((user) => ({
+			id: user.id,
+			name: user.name,
+			fullName: user.profile?.name ?? undefined,
+			studentId: user.profile?.student_id ?? undefined,
+			expected: user.profile?.expected ?? undefined,
+			image: user.image,
+			createAt: user.createdAt,
+			updateAt: user.updatedAt,
+			AccountRole: user.role,
+			role: user.profile?.role,
+			part: user.profile?.part,
+		}))
+
 		return {
 			status: StatusCode.OK,
-			response: userDetails,
+			response: { users: userDetails, totalCount: count },
 		}
 	} catch (error) {
 		return {

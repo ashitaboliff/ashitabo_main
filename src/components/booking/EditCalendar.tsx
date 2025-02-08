@@ -84,14 +84,14 @@ const EditCalendar = memo(
 									} else {
 										if (new Date(day) > bookingAbleMaxDate) {
 											tdClassName =
-												'border border-base-200 p-0 bg-tertiary-light'
+												'border border-base-200 p-0 bg-tetiary-light'
 										} else {
 											tdClassName = 'border border-base-200 p-0'
 										}
 									}
 
 									new Date(day) > bookingAbleMaxDate
-										? 'border border-base-200 p-0 bg-tertiary-light'
+										? 'border border-base-200 p-0 bg-tetiary-light'
 										: 'border border-base-200 p-0'
 
 									if (booking?.registName === undefined) {

@@ -31,10 +31,14 @@ const ShareButton = ({
 	}
 
 	return isFullButton ? (
-		<button type="button" className="btn btn-outline" onClick={handleShare}>
+		<button
+			type="button"
+			className="btn btn-outline w-32"
+			onClick={handleShare}
+		>
 			<div className="flex items-center justify-center">
 				<CiShare1 size={15} />
-				<span className="ml-2">{text}</span>
+				<span className="ml-2">{title}</span>
 			</div>
 		</button>
 	) : (
