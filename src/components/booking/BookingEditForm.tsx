@@ -88,7 +88,7 @@ const BookingEditForm = ({
 	return (
 		<>
 			{editState === 'select' && (
-				<div className="flex flex-col items-center justify-center p-4">
+				<div className="flex flex-col items-center justify-center">
 					<BookingDetailBox
 						props={{
 							bookingDate: bookingDetail.bookingDate,
@@ -98,27 +98,28 @@ const BookingEditForm = ({
 						}}
 						calendarTime={calendarTime}
 					/>
-					<div className="flex justify-center gap-4 mt-4">
-						<button
-							className="btn btn-primary"
-							onClick={() => setEditState('edit')}
-						>
-							編集
-						</button>
-						<button
-							className="btn btn-secondary"
-							onClick={() => {
-								setDeletePopupOpen(true)
-							}}
-						>
-							削除
-						</button>
-						<button
-							className="btn btn-outline"
-							onClick={() => router.push('/booking')}
-						>
-							ホームに戻る
-						</button>
+					<div className="flex flex-col justify-center space-y-2">
+						<div className="flex flex-row justify-center space-x-2">
+							<button
+								className="btn btn-primary"
+								onClick={() => setEditState('edit')}
+							>
+								予約を編集
+							</button>
+							<button
+								className="btn btn-secondary"
+								onClick={() => {
+									setDeletePopupOpen(true)
+								}}
+							>
+								予約を削除
+							</button>
+						</div>
+						<div className="flex flex-row justify-center space-x-2">
+							<button className="btn btn-outline" onClick={() => router.back()}>
+								戻る
+							</button>
+						</div>
 					</div>
 				</div>
 			)}

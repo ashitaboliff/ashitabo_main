@@ -2,7 +2,9 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
+import { usePathname } from 'next/navigation'
 import { BookingDetailProps } from '@/types/BookingTypes'
+import ShareButton from '@/components/atoms/ShareButton'
 import { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
@@ -18,6 +20,7 @@ const BookingDetail = ({
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const calendarAddPopupRef = useRef<PopupRef>(undefined)
 	const router = useRouter()
+	const pathname = usePathname()
 
 	if (!bookingDetail) {
 		return <BookingDetailNotFound />
@@ -35,25 +38,35 @@ const BookingDetail = ({
 				}}
 				calendarTime={calendarTime}
 			/>
-			<div className="flex flex-row justify-center space-x-2">
-				<button
-					className="btn btn-primary"
-					onClick={() => router.push(`/booking/${bookingDetail?.id}/edit`)}
-				>
-					編集
-				</button>
-				<button
-					className="btn btn-tertiary"
-					onClick={() => setIsPopupOpen(true)}
-				>
-					カレンダーに追加する
-				</button>
-				<button
-					className="btn btn-outline"
-					onClick={() => router.push('/booking')}
-				>
-					ホームに戻る
-				</button>
+			<div className="flex flex-col justify-center space-y-2">
+				<div className="flex flex-row justify-center space-x-2">
+					<button
+						className="btn btn-primary w-32"
+						onClick={() => router.push(`/booking/${bookingDetail?.id}/edit`)}
+					>
+						編集
+					</button>
+					<button
+						className="btn btn-tetiary btn-outline w-32"
+						onClick={() => setIsPopupOpen(true)}
+					>
+						スマホに追加
+					</button>
+					<ShareButton
+						url={pathname}
+						title="予約を共有"
+						text={`予約日: ${bookingDetail.bookingDate} ${bookingDetail.bookingTime}時`}
+						isFullButton
+					/>
+				</div>
+				<div className="flex justify-center space-x-2">
+					<button
+						className="btn btn-outline w-40"
+						onClick={() => router.push('/booking')}
+					>
+						コマ表に戻る
+					</button>
+				</div>
 			</div>
 			<AddCalendarPopup
 				calendarTime={calendarTime}
