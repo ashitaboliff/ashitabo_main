@@ -1,5 +1,4 @@
 import { ReactNode } from 'react'
-import ShareButton from '@/components/atoms/ShareButton'
 
 type DataItem = {
 	label: string
@@ -20,17 +19,10 @@ type Props = {
 const BaseTable = (props: Props) => {
 	return (
 		<div className="p-4 flex flex-col justify-center gap-2 mb-4 bg-bg-white shadow-md rounded-md">
-			<div className="relative flex flex-row">
+			<div className="flex flex-row">
 				<p className="text-xl text-text-light text-center font-semibold m-auto">
 					{props.title}
 				</p>
-				<div className="absolute inset-y-0 right-0 flex items-center">
-					<ShareButton
-						title={props.title}
-						url={window.location.href}
-						text="予約情報をシェア"
-					/>
-				</div>
 			</div>
 			{props.data.map((item, index) => (
 				<div key={index} className="p-2 border-t border-border-light">

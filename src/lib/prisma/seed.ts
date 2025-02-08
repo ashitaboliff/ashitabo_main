@@ -27,6 +27,56 @@ function DateFormat(addDay) {
 async function main() {
 	console.log('Seeding data...')
 
+	// await prisma.user.createMany({
+	// 	data: [
+	// 		{
+	// 			id: '1',
+	// 			role: 'USER',
+	// 			name: 'user1',
+	// 		},
+	// 		{
+	// 			id: '2',
+	// 			role: 'USER',
+	// 			name: 'user2',
+	// 		},
+	// 		{
+	// 			id: '3',
+	// 			role: 'USER',
+	// 			name: 'user3',
+	// 		},
+	// 		{
+	// 			id: '4',
+	// 			role: 'USER',
+	// 			name: 'user4',
+	// 		},
+	// 		{
+	// 			id: '5',
+	// 			role: 'USER',
+	// 			name: 'user5',
+	// 		},
+	// 		{
+	// 			id: '6',
+	// 			role: 'USER',
+	// 		},
+	// 		{
+	// 			id: '7',
+	// 			role: 'USER',
+	// 		},
+	// 		{
+	// 			id: '8',
+	// 			role: 'USER',
+	// 		},
+	// 		{
+	// 			id: '9',
+	// 			role: 'USER',
+	// 		},
+	// 		{
+	// 			id: '10',
+	// 			role: 'USER',
+	// 		},
+	// 	],
+	// })
+
 	await prisma.user.create({
 		data: {
 			id: 'admin',

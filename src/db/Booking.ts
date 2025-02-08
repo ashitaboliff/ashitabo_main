@@ -310,9 +310,13 @@ export const getBookingByUserId = async ({
 		}
 	}
 
-	const getBookingByUserIdCache = unstable_cache(getBookingByUserId, [userId], {
-		tags: [`booking-${userId}`],
-	})
+	const getBookingByUserIdCache = unstable_cache(
+		getBookingByUserId,
+		[userId, sort, page.toString(), perPage.toString()],
+		{
+			tags: [`booking-${userId}`],
+		},
+	)
 	const bookingCacheData = await getBookingByUserIdCache({
 		userId,
 		sort,

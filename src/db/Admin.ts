@@ -1,42 +1,48 @@
 'use server'
 
-import fs from 'fs'
-import path from 'path'
 import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
 import { AccountRole } from '@/types/UserTypes'
 import { BuyBookingStatus } from '@/types/BookingTypes'
 
-export const getAllUsers = async () => {
-	async function getAllUsers() {
+export const getUserWithProfile = async ({
+	sort,
+	page,
+	perPage,
+}: {
+	sort: string
+	page: number
+	perPage: number
+}) => {
+	async function getUserWithProfile() {
 		try {
-			const users = await prisma.user.findMany()
-			return users
+			const [users, count] = await Promise.all([
+				prisma.user.findMany({
+					orderBy: {
+						createdAt: sort === 'new' ? 'desc' : 'asc',
+					},
+					skip: (page - 1) * perPage,
+					take: perPage,
+					include: {
+						profile: true,
+					},
+				}),
+				prisma.user.count(),
+			])
+			return { users, count }
 		} catch (error) {
 			throw error
 		}
 	}
-	const users = unstable_cache(getAllUsers, [], {
-		tags: ['users'],
-	})
+	const users = unstable_cache(
+		getUserWithProfile,
+		[sort, page.toString(), perPage.toString()],
+		{
+			tags: ['users'],
+		},
+	)
 	const result = await users()
-	return result
-}
-
-export const getAllUserProfiles = async () => {
-	async function getAllUserProfiles() {
-		try {
-			const userProfiles = await prisma.profile.findMany()
-			return userProfiles
-		} catch (error) {
-			throw error
-		}
-	}
-	const userProfiles = unstable_cache(getAllUserProfiles, [], {
-		tags: ['users'],
-	})
-	const result = await userProfiles()
 	return result
 }
 

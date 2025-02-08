@@ -20,7 +20,7 @@ const Footer = () => {
 				>
 					{list.map(({ title, list }) => (
 						<li key={title} className="text-center">
-							<h2 className="font-bold text-base text-neutral-content border-l-4 border-tertiary-light pl-2">
+							<h2 className="font-bold text-base text-neutral-content border-l-4 border-tetiary-light pl-2">
 								{title}
 							</h2>
 							{list.map(({ url, title }) => (

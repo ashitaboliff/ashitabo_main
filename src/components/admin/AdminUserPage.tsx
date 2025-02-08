@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, use } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -8,6 +8,7 @@ import {
 	adminRevalidateTagAction,
 	deleteUserAction,
 	updateUserRoleAction,
+	getAllUserDetailsAction,
 } from './action'
 import {
 	UserDetail,
@@ -22,19 +23,13 @@ import Pagination from '@/components/atoms/Pagination'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 
-const AdminUserPage = ({
-	userDetails,
-	session,
-}: {
-	userDetails: UserDetail[]
-	session: Session
-}) => {
+const AdminUserPage = ({ session }: { session: Session }) => {
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [usersPerPage, setUsersPerPage] = useState(10)
-	const [popupData, setPopupData] = useState<UserDetail | undefined | null>(
-		userDetails?.[0] ?? undefined,
-	)
+	const [sort, setSort] = useState<'new' | 'old'>('new')
+	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [popupData, setPopupData] = useState<UserDetail>()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
 	const [isdeletePopupOpen, setIsDeletePopupOpen] = useState<boolean>(false)
@@ -44,27 +39,24 @@ const AdminUserPage = ({
 	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
 	const successPopupRef = useRef<PopupRef>(undefined)
 
-	const totalUsers = userDetails?.length ?? 0
-	const pageMax = Math.ceil(totalUsers / usersPerPage)
-
-	const indexOfLastUser = currentPage * usersPerPage
-	const indexOfFirstUser = indexOfLastUser - usersPerPage
-	const currentUsers =
-		userDetails?.slice(indexOfFirstUser, indexOfLastUser) ?? []
+	const [pageMax, setPageMax] = useState<number>(1)
+	const [users, setUsers] = useState<UserDetail[]>([])
 
 	const onDelete = async (id: string) => {
+		setIsLoading(true)
 		const res = await deleteUserAction({ id, role: 'ADMIN' })
 		if (res.status === 200) {
-			setPopupData(null)
 			setIsPopupOpen(false)
 			setIsDeletePopupOpen(false)
 			await adminRevalidateTagAction('users')
 		} else {
 			setError(res)
 		}
+		setIsLoading(false)
 	}
 
 	const onRoleChange = async (id: string, role: AccountRole) => {
+		setIsLoading(true)
 		const res = await updateUserRoleAction({ id, role })
 		if (res.status === 200) {
 			await adminRevalidateTagAction('users')
@@ -72,7 +64,23 @@ const AdminUserPage = ({
 		} else {
 			setError(res)
 		}
+		setIsLoading(false)
 	}
+
+	useEffect(() => {
+		const fetchUsers = async () => {
+			const res = await getAllUserDetailsAction({
+				sort,
+				page: currentPage,
+				perPage: usersPerPage,
+			})
+			if (res.status === 200) {
+				setUsers(res.response.users)
+				setPageMax(Math.ceil(res.response.totalCount / usersPerPage))
+			}
+		}
+		fetchUsers()
+	}, [currentPage, usersPerPage, sort])
 
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
@@ -80,7 +88,7 @@ const AdminUserPage = ({
 			<p className="text-sm text-center">
 				このページでは登録ユーザの確認、削除、三役権限の追加が可能です。
 				<br />
-				見知らぬユーザやサイト上での不審な動きのあるユーザを削除可能ですが基本的にそんなことしないでください。
+				見知らぬユーザやサイト上での不審な動きのあるユーザを削除可能ですが、基本的にそんなことしないでください。
 				<br />
 				また、三役権限の追加もむやみに行わないでください。大いなる責任が伴います。お前らを信用しています。
 			</p>
@@ -103,6 +111,25 @@ const AdminUserPage = ({
 						name="usersPerPage"
 					/>
 				</div>
+				<div className="flex flex-row gap-x-2">
+					<input
+						type="radio"
+						name="sort"
+						value="new"
+						defaultChecked
+						className="btn btn-tetiary btn-sm"
+						aria-label="新しい順"
+						onChange={() => setSort('new')}
+					/>
+					<input
+						type="radio"
+						name="sort"
+						value="old"
+						className="btn btn-tetiary btn-sm"
+						aria-label="古い順"
+						onChange={() => setSort('old')}
+					/>
+				</div>
 				<table className="table table-zebra table-sm w-full max-w-36 justify-center">
 					<thead>
 						<tr>
@@ -114,7 +141,7 @@ const AdminUserPage = ({
 						</tr>
 					</thead>
 					<tbody>
-						{currentUsers.map((user) => (
+						{users.map((user) => (
 							<tr
 								key={user.id}
 								onClick={() => {
@@ -189,8 +216,9 @@ const AdminUserPage = ({
 						<button
 							className="btn btn-primary"
 							disabled={
-								popupData?.AccountRole === 'ADMIN' ||
-								popupData?.AccountRole === 'TOPADMIN'
+								(popupData?.AccountRole === 'ADMIN' ||
+									popupData?.AccountRole === 'TOPADMIN') &&
+								!isLoading
 									? true
 									: false
 							}
@@ -203,7 +231,9 @@ const AdminUserPage = ({
 						</button>
 						<button
 							className="btn btn-error"
-							disabled={session.user.id === popupData?.id ? true : false}
+							disabled={
+								session.user.id === popupData?.id && !isLoading ? true : false
+							}
 							onClick={async () => {
 								if (!popupData) return
 								setIsDeletePopupOpen(true)

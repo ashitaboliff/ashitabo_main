@@ -196,8 +196,10 @@ export default function NewBooking({
 							</button>
 							<ShareButton
 								url={`${window.location.origin}/booking/${bookingId}`}
-								title="新規予約"
-								text="予約をバンドに共有"
+								title="予約をバンドに共有"
+								text={`予約日: ${format(bookingDate, 'yyyy/MM/dd(E)', {
+									locale: ja,
+								})} ${calendarTime[Number(bookingTime)]}時`}
 								isFullButton
 							/>
 						</div>

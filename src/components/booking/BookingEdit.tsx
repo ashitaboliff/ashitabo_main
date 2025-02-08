@@ -32,7 +32,6 @@ const BookingEdit = ({
 					handleSetAuth={setIsAuth}
 					calendarTime={calendarTime}
 					bookingDetail={bookingDetail}
-					session={session}
 				/>
 			)}
 		</div>
