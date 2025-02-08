@@ -3,7 +3,6 @@
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
 import {
-	getBookingByUserIdAction,
 	getCalendarTimeAction,
 } from '@/components/booking/actions'
 import { getProfileAction } from '@/app/actions'
