@@ -2,8 +2,13 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
-import { getUserWithName } from '@/db/Schedule'
-import { UserWithName } from '@/types/ScheduleTypes'
+import {
+	getUserWithName,
+	createSchedule,
+	createScheduleTimeslot,
+	createTimeslot,
+} from '@/db/Schedule'
+import { UserWithName, Schedule } from '@/types/ScheduleTypes'
 
 export const getUserIdWithNames = async (): Promise<
 	ApiResponse<UserWithName[]>
@@ -18,6 +23,22 @@ export const getUserIdWithNames = async (): Promise<
 		return {
 			status: StatusCode.OK,
 			response: userWithNames,
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: String(error),
+		}
+	}
+}
+
+export const createScheduleAction = async (
+	Schedule: Schedule,
+): Promise<ApiResponse<string>> => {
+	try {
+		return {
+			status: StatusCode.OK,
+			response: 'Success',
 		}
 	} catch (error) {
 		return {

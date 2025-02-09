@@ -3,12 +3,10 @@
 import BookingDetail from '@/components/booking/BookingDetail'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 import {
-	getCalendarTimeAction,
 	getBookingByIdAction,
 	getBuyBookingByIdAction,
 } from '@/components/booking/actions'
 import { BookingDetailProps } from '@/types/BookingTypes'
-import { notFound } from 'next/navigation'
 import { createMetaData } from '@/utils/MetaData'
 
 export async function metadata() {
@@ -21,10 +19,7 @@ export async function metadata() {
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	let bookingDetailProps: BookingDetailProps
-	const calendarTime = await getCalendarTimeAction()
-	if (calendarTime.status !== 200) {
-		return notFound()
-	}
+
 	const id = (await params).id
 	const bookingDetail = await getBookingByIdAction(id)
 	if (bookingDetail.status === 200) {
@@ -40,12 +35,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	if (!bookingDetailProps) {
 		return <BookingDetailNotFound />
 	}
-	return (
-		<BookingDetail
-			calendarTime={calendarTime.response}
-			bookingDetail={bookingDetailProps}
-		/>
-	)
+	return <BookingDetail bookingDetail={bookingDetailProps} />
 }
 
 export default Page

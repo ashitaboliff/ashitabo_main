@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { format, eachDayOfInterval, getDay, set } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { BookingTime } from '@/types/BookingTypes'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { createBookingBanDateAction } from './action'
 import { ErrorType } from '@/types/ResponseTypes'
@@ -63,7 +64,7 @@ const BanBookingSchema = yup.object().shape({
 	description: yup.string().required('説明を入力してください'),
 })
 
-const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
+const BanBookingCreate = () => {
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
@@ -205,7 +206,7 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 					label="開始時間"
 					name="startTime"
 					register={register('startTime')}
-					options={calendarTime.reduce(
+					options={BookingTime.reduce(
 						(acc, cur, i) => {
 							acc[i.toString()] = cur
 							return acc
@@ -219,7 +220,7 @@ const BanBookingCreate = ({ calendarTime }: { calendarTime: string[] }) => {
 						label="終了時間"
 						name="endTime"
 						register={register('endTime')}
-						options={calendarTime.reduce(
+						options={BookingTime.reduce(
 							(acc, cur, i) => {
 								acc[i.toString()] = cur
 								return acc

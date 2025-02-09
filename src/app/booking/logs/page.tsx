@@ -2,10 +2,7 @@
 
 import { notFound } from 'next/navigation'
 import BookingLogs from '@/components/booking/BookingLogs'
-import {
-	getCalendarTimeAction,
-	getAllBookingAction,
-} from '@/components/booking/actions'
+import { getAllBookingAction } from '@/components/booking/actions'
 import { createMetaData } from '@/utils/MetaData'
 
 export async function metadata() {
@@ -16,17 +13,10 @@ export async function metadata() {
 }
 
 const BookingLog = async () => {
-	const calendarTime = await getCalendarTimeAction()
-	if (calendarTime.status !== 200) return notFound()
 	const bookingLog = await getAllBookingAction()
 	if (bookingLog.status !== 200) return notFound()
 
-	return (
-		<BookingLogs
-			calendarTime={calendarTime.response}
-			bookingLog={bookingLog.response}
-		/>
-	)
+	return <BookingLogs bookingLog={bookingLog.response} />
 }
 
 export default BookingLog

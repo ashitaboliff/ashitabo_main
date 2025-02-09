@@ -11,10 +11,8 @@ import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
 
 const BookingDetail = ({
-	calendarTime,
 	bookingDetail,
 }: {
-	calendarTime: string[]
 	bookingDetail: BookingDetailProps
 }) => {
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
@@ -36,7 +34,6 @@ const BookingDetail = ({
 					name: bookingDetail.name,
 					isPaidStatus: bookingDetail.isPaidStatus,
 				}}
-				calendarTime={calendarTime}
 			/>
 			<div className="flex flex-col justify-center space-y-2">
 				<div className="flex flex-row justify-center space-x-2">
@@ -69,7 +66,6 @@ const BookingDetail = ({
 				</div>
 			</div>
 			<AddCalendarPopup
-				calendarTime={calendarTime}
 				bookingDetail={bookingDetail}
 				isPopupOpen={isPopupOpen}
 				setIsPopupOpen={setIsPopupOpen}

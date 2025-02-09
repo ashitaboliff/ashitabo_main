@@ -230,6 +230,7 @@ model Schedule {
   userSchedules     UserSchedule[]
 
   @@index([userId])
+  @@map("schedule")
 }
 
 model Timeslot {

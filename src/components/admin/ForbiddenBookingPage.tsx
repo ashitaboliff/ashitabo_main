@@ -8,18 +8,12 @@ import { deleteBanBookingAction, adminRevalidateTagAction } from './action'
 import Pagination from '@/components/atoms/Pagination'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import { BanBooking } from '@/types/BookingTypes'
+import { BanBooking, BookingTime } from '@/types/BookingTypes'
 import { ErrorType } from '@/types/ResponseTypes'
 
 import { TiDeleteOutline } from 'react-icons/ti'
 
-const ForbiddenBookingPage = ({
-	banBooking,
-	calendarTime,
-}: {
-	banBooking: BanBooking[]
-	calendarTime: string[]
-}) => {
+const ForbiddenBookingPage = ({ banBooking }: { banBooking: BanBooking[] }) => {
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [banBookingsPerPage, setBanBookingsPerPage] = useState(10)
@@ -123,10 +117,10 @@ const ForbiddenBookingPage = ({
 								</td>
 								<td>
 									{banBooking.endTime
-										? calendarTime[banBooking.startTime].split('~')[0] +
+										? BookingTime[banBooking.startTime].split('~')[0] +
 											'~' +
-											calendarTime[banBooking.endTime].split('~')[1]
-										: calendarTime[banBooking.startTime]}
+											BookingTime[banBooking.endTime].split('~')[1]
+										: BookingTime[banBooking.startTime]}
 								</td>
 								<td>{banBooking.description}</td>
 							</tr>
@@ -160,10 +154,10 @@ const ForbiddenBookingPage = ({
 							<div className="font-bold">時間:</div>
 							<div>
 								{popupData.endTime
-									? calendarTime[popupData.startTime].split('~')[0] +
+									? BookingTime[popupData.startTime].split('~')[0] +
 										' ~ ' +
-										calendarTime[popupData.endTime].split('~')[1]
-									: calendarTime[popupData.startTime]}
+										BookingTime[popupData.endTime].split('~')[1]
+									: BookingTime[popupData.startTime]}
 							</div>
 							<div className="font-bold">禁止理由:</div>
 							<div>{popupData.description}</div>

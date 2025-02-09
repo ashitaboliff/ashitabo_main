@@ -21,6 +21,7 @@ const ScheduleCreateSchema = yup.object().shape({
 	startDate: yup.date().required('日付を入力してください'),
 	endDate: yup.date().required('日付を入力してください'),
 	isTimeExtended: yup.boolean(),
+	deadline: yup.date().required('日付を入力してください'),
 	isMentionChecked: yup.boolean(),
 	mention: yup.array().when('isMentionChecked', {
 		is: (isMentionChecked: boolean) => isMentionChecked,
@@ -80,7 +81,7 @@ const ScheduleCreatePage = ({ session }: { session: Session }) => {
 	}, [])
 
 	return (
-		<div className="flex flex-col items-center justify-center">
+		<div className="flex flex-col items-center justify-center py-6 bg-bg-white rounded-lg shadow-md">
 			<h1 className="text-2xl font-bold">スケジュール作成</h1>
 			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit(onSubmit)}>
 				<TextInputField
@@ -160,8 +161,27 @@ const ScheduleCreatePage = ({ session }: { session: Session }) => {
 						/>
 					)}
 				/>
-				<button className="btn btn-primary btn-md" type="submit">
+				<Controller
+					name="deadline"
+					control={control}
+					render={({ field }) => (
+						<CustomDatePicker
+							label="締め切り"
+							selectedDate={field.value ?? null}
+							onChange={field.onChange}
+							minDate={new Date()}
+							errorMessage={errors.deadline?.message}
+						/>
+					)}
+				/>
+				<button className="btn btn-primary btn-md mt-4" type="submit">
 					作成
+				</button>
+				<button
+					className="btn btn-outline btn-md"
+					onClick={() => router.back()}
+				>
+					戻る
 				</button>
 			</form>
 		</div>

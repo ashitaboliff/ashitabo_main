@@ -17,12 +17,10 @@ import { MdOutlineEditCalendar } from 'react-icons/md'
 const UserPage = ({
 	profile,
 	session,
-	calendarTime,
 	userRole,
 }: {
 	profile: Profile
 	session: Session
-	calendarTime: string[]
 	userRole: string
 }) => {
 	const router = useRouter()
@@ -78,7 +76,7 @@ const UserPage = ({
 			)}
 			<Tabs>
 				<Tab label={<MdOutlineEditCalendar size={30} />}>
-					<UserBookingLogs session={session} calendarTime={calendarTime} />
+					<UserBookingLogs session={session} />
 				</Tab>
 				<Tab label={<GiCardRandom size={30} />}>
 					<div className="mt-5 text-2xl text-center">

@@ -5,20 +5,14 @@ import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Booking } from '@/types/BookingTypes'
+import { Booking, BookingTime } from '@/types/BookingTypes'
 import Pagination from '@/components/atoms/Pagination'
 import SelectFieldNumber from '@/components/atoms/SelectFieldNumber'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import { getBookingByUserIdAction } from '@/components/booking/actions'
 
-const UserBookingLogs = ({
-	session,
-	calendarTime,
-}: {
-	session: Session
-	calendarTime: string[]
-}) => {
+const UserBookingLogs = ({ session }: { session: Session }) => {
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [logsPerPage, setLogsPerPage] = useState(10)
@@ -103,7 +97,7 @@ const UserBookingLogs = ({
 										locale: ja,
 									})}
 								</td>
-								<td className="text-xs">{calendarTime[booking.bookingTime]}</td>
+								<td className="text-xs">{BookingTime[booking.bookingTime]}</td>
 								<td className="text-xs">{booking.registName}</td>
 								<td className="text-xs">{booking.name}</td>
 							</tr>
@@ -135,7 +129,7 @@ const UserBookingLogs = ({
 									})}
 								</div>
 								<div className="font-bold">予約時間:</div>
-								<div>{calendarTime[popupData.bookingTime]}</div>
+								<div>{BookingTime[popupData.bookingTime]}</div>
 								<div className="font-bold">バンド名:</div>
 								<div>{popupData.name}</div>
 								<div className="font-bold">責任者:</div>
@@ -173,7 +167,6 @@ const UserBookingLogs = ({
 						</div>
 					</Popup>
 					<AddCalendarPopup
-						calendarTime={calendarTime}
 						bookingDetail={popupData}
 						isPopupOpen={isAddCalendarPopupOpen}
 						setIsPopupOpen={setIsAddCalendarPopupOpen}

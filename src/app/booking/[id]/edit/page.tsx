@@ -4,14 +4,12 @@ import { BookingDetailProps } from '@/types/BookingTypes'
 import {
 	getBookingByIdAction,
 	getBuyBookingByIdAction,
-	getCalendarTimeAction,
 } from '@/components/booking/actions'
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
 import SessionForbidden from '@/components/atoms/SessionNotFound'
 import BookingEdit from '@/components/booking/BookingEdit'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
-import { notFound } from 'next/navigation'
 
 export async function metadata() {
 	return {
@@ -30,10 +28,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 		return <SessionForbidden />
 	}
 	let bookingDetailProps: BookingDetailProps
-	const calendarTime = await getCalendarTimeAction()
-	if (calendarTime.status !== 200) {
-		return notFound()
-	}
+
 	const id = (await params).id
 	const bookingDetail = await getBookingByIdAction(id)
 	if (bookingDetail.status === 200) {
@@ -49,13 +44,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	if (!bookingDetailProps) {
 		return <BookingDetailNotFound />
 	}
-	return (
-		<BookingEdit
-			calendarTime={calendarTime.response}
-			bookingDetail={bookingDetailProps}
-			session={session}
-		/>
-	)
+	return <BookingEdit bookingDetail={bookingDetailProps} session={session} />
 }
 
 export default Page

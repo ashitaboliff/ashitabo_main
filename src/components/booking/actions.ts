@@ -12,6 +12,7 @@ import {
 	BuyBookingStatus,
 	BookingLog,
 	BookingDetailProps,
+	BookingTime,
 } from '@/types/BookingTypes'
 import {
 	getAllBooking,
@@ -27,27 +28,11 @@ import {
 	deleteBooking,
 	getBookingBanDate,
 	getBanBookingByDate,
-	getCalendarTime,
 	getBuyBookingById,
 	getBuyBookingByUserId,
 } from '@/db/Booking'
 import { getUser } from '@/db/Auth'
 import { cookies } from 'next/headers'
-
-export async function getCalendarTimeAction(): Promise<ApiResponse<string[]>> {
-	try {
-		const timeList = await getCalendarTime()
-		return {
-			status: StatusCode.OK,
-			response: timeList,
-		}
-	} catch (error) {
-		return {
-			status: StatusCode.INTERNAL_SERVER_ERROR,
-			response: String(error),
-		}
-	}
-}
 
 export async function getAllBookingAction(): Promise<
 	ApiResponse<BookingLog[]>
@@ -151,18 +136,9 @@ export async function getBookingByDateAction({
 		// 日付と時間の二次元辞書型配列を初期化
 		const bookingsByDateAndTime: BookingResponse = {}
 
-		const calendarTime = await getCalendarTimeAction()
-
-		if (calendarTime.status !== StatusCode.OK) {
-			return {
-				status: StatusCode.INTERNAL_SERVER_ERROR,
-				response: 'Internal Server Error',
-			}
-		}
-
 		allDates.forEach((date) => {
 			bookingsByDateAndTime[date] = {}
-			for (let time = 0; time <= calendarTime.response.length; time++) {
+			for (let time = 0; time <= BookingTime.length; time++) {
 				bookingsByDateAndTime[date][time] = null // 初期値はnull
 			}
 		})

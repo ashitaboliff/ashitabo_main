@@ -5,14 +5,14 @@ import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
 import { useScreenSize, getMaxWidth } from '@/utils/ScreenSize'
-import { BookingResponse } from '@/types/BookingTypes'
+import { BookingResponse, BookingTime } from '@/types/BookingTypes'
 import { ErrorType } from '@/types/ResponseTypes'
 import BookingRule from '@/components/molecules/BookingRule'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import BookingCalendar from '@/components/booking/BookingCalendar'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 
-const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
+const MainPage = () => {
 	const yesterDate = subDays(new Date(), 1)
 	const [viewDay, setViewday] = useState<Date>(yesterDate)
 	const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
@@ -132,10 +132,7 @@ const MainPage = ({ calendarTime }: { calendarTime: string[] }) => {
 							<div className="skeleton h-96 w-96"></div>
 						</div>
 					) : (
-						<BookingCalendar
-							bookingDate={bookingData}
-							timeList={calendarTime}
-						/>
+						<BookingCalendar bookingDate={bookingData} timeList={BookingTime} />
 					)
 				) : (
 					<div className="flex justify-center">
