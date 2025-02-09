@@ -13,13 +13,17 @@ const CustomDatePicker = ({
 	label,
 	selectedDate,
 	onChange,
+	minDate,
+	errorMessage,
 }: {
 	label?: string
 	selectedDate: Date | null
 	onChange: (dates: Date | null) => void
+	minDate?: Date
+	errorMessage?: string
 }) => {
 	return (
-		<div className="flex flex-row gap-y-2 items-center justify-around">
+		<div className="flex flex-col gap-y-2 w-full">
 			{label && <label>{label}</label>}
 			<DatePicker
 				selected={selectedDate}
@@ -33,9 +37,15 @@ const CustomDatePicker = ({
 						changeMonth={(value: string) => props.changeMonth(Number(value))}
 					/>
 				)}
+				minDate={minDate}
 				dateFormat="yyyy/MM/dd"
-				className="border border-base-300 rounded-md p-2"
+				className="border border-base-300 rounded-md p-2 w-full"
 			/>
+			{errorMessage && (
+				<div className="label">
+					<span className="label-text-alt text-error">{errorMessage}</span>
+				</div>
+			)}
 		</div>
 	)
 }

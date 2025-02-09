@@ -48,7 +48,7 @@ const TextInputField = ({
 	...props
 }: TextInputFieldProps) => {
 	return (
-		<div>
+		<div className="flex flex-col w-full">
 			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
 			<input
 				name={name}

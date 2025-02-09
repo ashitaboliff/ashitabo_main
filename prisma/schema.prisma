@@ -215,11 +215,11 @@ model Schedule {
   id             String      @id @default(uuid())
   userId         String      @map("user_id")
   title          String
-  startDate      DateTime    @map("start_date")
-  endDate        DateTime    @map("end_date")
-  mention        String?      // null なら誰でも
+  startDate      String      @map("start_date") // ISO
+  endDate        String      @map("end_date")  // ISO
+  mention        String[]    @default([]) // 空配列なら mention なし
   timeExtended   Boolean     @default(false) @map("time_extended")
-  deadline       DateTime
+  deadline       String
   description    String?
   isDeleted      Boolean     @default(false) @map("is_deleted")
   createdAt      DateTime    @default(now()) @map("created_at")
@@ -234,7 +234,7 @@ model Schedule {
 
 model Timeslot {
   id                 String      @id @default(uuid())
-  date               DateTime
+  date               String      // ISO
   time               Int         // time拡張が true なら 0-19, false なら 9-16
 
   scheduleTimeslots  ScheduleTimeslot[]
