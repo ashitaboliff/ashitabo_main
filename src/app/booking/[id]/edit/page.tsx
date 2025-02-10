@@ -33,11 +33,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const bookingDetail = await getBookingByIdAction(id)
 	if (bookingDetail.status === 200) {
 		bookingDetailProps = bookingDetail.response
-		const isBuyBooking = await getBuyBookingByIdAction(id)
-		if (isBuyBooking.status === 200) {
-			bookingDetailProps.isPaidStatus = isBuyBooking.response.status
-			bookingDetailProps.isPaidExpired = isBuyBooking.response.expiredAt
-		}
 	} else {
 		return <BookingDetailNotFound />
 	}

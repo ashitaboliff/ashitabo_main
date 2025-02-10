@@ -2,10 +2,7 @@
 
 import BookingDetail from '@/components/booking/BookingDetail'
 import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
-import {
-	getBookingByIdAction,
-	getBuyBookingByIdAction,
-} from '@/components/booking/actions'
+import { getBookingByIdAction } from '@/components/booking/actions'
 import { BookingDetailProps } from '@/types/BookingTypes'
 import { createMetaData } from '@/utils/MetaData'
 
@@ -24,11 +21,6 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const bookingDetail = await getBookingByIdAction(id)
 	if (bookingDetail.status === 200) {
 		bookingDetailProps = bookingDetail.response
-		const isBuyBooking = await getBuyBookingByIdAction(id)
-		if (isBuyBooking.status === 200) {
-			bookingDetailProps.isPaidStatus = isBuyBooking.response.status
-			bookingDetailProps.isPaidExpired = isBuyBooking.response.expiredAt
-		}
 	} else {
 		return <BookingDetailNotFound />
 	}

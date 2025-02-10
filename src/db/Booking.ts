@@ -3,8 +3,6 @@
 import 'server-only'
 import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
-import fs from 'fs'
-import path from 'path'
 import { unstable_cache } from 'next/cache'
 import { Booking, BuyBookingStatus } from '@/types/BookingTypes'
 
@@ -642,30 +640,4 @@ export const getBuyBookingByExpire = async (expireAt: string) => {
 	})
 	const buyBookingCacheData = await buyBookingCache(expireAt)
 	return buyBookingCacheData
-}
-
-/**
- * 予約可能時間を配列で取得する関数
- */
-export const getCalendarTime = async () => {
-	async function calendarTime() {
-		const filePath = path.join(process.cwd(), '/src/db/data', 'TimeData.csv')
-		try {
-			const absolutePath = path.resolve(filePath)
-			if (!fs.existsSync(absolutePath)) {
-				throw new Error(`File not found: ${filePath}`)
-			}
-			const data = fs.readFileSync(absolutePath, 'utf-8')
-			return data
-				.split('\n')
-				.map((line) => line.trim().replace(',', ''))
-				.filter((line) => line !== '')
-		} catch (error) {
-			throw error
-		}
-	}
-	const calendarTimeCache = unstable_cache(calendarTime, [], {
-		tags: ['calendarTime'],
-	})
-	return await calendarTimeCache()
 }

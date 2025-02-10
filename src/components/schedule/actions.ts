@@ -2,13 +2,15 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
+import { v4 } from 'uuid'
+import { getUserWithName, createSchedule, createTimeslot } from '@/db/Schedule'
+import { BookingTime } from '@/types/BookingTypes'
 import {
-	getUserWithName,
-	createSchedule,
-	createScheduleTimeslot,
-	createTimeslot,
-} from '@/db/Schedule'
-import { UserWithName, Schedule } from '@/types/ScheduleTypes'
+	UserWithName,
+	Schedule,
+	generateScheduleTimeExtend,
+	SchedulePost,
+} from '@/types/ScheduleTypes'
 
 export const getUserIdWithNames = async (): Promise<
 	ApiResponse<UserWithName[]>
@@ -33,11 +35,41 @@ export const getUserIdWithNames = async (): Promise<
 }
 
 export const createScheduleAction = async (
-	Schedule: Schedule,
+	schedule: SchedulePost,
 ): Promise<ApiResponse<string>> => {
 	try {
+		const allTimeslots = generateScheduleTimeExtend(BookingTime)
+
+		const offset = [...allTimeslots].findIndex((x) => x === BookingTime[0])
+		const timeRange = schedule.timeExtended
+			? [...allTimeslots.keys()]
+			: [...BookingTime.keys()].map((i) => i + offset)
+
+		const newSchedule = {
+			id: schedule.id || v4(),
+			userId: schedule.userId,
+			title: schedule.title,
+			description: schedule.description,
+			startDate: schedule.dates[0],
+			endDate: schedule.dates[schedule.dates.length - 1],
+			mention: schedule.mention,
+			timeExtended: schedule.timeExtended,
+			deadline: schedule.deadline,
+		}
+		await createSchedule(newSchedule)
+
+		for (const date of schedule.dates) {
+			for (const i of timeRange) {
+				await createTimeslot({
+					scheduleId: schedule.id || v4(),
+					date,
+					time: i,
+				})
+			}
+		}
+
 		return {
-			status: StatusCode.OK,
+			status: StatusCode.CREATED,
 			response: 'Success',
 		}
 	} catch (error) {

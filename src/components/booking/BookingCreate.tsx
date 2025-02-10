@@ -194,7 +194,7 @@ export default function NewBooking({ session }: { session: Session }) {
 								title="予約をバンドに共有"
 								text={`予約日: ${format(bookingDate, 'yyyy/MM/dd(E)', {
 									locale: ja,
-								})} ${BookingTime[Number(bookingTime)]}時`}
+								})} ${BookingTime[Number(bookingTime)]}`}
 								isFullButton
 							/>
 						</div>

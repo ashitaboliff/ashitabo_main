@@ -226,7 +226,7 @@ model Schedule {
   updatedAt      DateTime    @updatedAt @map("updated_at")
 
   user              User     @relation(fields: [userId], references: [id])
-  scheduleTimeslots ScheduleTimeslot[]
+  timeslots         Timeslot[]
   userSchedules     UserSchedule[]
 
   @@index([userId])
@@ -235,26 +235,14 @@ model Schedule {
 
 model Timeslot {
   id                 String      @id @default(uuid())
+  scheduleId         String      @map("schedule_id")
   date               String      // ISO
   time               Int         // time拡張が true なら 0-19, false なら 9-16
 
-  scheduleTimeslots  ScheduleTimeslot[]
   userTimeslots      UserTimeslot[]
 
-  @@unique([date, time])  // `date + time` を一意にすることで重複データを防ぐ
+  schedule           Schedule    @relation(fields: [scheduleId], references: [id])
   @@map("timeslot")
-}
-
-model ScheduleTimeslot {
-  id            String      @id @default(uuid())
-  scheduleId    String      @map("schedule_id")
-  timeslotId    String      @map("timeslot_id")
-
-  schedule      Schedule?   @relation(fields: [scheduleId], references: [id])
-  timeslot      Timeslot?   @relation(fields: [timeslotId], references: [id])
-
-  @@unique([scheduleId, timeslotId])  // 同じスケジュールに同じ timeslot を二重登録しない
-  @@map("schedule_timeslot")
 }
 
 model UserSchedule {
