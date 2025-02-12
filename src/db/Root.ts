@@ -7,6 +7,9 @@ export const getAllBookingId = async () => {
 	async function getAllBookingId() {
 		try {
 			const bookingId = await prisma.booking.findMany({
+				where: {
+					is_deleted: false,
+				},
 				select: {
 					id: true,
 				},

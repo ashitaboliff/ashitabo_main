@@ -17,6 +17,7 @@ import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/molecules/PasswordInputField'
 import { Session } from 'next-auth'
 import { ErrorType } from '@/types/ResponseTypes'
+import { BookingTime } from '@/types/BookingTypes'
 
 const today = new Date(
 	new Date().getFullYear(),
@@ -35,13 +36,7 @@ const schema = yup.object().shape({
 	password: yup.string().required('パスワードを入力してください'),
 })
 
-export default function NewBooking({
-	calendarTime,
-	session,
-}: {
-	calendarTime: string[]
-	session: Session
-}) {
+export default function NewBooking({ session }: { session: Session }) {
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
 	const [noticePopupOpen, setNoticePopupOpen] = useState(false)
@@ -70,7 +65,7 @@ export default function NewBooking({
 		resolver: yupResolver(schema),
 		defaultValues: {
 			bookingDate: bookingDate.toISOString().split('T')[0],
-			bookingTime: calendarTime[Number(bookingTime)],
+			bookingTime: BookingTime[Number(bookingTime)],
 		},
 	})
 
@@ -179,7 +174,7 @@ export default function NewBooking({
 				<div className="text-center">
 					<p>以下の内容で予約が完了しました。</p>
 					<p>日付: {format(bookingDate, 'yyyy/MM/dd(E)', { locale: ja })}</p>
-					<p>時間: {calendarTime[Number(bookingTime)]}</p>
+					<p>時間: {BookingTime[Number(bookingTime)]}</p>
 					<p>バンド名: {watch('registName')}</p>
 					<p>責任者: {watch('name')}</p>
 					<div className="flex flex-col justify-center gap-y-2 mt-4">
@@ -199,7 +194,7 @@ export default function NewBooking({
 								title="予約をバンドに共有"
 								text={`予約日: ${format(bookingDate, 'yyyy/MM/dd(E)', {
 									locale: ja,
-								})} ${calendarTime[Number(bookingTime)]}時`}
+								})} ${BookingTime[Number(bookingTime)]}`}
 								isFullButton
 							/>
 						</div>
@@ -214,7 +209,6 @@ export default function NewBooking({
 				</div>
 			</Popup>
 			<AddCalendarPopup
-				calendarTime={calendarTime}
 				bookingDetail={{
 					id: '',
 					userId: '',

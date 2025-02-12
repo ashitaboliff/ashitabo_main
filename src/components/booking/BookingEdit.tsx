@@ -7,11 +7,9 @@ import BookingEditForm from '@/components/booking/BookingEditForm'
 import { Session } from 'next-auth'
 
 const BookingEdit = ({
-	calendarTime,
 	bookingDetail,
 	session,
 }: {
-	calendarTime: string[]
 	bookingDetail: BookingDetailProps
 	session: Session
 }) => {
@@ -22,15 +20,10 @@ const BookingEdit = ({
 	return (
 		<div className="flex-col">
 			{isAuth ? (
-				<BookingEditForm
-					calendarTime={calendarTime}
-					bookingDetail={bookingDetail}
-					session={session}
-				/>
+				<BookingEditForm bookingDetail={bookingDetail} session={session} />
 			) : (
 				<BookingEditAuth
 					handleSetAuth={setIsAuth}
-					calendarTime={calendarTime}
 					bookingDetail={bookingDetail}
 				/>
 			)}

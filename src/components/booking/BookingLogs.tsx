@@ -4,7 +4,11 @@ import { useRef, useState } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction } from './actions'
-import { BookingLog, BuyBookingStatusMap } from '@/types/BookingTypes'
+import {
+	BookingLog,
+	BuyBookingStatusMap,
+	BookingTime,
+} from '@/types/BookingTypes'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import Pagination from '@/components/atoms/Pagination'
 import SelectField from '@/components/atoms/SelectField'
@@ -12,10 +16,8 @@ import SelectField from '@/components/atoms/SelectField'
 import { TiDeleteOutline } from 'react-icons/ti'
 
 const BookingLogs = ({
-	calendarTime,
 	bookingLog,
 }: {
-	calendarTime: string[]
 	bookingLog: BookingLog[] | undefined | null
 }) => {
 	const [currentPage, setCurrentPage] = useState<number>(1)
@@ -87,7 +89,7 @@ const BookingLogs = ({
 								<td className="text-xxs">
 									{format(log.bookingDate, 'yyyy年MM月dd日', { locale: ja })}
 								</td>
-								<td className="text-xxs">{calendarTime[log.bookingTime]}</td>
+								<td className="text-xxs">{BookingTime[log.bookingTime]}</td>
 								<td className="text-xxs">{log.registName}</td>
 								<td className="text-xxs">{log.name}</td>
 							</tr>
@@ -119,7 +121,7 @@ const BookingLogs = ({
 									})}
 							</div>
 							<div className="font-bold">予約時間:</div>
-							<div>{popupData && calendarTime[popupData.bookingTime]}</div>
+							<div>{popupData && BookingTime[popupData.bookingTime]}</div>
 							<div className="font-bold">バンド名:</div>
 							<div>{popupData?.name}</div>
 							<div className="font-bold">責任者:</div>

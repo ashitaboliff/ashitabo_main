@@ -1,7 +1,7 @@
 'use client'
 
 import { memo } from 'react'
-import { addWeeks, format, set } from 'date-fns'
+import { addWeeks, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { BookingResponse } from '@/types/BookingTypes'
 import BookingTableBox from '@/components/molecules/BookingTableBox'

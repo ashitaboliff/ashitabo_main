@@ -2,9 +2,6 @@
 
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
-import {
-	getCalendarTimeAction,
-} from '@/components/booking/actions'
 import { getProfileAction } from '@/app/actions'
 import { getUserRoleAction } from '@/components/admin/action'
 import { Profile } from '@/types/UserTypes'
@@ -23,10 +20,7 @@ export async function metadata() {
 const userPage = async () => {
 	const session = await getSession()
 	const isSession = await sessionCheck(session)
-	const calendarTime = await getCalendarTimeAction()
-	if (calendarTime.status !== 200) {
-		return notFound()
-	}
+
 	if (isSession === 'no-session' || !session) {
 		await redirectFrom('/auth/signin', '/user')
 	} else if (isSession === 'session') {
@@ -42,7 +36,6 @@ const userPage = async () => {
 				<UserPage
 					profile={profile.response as Profile}
 					session={session}
-					calendarTime={calendarTime.response}
 					userRole={userRole.response}
 				/>
 			)

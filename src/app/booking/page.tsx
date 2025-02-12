@@ -2,15 +2,10 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { getCalendarTimeAction } from '@/components/booking/actions'
 import MainPage from '@/components/booking/BookingMainPage'
 import { notFound } from 'next/navigation'
 
 const Page = async () => {
-	const calendarTime = await getCalendarTimeAction()
-	if (calendarTime.status !== 200) {
-		return notFound()
-	}
 	return (
 		<>
 			<div className="flex justify-center space-x-2 m-2 mt-6">
@@ -27,7 +22,7 @@ const Page = async () => {
 					height={150}
 				/> */}
 			</div>
-			<MainPage calendarTime={calendarTime.response} />
+			<MainPage />
 		</>
 	)
 }

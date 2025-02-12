@@ -188,3 +188,66 @@ CREATE TABLE "video" (
   "updated_at" TIMESTAMP DEFAULT NOW(),
   FOREIGN KEY ("playlist_id") REFERENCES "playlist" ("playlist_id") ON DELETE CASCADE
 )
+
+CREATE TABLE "schedule" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "user_id" UUID NOT NULL,
+    "title" TEXT NOT NULL,
+    "start_date" TIMESTAMP NOT NULL,
+    "end_date" TIMESTAMP NOT NULL,
+    "mention" TEXT,
+    "time_extended" BOOLEAN NOT NULL DEFAULT FALSE,
+    "deadline" TIMESTAMP NOT NULL,
+    "description" TEXT,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT FALSE,
+    "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+    "updated_at" TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE INDEX "schedule_user_id_idx" ON "schedule" ("user_id");
+
+CREATE TABLE "timeslot" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "date" TIMESTAMP NOT NULL,
+    "time" INT NOT NULL,
+    CONSTRAINT unique_timeslot UNIQUE ("date", "time")
+);
+
+CREATE TABLE "schedule_timeslot" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "schedule_id" UUID NOT NULL,
+    "timeslot_id" UUID NOT NULL,
+    CONSTRAINT unique_schedule_timeslot UNIQUE ("schedule_id", "timeslot_id"),
+    FOREIGN KEY ("schedule_id") REFERENCES "schedule" ("id") ON DELETE CASCADE,
+    FOREIGN KEY ("timeslot_id") REFERENCES "timeslot" ("id") ON DELETE CASCADE
+);
+
+CREATE TABLE "user_schedule" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "user_id" UUID NOT NULL,
+    "schedule_id" UUID NOT NULL,
+    "description" TEXT,
+    "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+    "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
+    "is_deleted" BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE INDEX "user_schedule_user_id_idx" ON "user_schedule" ("user_id");
+CREATE INDEX "user_schedule_schedule_id_idx" ON "user_schedule" ("schedule_id");
+
+CREATE TABLE "user_timeslot" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "user_schedule_id" UUID NOT NULL,
+    "timeslot_id" UUID NOT NULL,
+    CONSTRAINT unique_user_timeslot UNIQUE ("user_schedule_id", "timeslot_id"),
+    FOREIGN KEY ("user_schedule_id") REFERENCES "user_schedule" ("id") ON DELETE CASCADE,
+    FOREIGN KEY ("timeslot_id") REFERENCES "timeslot" ("id") ON DELETE CASCADE
+);
+
+-- 外部キー制約
+ALTER TABLE "schedule"
+    ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE;
+
+ALTER TABLE "user_schedule"
+    ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE,
+    ADD FOREIGN KEY ("schedule_id") REFERENCES "schedule" ("id") ON DELETE CASCADE;

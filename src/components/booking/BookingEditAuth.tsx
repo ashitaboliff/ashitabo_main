@@ -18,11 +18,9 @@ const passschema = yup.object({
 
 const BookingEditAuth = ({
 	handleSetAuth,
-	calendarTime,
 	bookingDetail,
 }: {
 	handleSetAuth: (isAuth: boolean) => void
-	calendarTime: string[]
 	bookingDetail: Booking
 }) => {
 	const router = useRouter()
@@ -87,7 +85,6 @@ const BookingEditAuth = ({
 						registName: bookingDetail.registName,
 						name: bookingDetail.name,
 					}}
-					calendarTime={calendarTime}
 				/>
 			</div>
 			<form

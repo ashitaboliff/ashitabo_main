@@ -17,47 +17,41 @@ import LabelInputField from '@/components/atoms/LabelInputField'
  * @param defaultValue デフォルト値
  */
 
-type TextInputFieldProps = {
+type TextareaInputFieldProps = {
 	name?: string
 	register?: UseFormRegisterReturn
 	placeholder?: string
-	type: string
 	label?: string
 	infoDropdown?: ReactNode
 	disabled?: boolean
 	errorMessage?: string
 	className?: string
 	value?: string
-	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 	defaultValue?: string // 追加: defaultValue をサポート
 }
 
-const TextInputField = ({
+const TextareaInputField = ({
 	name,
 	register,
 	placeholder,
-	type,
 	label,
 	infoDropdown,
 	disabled,
 	errorMessage,
 	className,
 	value,
-	onChange,
 	defaultValue, // 追加: defaultValue をサポート
 	...props
-}: TextInputFieldProps) => {
+}: TextareaInputFieldProps) => {
 	return (
 		<div className="flex flex-col w-full">
 			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
-			<input
+			<textarea
 				name={name}
-				type={type}
 				placeholder={placeholder}
-				className={`input input-bordered w-full pr-10 bg-bg-white ${className}`}
+				className={`textarea textarea-bordered w-full pr-10 bg-bg-white ${className}`}
 				disabled={disabled}
 				value={value}
-				onChange={onChange}
 				defaultValue={defaultValue} // 追加: defaultValue を設定
 				{...register}
 				{...props}
@@ -72,4 +66,4 @@ const TextInputField = ({
 	)
 }
 
-export default TextInputField
+export default TextareaInputField

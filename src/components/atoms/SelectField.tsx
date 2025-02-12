@@ -81,7 +81,7 @@ const SelectField = ({
 					<div
 						tabIndex={0}
 						role="button"
-						className={`btn btn-primary m-1 ${watchValue.length !== 0 ? 'btn-outline' : ''}`}
+						className={`btn btn-primary m-1 max-w-3/4-screen ${watchValue.length !== 0 ? 'btn-outline' : ''}`}
 						onClick={toggleDropdown} // クリックで開閉を切り替え
 					>
 						{watchValue.length === 0
@@ -89,24 +89,29 @@ const SelectField = ({
 							: watchValue.map((key) => options[key]).join(', ')}
 					</div>
 					{isOpen && (
-						<div className="dropdown-content bg-bg-white menu space-y-2 rounded-box z-[1] w-52 p-2 shadow">
-							{Object.entries(options).map(([key, value]) => (
-								<label
-									key={`label-${key}`}
-									className="flex items-center space-x-2 cursor-pointer"
-								>
-									<input
-										key={`input-${key}`}
-										type="checkbox"
-										checked={watchValue.includes(key)} // 現在の選択をwatch
-										onChange={() => handleCheckboxChange(key)}
-										className="checkbox checkbox-primary"
-									/>
-									<span key={`span-${key}`} className="label-text">
-										{value}
-									</span>
-								</label>
-							))}
+						<div className="dropdown-content bg-bg-white flex flex-col rounded-box z-[20] w-52 p-2 shadow relative">
+							<div className="flex flex-col space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4">
+								{Object.entries(options).map(([key, value]) => (
+									<label
+										key={`label-${key}`}
+										className="flex items-center space-x-2 cursor-pointer"
+									>
+										<input
+											key={`input-${key}`}
+											type="checkbox"
+											checked={watchValue.includes(key)}
+											onChange={() => handleCheckboxChange(key)}
+											className="checkbox checkbox-primary"
+										/>
+										<span key={`span-${key}`} className="label-text">
+											{value}
+										</span>
+									</label>
+								))}
+							</div>
+							{options && Object.keys(options).length > 8 && (
+								<div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+							)}
 						</div>
 					)}
 				</div>

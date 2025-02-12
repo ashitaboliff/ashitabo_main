@@ -12,6 +12,7 @@ import {
 	BuyBooking,
 	BuyBookingStatus,
 	BuyBookingStatusMap,
+	BookingTime,
 } from '@/types/BookingTypes'
 import Pagination from '@/components/atoms/Pagination'
 import SelectField from '@/components/atoms/SelectField'
@@ -22,13 +23,7 @@ interface PopupProps {
 	detail?: Booking | null
 }
 
-const TopAdminBuyPage = ({
-	calendarTime,
-	buyBookings,
-}: {
-	calendarTime: string[]
-	buyBookings: BuyBooking[]
-}) => {
+const TopAdminBuyPage = ({ buyBookings }: { buyBookings: BuyBooking[] }) => {
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(1)
 	const [bookingsPerPage, setBookingsPerPage] = useState(10)
@@ -180,7 +175,7 @@ const TopAdminBuyPage = ({
 								<p>
 									予約時間:{' '}
 									{popupData.detail?.bookingTime !== undefined
-										? calendarTime[popupData.detail.bookingTime]
+										? BookingTime[popupData.detail.bookingTime]
 										: '不明'}
 								</p>
 							</div>

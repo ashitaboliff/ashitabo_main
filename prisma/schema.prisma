@@ -79,6 +79,8 @@ model User {
   bookings      Booking[]
   buyBookings   BuyBooking[]
   userGachas    UserGacha?
+  schedules   Schedule[]
+  userSchedules UserSchedule[]
 
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
@@ -208,6 +210,71 @@ model Video {
 
   @@map("video")
 }
+
+model Schedule {
+  id             String      @id @default(uuid())
+  userId         String      @map("user_id")
+  title          String
+  startDate      String      @map("start_date") // ISO
+  endDate        String      @map("end_date")  // ISO
+  mention        String[]    @default([]) // 空配列なら mention なし
+  timeExtended   Boolean     @default(false) @map("time_extended")
+  deadline       String
+  description    String?
+  isDeleted      Boolean     @default(false) @map("is_deleted")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  user              User     @relation(fields: [userId], references: [id])
+  timeslots         Timeslot[]
+  userSchedules     UserSchedule[]
+
+  @@index([userId])
+  @@map("schedule")
+}
+
+model Timeslot {
+  id                 String      @id @default(uuid())
+  scheduleId         String      @map("schedule_id")
+  date               String      // ISO
+  time               Int         // time拡張が true なら 0-19, false なら 9-16
+
+  userTimeslots      UserTimeslot[]
+
+  schedule           Schedule    @relation(fields: [scheduleId], references: [id])
+  @@map("timeslot")
+}
+
+model UserSchedule {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  scheduleId    String      @map("schedule_id")
+  description   String?
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  isDeleted     Boolean     @default(false) @map("is_deleted")
+
+  user          User        @relation(fields: [userId], references: [id])
+  schedule      Schedule    @relation(fields: [scheduleId], references: [id])
+  userTimeslots UserTimeslot[]
+
+  @@index([userId])
+  @@index([scheduleId])
+  @@map("user_schedule")
+}
+
+model UserTimeslot {
+  id               String      @id @default(uuid())
+  userScheduleId   String      @map("user_schedule_id")
+  timeslotId       String      @map("timeslot_id")
+
+  userSchedule     UserSchedule @relation(fields: [userScheduleId], references: [id])
+  timeslot         Timeslot     @relation(fields: [timeslotId], references: [id])
+
+  @@unique([userScheduleId, timeslotId]) // ユーザーの予約が同じ timeslot に二重登録されるのを防ぐ
+  @@map("user_timeslot")
+}
+
 
 enum Role {
   GRADUATE
