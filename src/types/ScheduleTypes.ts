@@ -8,7 +8,7 @@ export type Schedule = {
 	id?: string
 	userId: string
 	title: string
-	description?: string
+	description?: string | null
 	startDate: string
 	endDate: string
 	mention: string[]

@@ -3,7 +3,7 @@
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
 import { v4 } from 'uuid'
-import { getUserWithName, createSchedule, createTimeslot } from '@/db/Schedule'
+import { getUserWithName, createSchedule, createTimeslot, getScheduleById } from '@/db/Schedule'
 import { BookingTime } from '@/types/BookingTypes'
 import {
 	UserWithName,
@@ -25,6 +25,29 @@ export const getUserIdWithNames = async (): Promise<
 		return {
 			status: StatusCode.OK,
 			response: userWithNames,
+		}
+	} catch (error) {
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: String(error),
+		}
+	}
+}
+
+export const getScheduleByIdAction = async (
+	id: string,
+): Promise<ApiResponse<Schedule>> => {
+	try {
+		const schedule = await getScheduleById(id)
+		if (!schedule) {
+			return {
+				status: StatusCode.NOT_FOUND,
+				response: 'Not Found',
+			}
+		}
+		return {
+			status: StatusCode.OK,
+			response: schedule,
 		}
 	} catch (error) {
 		return {
