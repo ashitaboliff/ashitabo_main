@@ -4,6 +4,7 @@ declare namespace NodeJS {
 		POSTGRES_PRISMA_URL: string
 		GA_ID: string
 		NEXT_PUBLIC_LIFF_ID: string
+		GSAP_TOKEN: string
 		AUTH_LINE_SECRET: string
 		AUTH_LINE_SECRET: string
 		AUTH_URL: string

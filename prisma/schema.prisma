@@ -78,7 +78,7 @@ model User {
   profile       Profile?
   bookings      Booking[]
   buyBookings   BuyBooking[]
-  userGachas    UserGacha?
+  userGachas    UserGacha[]
   schedules   Schedule[]
   userSchedules UserSchedule[]
 
@@ -105,14 +105,14 @@ model Profile {
 }
 
 model UserGacha {
-  id         String   @id @default(uuid())
-  user_id    String   @unique
-  gacha_id   String[]
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  is_deleted Boolean  @default(false)
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  gachaSrc  String   @map("gacha_src")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+  isDeleted Boolean  @default(false) @map("is_deleted")
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_gacha")
 }

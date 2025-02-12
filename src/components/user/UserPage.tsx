@@ -8,7 +8,9 @@ import Image from 'next/image'
 import { Profile, RoleMap } from '@/types/UserTypes'
 import InstIcon from '@/components/atoms/InstIcon'
 import { Tabs, Tab } from '@/components/atoms/Tabs'
-import GachaPickup, { GachaPickupRef } from '@/components/gacha/GachaPickup'
+import GachaPickupPopup, {
+	GachaPickupPopupRef,
+} from '@/components/gacha/GachaPickupPopup'
 import UserBookingLogs from '@/components/user/UserBookingLogs'
 
 import { GiCardRandom } from 'react-icons/gi'
@@ -26,7 +28,7 @@ const UserPage = ({
 	const router = useRouter()
 
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
-	const gachaPopupRef = useRef<GachaPickupRef>(undefined)
+	const gachaPopupRef = useRef<GachaPickupPopupRef>(undefined)
 
 	return (
 		<div className="flex flex-col justify-center">
@@ -86,7 +88,6 @@ const UserPage = ({
 						<button
 							className="btn btn-primary"
 							onClick={() => setIsGachaPopupOpen(true)}
-							disabled={true}
 						>
 							ガチャを引く
 						</button>
@@ -102,7 +103,7 @@ const UserPage = ({
 				</button>
 			</div>
 			{isGachaPopupOpen && (
-				<GachaPickup
+				<GachaPickupPopup
 					ref={gachaPopupRef}
 					open={isGachaPopupOpen}
 					onClose={() => setIsGachaPopupOpen(false)}
