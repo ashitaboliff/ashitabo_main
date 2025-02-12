@@ -7,7 +7,6 @@ import {
 	getBuyBookingByStatusAction,
 } from '@/components/admin/action'
 import { getSession } from '@/app/actions'
-import { getCalendarTimeAction } from '@/components/booking/actions'
 import SessionForbidden from '@/components/atoms/SessionNotFound'
 
 const Page = async () => {
@@ -21,11 +20,6 @@ const Page = async () => {
 		return notFound()
 	}
 
-	const calendarTime = await getCalendarTimeAction()
-	if (calendarTime.status !== 200) {
-		return notFound()
-	}
-
 	const buyBookings = await getBuyBookingByStatusAction({
 		status: ['UNPAID', 'EXPIRED'],
 	})
@@ -33,12 +27,7 @@ const Page = async () => {
 		return notFound()
 	}
 
-	return (
-		<TopAdminBuyPage
-			calendarTime={calendarTime.response}
-			buyBookings={buyBookings.response}
-		/>
-	)
+	return <TopAdminBuyPage buyBookings={buyBookings.response} />
 }
 
 export default Page

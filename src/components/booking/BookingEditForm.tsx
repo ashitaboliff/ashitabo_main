@@ -16,6 +16,7 @@ import {
 	BookingDetailProps,
 	BookingResponse,
 	BuyBookingStatus,
+	BookingTime,
 } from '@/types/BookingTypes'
 import { ErrorType } from '@/types/ResponseTypes'
 import { Session } from 'next-auth'
@@ -43,11 +44,9 @@ type ResultType = {
 }
 
 const BookingEditForm = ({
-	calendarTime,
 	bookingDetail,
 	session,
 }: {
-	calendarTime: string[]
 	bookingDetail: BookingDetailProps
 	session: Session
 }) => {
@@ -96,7 +95,6 @@ const BookingEditForm = ({
 							registName: bookingDetail.registName,
 							name: bookingDetail.name,
 						}}
-						calendarTime={calendarTime}
 					/>
 					<div className="flex flex-col justify-center space-y-2">
 						<div className="flex flex-row justify-center space-x-2">
@@ -125,7 +123,7 @@ const BookingEditForm = ({
 			)}
 			{editState === 'edit' && (
 				<MemoBookingEditForm
-					calendarTime={calendarTime}
+					BookingTime={BookingTime}
 					bookingDetail={bookingDetail}
 					session={session}
 					setEditState={setEditState}
@@ -190,12 +188,12 @@ const BookingEditForm = ({
 
 const MemoBookingEditForm = memo(
 	({
-		calendarTime,
+		BookingTime,
 		bookingDetail,
 		session,
 		setEditState,
 	}: {
-		calendarTime: string[]
+		BookingTime: string[]
 		bookingDetail: BookingDetailProps
 		session: Session
 		setEditState: (state: 'edit' | 'select') => void
@@ -254,7 +252,7 @@ const MemoBookingEditForm = memo(
 			resolver: yupResolver(schema),
 			defaultValues: {
 				bookingDate: bookingDate,
-				bookingTime: calendarTime[bookingTime],
+				bookingTime: BookingTime[bookingTime],
 				registName: bookingDetail.registName,
 				name: bookingDetail.name,
 			},
@@ -345,7 +343,7 @@ const MemoBookingEditForm = memo(
 
 		useEffect(() => {
 			setValue('bookingDate', bookingDate)
-			setValue('bookingTime', calendarTime[bookingTime])
+			setValue('bookingTime', BookingTime[bookingTime])
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 		}, [bookingDate, bookingTime])
 
@@ -468,7 +466,7 @@ const MemoBookingEditForm = memo(
 						{bookingResponse ? (
 							<EditCalendar
 								bookingResponse={bookingResponse}
-								timeList={calendarTime}
+								timeList={BookingTime}
 								actualBookingDate={
 									new Date(bookingDetail.bookingDate)
 										.toISOString()

@@ -3,7 +3,11 @@
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import BaseTable from '@/components/atoms/BaseTable'
-import { BuyBookingStatus, BuyBookingStatusMap } from '@/types/BookingTypes'
+import {
+	BuyBookingStatus,
+	BuyBookingStatusMap,
+	BookingTime,
+} from '@/types/BookingTypes'
 
 interface BookingDetailProps {
 	bookingDate: string
@@ -13,13 +17,7 @@ interface BookingDetailProps {
 	isPaidStatus?: BuyBookingStatus
 }
 
-const BookingDetailBox = ({
-	props,
-	calendarTime,
-}: {
-	props: BookingDetailProps
-	calendarTime: string[]
-}) => {
+const BookingDetailBox = ({ props }: { props: BookingDetailProps }) => {
 	const data = [
 		{
 			label: '日付',
@@ -27,7 +25,7 @@ const BookingDetailBox = ({
 		},
 		{
 			label: '時間',
-			value: calendarTime[props.bookingTime],
+			value: BookingTime[props.bookingTime],
 		},
 		{
 			label: 'バンド名',
