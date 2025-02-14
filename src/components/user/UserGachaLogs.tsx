@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { GachaSort, GachaData } from '@/types/GachaTypes'
 import Pagination from '@/components/atoms/Pagination'
