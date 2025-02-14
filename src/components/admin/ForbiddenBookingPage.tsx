@@ -67,7 +67,7 @@ const ForbiddenBookingPage = ({ banBooking }: { banBooking: BanBooking[] }) => {
 				</button>
 				<button
 					className="btn btn-outline btn-md"
-					onClick={async () => await adminRevalidateTagAction('banBookings')}
+					onClick={async () => await adminRevalidateTagAction('banBooking')}
 				>
 					予約禁止日を更新
 				</button>

@@ -8,6 +8,8 @@ import Image from 'next/image'
 import { Profile, RoleMap } from '@/types/UserTypes'
 import InstIcon from '@/components/atoms/InstIcon'
 import { Tabs, Tab } from '@/components/atoms/Tabs'
+import LocalFont from 'next/font/local'
+import Popup, { PopupRef } from '@/components/molecules/Popup'
 import GachaPickupPopup, {
 	GachaPickupPopupRef,
 } from '@/components/gacha/GachaPickupPopup'
@@ -17,6 +19,13 @@ import { checkGachaCookieAction } from '@/components/gacha/actions'
 
 import { GiCardRandom } from 'react-icons/gi'
 import { MdOutlineEditCalendar } from 'react-icons/md'
+
+const gkktt = LocalFont({
+	src: '../../lib/fonts/851Gkktt_005.woff',
+	weight: 'normal',
+	style: 'normal',
+	variable: '--851-gkktt',
+})
 
 const UserPage = ({
 	profile,
@@ -32,6 +41,10 @@ const UserPage = ({
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
 	const gachaPopupRef = useRef<GachaPickupPopupRef>(undefined)
 	const [gachaCount, setGachaCount] = useState<number>(0)
+
+	const [isProvRatioPopupOpen, setIsProvRatioPopupOpen] =
+		useState<boolean>(false)
+	const provRatioPopupRef = useRef<PopupRef>(undefined)
 
 	useEffect(() => {
 		async function checkGachaCookie() {
@@ -95,16 +108,24 @@ const UserPage = ({
 				</Tab>
 				<Tab label={<GiCardRandom size={30} />}>
 					<div className="flex flex-col justify-center mb-2 gap-y-2">
-						<button
-							className="btn btn-primary"
-							onClick={() => {
-								setIsGachaPopupOpen(true)
-								setGachaCount(gachaCount + 1)
-							}}
-							disabled={gachaCount === 100}
-						>
-							ガチャを引く
-						</button>
+						<div className="flex flex-row justify-center gap-x-2">
+							<button
+								className="btn btn-primary"
+								onClick={() => {
+									setIsGachaPopupOpen(true)
+									setGachaCount(gachaCount + 1)
+								}}
+								disabled={gachaCount === 100}
+							>
+								ガチャを引く
+							</button>
+							<button
+								className="btn btn-outline"
+								onClick={() => setIsProvRatioPopupOpen(true)}
+							>
+								提供割合
+							</button>
+						</div>
 						{gachaCount === 100 && (
 							<div className="text-error text-center">
 								本日のガチャは終了しました
@@ -130,6 +151,118 @@ const UserPage = ({
 					onClose={() => setIsGachaPopupOpen(false)}
 				/>
 			)}
+			<Popup
+				title="提供割合"
+				ref={provRatioPopupRef}
+				open={isProvRatioPopupOpen}
+				onClose={() => setIsProvRatioPopupOpen(false)}
+			>
+				<div className="flex flex-col items-center space-y-2 text-sm">
+					<div
+						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className}`}
+					>
+						COMMON
+					</div>
+					<div className="flex flex-row my-2 w-full">
+						<Image
+							src="/gacha/preset/Common.png"
+							width={72}
+							height={104}
+							alt="COMMON"
+							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+						/>
+						<div className="flex flex-col justify-center gap-y-1 basis-2/3">
+							<div>全体確率: 45%</div>
+							<div>封入数: 20枚</div>
+							<div>一枚当たりの確率: 2.25%</div>
+						</div>
+					</div>
+					<div
+						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+					>
+						RARE
+					</div>
+					<div className="flex flex-row my-2 w-full">
+						<Image
+							src="/gacha/preset/Rare.png"
+							width={72}
+							height={104}
+							alt="RARE"
+							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+						/>
+						<div className="flex flex-col justify-center gap-y-1 basis-2/3">
+							<div>全体確率: 30%</div>
+							<div>封入数: 15枚</div>
+							<div>一枚当たりの確率: 2%</div>
+						</div>
+					</div>
+					<div
+						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+					>
+						SURER RARE
+					</div>
+					<div className="flex flex-row my-2 w-full">
+						<Image
+							src="/gacha/preset/SR.png"
+							width={72}
+							height={104}
+							alt="SURER RARE"
+							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+						/>
+						<div className="flex flex-col justify-center gap-y-2 basis-2/3">
+							<div>全体確率: 17%</div>
+							<div>封入数: 10枚</div>
+							<div>一枚当たりの確率: 1.7%</div>
+						</div>
+					</div>
+					<div
+						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+					>
+						SSR
+					</div>
+					<div className="flex flex-row my-2 w-full">
+						<Image
+							src="/gacha/preset/SSR.png"
+							width={72}
+							height={104}
+							alt="SSR"
+							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+						/>
+						<div className="flex flex-col justify-center gap-y-2 basis-2/3">
+							<div>全体確率: 6.5%</div>
+							<div>封入数: 5枚</div>
+							<div>一枚当たりの確率: 1.3%</div>
+						</div>
+					</div>
+					<div
+						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+					>
+						ULTRA RARE
+					</div>
+					<div className="flex flex-row my-2 w-full">
+						<Image
+							src="/gacha/preset/UR.png"
+							width={72}
+							height={104}
+							alt="ULTRA RARE"
+							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+						/>
+						<div className="flex flex-col justify-center gap-y-2 basis-2/3">
+							<div>全体確率: 1%</div>
+							<div>封入数: 2枚</div>
+							<div>一枚当たりの確率: 0.5%</div>
+						</div>
+					</div>
+				</div>
+				<div className="flex flex-row justify-center gap-x-4 mt-4">
+					<button
+						className="btn btn-outline"
+						onClick={() => setIsProvRatioPopupOpen(false)}
+					>
+						閉じる
+					</button>
+				</div>
+			</Popup>
 		</div>
 	)
 }
