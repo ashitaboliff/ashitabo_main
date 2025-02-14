@@ -1,6 +1,6 @@
 import { RarityType } from '@/types/GachaTypes'
 
-class GachaItem {
+export class GachaItem {
 	constructor(
 		public id: number,
 		public src: string,
@@ -21,21 +21,25 @@ export default class Gacha {
 
 	constructor(version: string) {
 		this.categories = [
-			new GachaCategory('common', 22500, this.generateItems('C', 20, version)),
-			new GachaCategory('rare', 20000, this.generateItems('R', 15, version)),
+			new GachaCategory('COMMON', 22500, this.generateItems('C', 20, version)),
+			new GachaCategory('RARE', 20000, this.generateItems('R', 15, version)),
 			new GachaCategory(
-				'superRare',
+				'SUPER_RARE',
 				17000,
 				this.generateItems('SR', 10, version),
 			),
-			new GachaCategory('ssRare', 13000, this.generateItems('SSR', 5, version)),
 			new GachaCategory(
-				'ultraRare',
+				'SS_RARE',
+				13000,
+				this.generateItems('SSR', 5, version),
+			),
+			new GachaCategory(
+				'ULTRA_RARE',
 				5000,
 				this.generateItems('UR', 2, version),
 			),
 			new GachaCategory(
-				'secretRare',
+				'SECRET_RARE',
 				1,
 				this.generateItems('SECRET', 1, version),
 			),

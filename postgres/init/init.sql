@@ -24,6 +24,15 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'BuyBookingStatus') THEN
         CREATE TYPE "BuyBookingStatus" AS ENUM ('UNPAID', 'PAID', 'CANCELED', 'EXPIRED');
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'GachaRarity') THEN
+        CREATE TYPE "BuyBookingStatus" AS ENUM (
+          'COMMON',
+          'RARE',
+          'SUPER_RARE',
+          'SS_RARE',
+          'ULTRA_RARE'
+          'SECRET_RARE'
+          );
     END IF;
 END$$;
 
@@ -100,8 +109,10 @@ CREATE TABLE "profile" (
 
 CREATE TABLE "user_gacha" (
   "id" TEXT PRIMARY KEY DEFAULT gen_random_uuid(),
-  "user_id" TEXT,
-  "gacha_src" TEXT,
+  "user_id" TEXT NOT NULL,
+  "gacha_version" TEXT NOT NULL,
+  "gacha_rarity" "GachaRarity" NOT NULL,
+  "gacha_src" TEXT NOT NULL,
   "created_at" TIMESTAMP DEFAULT NOW(),
   "updated_at" TIMESTAMP DEFAULT NOW(),
   "is_deleted" BOOLEAN DEFAULT FALSE,

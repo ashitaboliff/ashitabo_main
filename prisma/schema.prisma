@@ -105,12 +105,14 @@ model Profile {
 }
 
 model UserGacha {
-  id        String   @id @default(uuid())
-  userId    String   @map("user_id")
-  gachaSrc  String   @map("gacha_src")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
-  isDeleted Boolean  @default(false) @map("is_deleted")
+  id           String      @id @default(uuid())
+  userId       String      @map("user_id")
+  gachaVersion String      @map("gacha_version")
+  gachaRarity  GachaRarity @map("gacha_rarity")
+  gachaSrc     String      @map("gacha_src")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt      @map("updated_at")
+  isDeleted    Boolean     @default(false) @map("is_deleted")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -302,4 +304,13 @@ enum BuyBookingStatus {
   PAID
   CANCELED
   EXPIRED
+}
+
+enum GachaRarity {
+  COMMON
+  RARE
+  SUPER_RARE
+  SS_RARE
+  ULTRA_RARE
+  SECRET_RARE
 }

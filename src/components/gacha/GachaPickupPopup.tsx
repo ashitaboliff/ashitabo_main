@@ -1,12 +1,20 @@
 'use client'
 
-import { useEffect, useImperativeHandle, forwardRef, useRef } from 'react'
-import Image from 'next/image'
+import {
+	useEffect,
+	useImperativeHandle,
+	forwardRef,
+	useRef,
+	useMemo,
+	useState,
+} from 'react'
 import gsap from 'gsap'
 import clsx from 'clsx'
-import { BsStars } from 'react-icons/bs'
-import Gacha from '@/components/gacha/GachaList'
-import { RarityType } from '@/types/GachaTypes'
+import Gacha, { GachaItem } from '@/components/gacha/GachaList'
+import { RarityType, GachaCreateType } from '@/types/GachaTypes'
+import { createUserGachaResultAction } from '@/components/gacha/actions'
+import { getSession } from '@/app/actions'
+import { ApiResponse } from '@/types/ResponseTypes'
 
 export type GachaPickupPopupRef =
 	| {
@@ -17,18 +25,67 @@ export type GachaPickupPopupRef =
 
 interface CardProps {
 	frontImage: string
-	backImage: string
 	rarity: RarityType
+	delay?: number
 }
 
-const CardAnimation = ({ frontImage, backImage, rarity }: CardProps) => {
+// 固定のfpstar形状のキラキラコンポーネント
+interface SparkleProps {
+	size: number
+	color: string
+	style?: React.CSSProperties
+	className?: string
+}
+const Sparkle = ({ size, color, style = {}, className }: SparkleProps) => {
+	// すべて固定：形はfpstar、回転は0°
+	const combinedStyle = { ...style, transform: 'rotate(0deg)' }
+	return (
+		<svg
+			width={size}
+			height={size}
+			style={combinedStyle}
+			className={className}
+			viewBox="0 0 100 100"
+		>
+			{color === '#000' ? (
+				<polygon
+					points="50,0 65,40 100,50 65,60 50,100 35,60 0,50 35,40"
+					fill={color}
+				/>
+			) : (
+				<polygon
+					points="50,0 65,40 100,50 65,60 50,100 35,60 0,50 35,40"
+					fill="url(#goldGradient)"
+				/>
+			)}
+		</svg>
+	)
+}
+
+export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	const cardRef = useRef<HTMLDivElement>(null)
+	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
+	const backImage = '/gacha/backimage.png'
+
+	// 画像が読み込まれたらカウントアップ
+	const handleImageLoad = () => {
+		setImagesLoaded((prev) => prev + 1)
+	}
 
 	useEffect(() => {
-		if (!cardRef.current) return
+		if (!cardRef.current || imagesLoaded < 2) return
 
-		// カードの360°回転（1度きり）のアニメーション
-		if (rarity === 'common') {
+		if (delay) {
+			setTimeout(() => {
+				gsap.to(cardRef.current, {
+					opacity: 1,
+					duration: 0.5,
+				})
+			}, delay)
+		}
+
+		// カード本体のアニメーション（レアリティに応じた処理）
+		if (rarity === 'COMMON') {
 			gsap.to(cardRef.current, {
 				scale: 1.1,
 				duration: 0.2,
@@ -36,20 +93,19 @@ const CardAnimation = ({ frontImage, backImage, rarity }: CardProps) => {
 				repeat: 1,
 				ease: 'none',
 			})
-		} else if (rarity === 'rare' || rarity === 'superRare') {
+		} else if (rarity === 'RARE' || rarity === 'SUPER_RARE') {
 			gsap.to(cardRef.current, {
 				rotationY: 360,
 				duration: 2,
 				ease: 'power1.inOut',
 			})
-		} else if (rarity === 'ssRare') {
+		} else if (rarity === 'SS_RARE') {
 			gsap.to(cardRef.current, {
 				rotationY: 360,
 				duration: 2,
 				ease: 'expo.inOut',
 			})
-		} else if (rarity === 'ultraRare' || rarity === 'secretRare') {
-			// ultraRare, secretRare でバウンド（ポップアップ）効果を追加
+		} else if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
 			gsap.to(cardRef.current, {
 				rotationY: 360,
 				duration: 2,
@@ -64,32 +120,83 @@ const CardAnimation = ({ frontImage, backImage, rarity }: CardProps) => {
 			})
 		}
 
-		// sparkleエフェクトのアニメーション（対象は各BsStarsアイコン）
-		if (['superRare', 'ssRare', 'ultraRare', 'secretRare'].includes(rarity)) {
-			gsap.to('.sparkle-star', {
-				opacity: 0.2,
-				scale: 1.5,
-				duration: 0.8,
-				yoyo: true,
-				repeat: -1,
-				ease: 'power1.inOut',
-			})
-		}
-	}, [rarity])
+		// ※ 星のアニメーション自体は gsap で共通に実施（固定パラメータ）
+		gsap.to('.sparkle-star', {
+			opacity: 0.5,
+			scale: 1.5,
+			duration: 0.8,
+			yoyo: true,
+			repeat: -1,
+			ease: 'power1.inOut',
+		})
+	}, [rarity, imagesLoaded])
 
-	// レアリティに応じたsparkleのサイズと色設定
-	// superRare は小さめ、ssRare/ultraRare は大きめ、secretRare は黒色に設定
-	const starSize = rarity === 'superRare' ? 30 : 40
-	const starColor = rarity === 'secretRare' ? '#000' : '#FFD700'
+	// レアリティに合わせた基準サイズ設定
+	// SUPER_RAREは15、それ以外は20
+	const starBaseSize = rarity === 'SUPER_RARE' ? 15 : 20
+	// SECRETの場合は色はそのまま黒、その他はグラデーション（金色）
+	const starColor = rarity === 'SECRET_RARE' ? '#000' : '#FFD700'
 
-	// カード周囲に散らばる星の配置（絶対配置のスタイルを inline で指定）
-	const starPositions = [
-		{ top: '2%', left: '10%' },
-		{ top: '12%', right: '5%' },
-		{ bottom: '8%', left: '15%' },
-		{ bottom: '5%', right: '10%' },
-		{ top: '45%', left: '80%' },
-	]
+	// 固定の40個の星の表示位置（中央を避け、カードなど他の要素と重ならないよう端部に配置）
+	const fixedStarPositions = useMemo(() => {
+		const topPositions = [
+			{ top: '9%', left: '5%' },
+			{ top: '5%', left: '10%' },
+			{ top: '11%', left: '15%' },
+			{ top: '5%', left: '20%' },
+			{ top: '8%', left: '25%' },
+			{ top: '5%', right: '5%' },
+			{ top: '13%', right: '10%' },
+			{ top: '8%', right: '15%' },
+			{ top: '2%', right: '20%' },
+			{ top: '5%', right: '25%' },
+		]
+		const bottomPositions = [
+			{ bottom: '4%', left: '5%' },
+			{ bottom: '4%', left: '10%' },
+			{ bottom: '5%', left: '15%' },
+			{ bottom: '5%', left: '20%' },
+			{ bottom: '2%', left: '25%' },
+			{ bottom: '8%', right: '5%' },
+			{ bottom: '9%', right: '10%' },
+			{ bottom: '5%', right: '15%' },
+			{ bottom: '12%', right: '20%' },
+			{ bottom: '8%', right: '25%' },
+		]
+		const leftPositions = [
+			{ left: '8%', top: '5%' },
+			{ left: '4%', top: '10%' },
+			{ left: '6%', top: '15%' },
+			{ left: '5%', top: '20%' },
+			{ left: '5%', top: '25%' },
+			{ left: '7%', bottom: '5%' },
+			{ left: '5%', bottom: '10%' },
+			{ left: '16%', bottom: '15%' },
+			{ left: '5%', bottom: '20%' },
+			{ left: '5%', bottom: '25%' },
+		]
+		const rightPositions = [
+			{ right: '5%', top: '5%' },
+			{ right: '5%', top: '10%' },
+			{ right: '10%', top: '15%' },
+			{ right: '4%', top: '20%' },
+			{ right: '5%', top: '25%' },
+			{ right: '4%', bottom: '5%' },
+			{ right: '5%', bottom: '10%' },
+			{ right: '7%', bottom: '15%' },
+			{ right: '3%', bottom: '20%' },
+			{ right: '11%', bottom: '25%' },
+		]
+		return [
+			...topPositions,
+			...bottomPositions,
+			...leftPositions,
+			...rightPositions,
+		]
+	}, [])
+
+	// 各星のサイズは、基準サイズから -10, 0, +10, 0 を順に繰り返し適用
+	const sizeVariations = [-10, 0, 10, 0]
 
 	return (
 		<div className="relative w-75 h-100" style={{ perspective: '1000px' }}>
@@ -101,6 +208,7 @@ const CardAnimation = ({ frontImage, backImage, rarity }: CardProps) => {
 						src={frontImage}
 						alt="Card Front"
 						className="w-full h-full object-cover"
+						onLoad={handleImageLoad}
 					/>
 				</div>
 				{/* 裏面（rotateY-180で配置） */}
@@ -109,50 +217,123 @@ const CardAnimation = ({ frontImage, backImage, rarity }: CardProps) => {
 						src={backImage}
 						alt="Card Back"
 						className="w-full h-full object-cover"
+						onLoad={handleImageLoad}
 					/>
 				</div>
 			</div>
 
-			{/* Sparkleエフェクト：対象レアリティの場合のみ表示 */}
-			{['superRare', 'ssRare', 'ultraRare', 'secretRare'].includes(rarity) && (
+			{/* キラキラエフェクト（対象レアリティの場合のみ表示） */}
+			{['SUPER_RARE', 'SS_RARE', 'ULTRA_RARE', 'SECRET_RARE'].includes(
+				rarity,
+			) && (
 				<div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-					{starPositions.map((pos, index) => (
-						<BsStars
-							key={index}
-							className="sparkle-star absolute"
-							size={starSize}
-							color={starColor}
-							style={pos}
-						/>
-					))}
+					{/* SECRET以外はグラデーション定義を追加（globals.css等で別途定義しても可） */}
+					{rarity !== 'SECRET_RARE' && (
+						<svg width="0" height="0">
+							<defs>
+								<linearGradient
+									id="goldGradient"
+									x1="0%"
+									y1="0%"
+									x2="100%"
+									y2="0%"
+								>
+									<stop
+										offset="0%"
+										style={{ stopColor: '#FFD700', stopOpacity: 1 }}
+									/>
+									<stop
+										offset="100%"
+										style={{ stopColor: '#FFB14E', stopOpacity: 1 }}
+									/>
+								</linearGradient>
+							</defs>
+						</svg>
+					)}
+					{fixedStarPositions.map((pos, index) => {
+						const currentSize =
+							starBaseSize + sizeVariations[index % sizeVariations.length]
+						return (
+							<Sparkle
+								key={index}
+								size={currentSize}
+								color={starColor}
+								style={{ position: 'absolute', ...pos }}
+								className="sparkle-star"
+							/>
+						)
+					})}
 				</div>
 			)}
 		</div>
 	)
 }
 
-export const GachaPickup = () => {
-	const gacha = new Gacha('version1')
-	const { data, name } = gacha.pickRandomImage()
-
-	return (
-		<div className="flex flex-col items-center h-100">
-			<CardAnimation
-				frontImage={data.src}
-				backImage="/gacha/backimage.png"
-				rarity={name}
-			/>
-		</div>
+export const GachaPickup = ({
+	createType,
+	delay,
+}: {
+	createType: GachaCreateType
+	delay?: number
+}) => {
+	const gacha = useMemo(() => new Gacha('version1'), [])
+	const [gachaData] = useState<{ data: GachaItem; name: RarityType }>(() =>
+		gacha.pickRandomImage(),
 	)
+	const [res, setRes] = useState<ApiResponse<string>>()
+	const hasCalled = useRef(false)
+
+	useEffect(() => {
+		if (hasCalled.current) return
+		hasCalled.current = true
+		;(async () => {
+			const session = await getSession()
+			setRes(
+				await createUserGachaResultAction({
+					userId: session?.user.id,
+					gachaVersion: 'version1',
+					gachaRarity: gachaData.name,
+					gachaSrc: gachaData.data.src,
+					createType,
+				}),
+			)
+		})()
+	}, [gachaData, createType])
+
+	if (!res) {
+		return (
+			<div className="flex flex-col items-center h-100">
+				<div className="loading loading-spinner loading-lg my-auto"></div>
+			</div>
+		)
+	} else if (res.status !== 201) {
+		return (
+			<div className="flex flex-col items-center h-100">
+				<div className="text-lg text-seconday-main my-auto">
+					今日はもうこれ以上引けません
+				</div>
+			</div>
+		)
+	} else {
+		return (
+			<div className="flex flex-col items-center h-100">
+				<CardAnimation
+					frontImage={gachaData.data.src}
+					rarity={gachaData.name}
+				/>
+			</div>
+		)
+	}
 }
 
 const GachaPickupPopup = forwardRef<
 	GachaPickupPopupRef,
 	{
+		createType: GachaCreateType
 		open: boolean
 		onClose: () => void
 	}
->(({ open, onClose }, ref) => {
+>(({ open, onClose, createType }, ref) => {
 	useImperativeHandle(ref, () => ({
 		show: () => onClose(),
 		close: () => onClose(),
@@ -168,8 +349,7 @@ const GachaPickupPopup = forwardRef<
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="text-center mb-4 text-xl font-bold">ガチャ結果</div>
-
-				<GachaPickup />
+				<GachaPickup createType={createType} />
 				<button className="btn btn-outline" onClick={onClose}>
 					閉じる
 				</button>

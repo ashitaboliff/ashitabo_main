@@ -110,6 +110,9 @@
 	.h-120 {
 		height: 30rem;
 	}
+	.aspect-gacha {
+		aspect-ratio: 3 / 4;
+	}
 	.btn.btn-offwhite {
 		@apply bg-bg-white text-bg-dark border-none bg-opacity-60;
 	}
