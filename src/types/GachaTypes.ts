@@ -1,20 +1,22 @@
+export type RarityType =
+	| 'COMMON'
+	| 'RARE'
+	| 'SUPER_RARE'
+	| 'SS_RARE'
+	| 'ULTRA_RARE'
+	| 'SECRET_RARE'
+
+export type GachaSort = 'new' | 'old' | 'rare' | 'notrare'
+
 export type GachaData = {
-	id: number
-	src: string
-	title?: string
+	userId: string
+	id: string
+	gachaVersion: string
+	gachaRarity: RarityType
+	gachaSrc: string
+	createdAt: Date
+	updatedAt: Date
+	isDeleted: boolean
 }
 
-export type GachaCategory = {
-	late: number
-	name: string
-	data: GachaData[]
-}
-
-export type GachaListItem = {
-	common: GachaCategory
-	rare: GachaCategory
-	superRare: GachaCategory
-	ssRare: GachaCategory
-	ultraRare: GachaCategory
-	secretRare: GachaCategory
-}
+export type GachaCreateType = 'booking' | 'user'

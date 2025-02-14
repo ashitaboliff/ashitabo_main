@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { signOutUser } from './action'
@@ -8,8 +8,12 @@ import Image from 'next/image'
 import { Profile, RoleMap } from '@/types/UserTypes'
 import InstIcon from '@/components/atoms/InstIcon'
 import { Tabs, Tab } from '@/components/atoms/Tabs'
-import GachaPickup, { GachaPickupRef } from '@/components/gacha/GachaPickup'
+import GachaPickupPopup, {
+	GachaPickupPopupRef,
+} from '@/components/gacha/GachaPickupPopup'
 import UserBookingLogs from '@/components/user/UserBookingLogs'
+import UserGachaLogs from '@/components/user/UserGachaLogs'
+import { checkGachaCookieAction } from '@/components/gacha/actions'
 
 import { GiCardRandom } from 'react-icons/gi'
 import { MdOutlineEditCalendar } from 'react-icons/md'
@@ -26,7 +30,18 @@ const UserPage = ({
 	const router = useRouter()
 
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
-	const gachaPopupRef = useRef<GachaPickupRef>(undefined)
+	const gachaPopupRef = useRef<GachaPickupPopupRef>(undefined)
+	const [gachaCount, setGachaCount] = useState<number>(0)
+
+	useEffect(() => {
+		async function checkGachaCookie() {
+			const res = await checkGachaCookieAction()
+			if (res.status !== 200) {
+				setGachaCount(100)
+			}
+		}
+		checkGachaCookie()
+	}, [gachaCount])
 
 	return (
 		<div className="flex flex-col justify-center">
@@ -79,18 +94,24 @@ const UserPage = ({
 					<UserBookingLogs session={session} />
 				</Tab>
 				<Tab label={<GiCardRandom size={30} />}>
-					<div className="mt-5 text-2xl text-center">
-						---以下ガチャ開発中---
-					</div>
-					<div className="flex flex-row justify-around">
+					<div className="flex flex-col justify-center mb-2 gap-y-2">
 						<button
 							className="btn btn-primary"
-							onClick={() => setIsGachaPopupOpen(true)}
-							disabled={true}
+							onClick={() => {
+								setIsGachaPopupOpen(true)
+								setGachaCount(gachaCount + 1)
+							}}
+							disabled={gachaCount === 100}
 						>
 							ガチャを引く
 						</button>
+						{gachaCount === 100 && (
+							<div className="text-error text-center">
+								本日のガチャは終了しました
+							</div>
+						)}
 					</div>
+					<UserGachaLogs session={session} />
 				</Tab>
 			</Tabs>
 			<div className="flex flex-row justify-center gap-x-4">
@@ -102,7 +123,8 @@ const UserPage = ({
 				</button>
 			</div>
 			{isGachaPopupOpen && (
-				<GachaPickup
+				<GachaPickupPopup
+					createType="user"
 					ref={gachaPopupRef}
 					open={isGachaPopupOpen}
 					onClose={() => setIsGachaPopupOpen(false)}
