@@ -28,6 +28,9 @@ const Page = async () => {
 				<a className="underline" href="/blogs/20250216">
 					2025年2月16日のアップデートのお知らせ
 				</a>
+				<a className="underline" href="/blogs/20250214">
+					今後の運営について(2025年2月)
+				</a>
 				<a className="btn btn-outline mt-4" href="/">
 					戻る
 				</a>

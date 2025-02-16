@@ -1,15 +1,15 @@
 'use server'
 
-import blogs from '@/app/blogs/20250216/blogsJson'
+import blogs from '@/app/blogs/20250214/blogsJson'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import parse from 'html-react-parser'
 import { createMetaData } from '@/utils/MetaData'
 
 export async function metadata() {
 	return createMetaData({
-		title: 'アップデートのお知らせ(2025/01/16)',
-		description: 'あしたぼホームページ2025年2月のアップデートのお知らせです。',
-		url: '/blogs/20250216',
+		title: '今後の運営について(2025/01/16)',
+		description: 'あしたぼホームページ今後の運営について(2025年2月)',
+		url: '/blogs/20250214',
 	})
 }
 
@@ -17,7 +17,7 @@ const Page = async () => {
 	return (
 		<div className="container mx-auto bg-bg-white p-4 pb-8 rounded-lg">
 			<h1 className="text-3xl font-bold text-center mt-4">
-				アップデートのお知らせ
+				今後の運営について
 			</h1>
 			<div className="flex flex-col items-end">
 				<div className="text-center mt-4 flex flex-row items-center gap-x-2">
