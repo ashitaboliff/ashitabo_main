@@ -20,3 +20,7 @@ export type GachaData = {
 }
 
 export type GachaCreateType = 'booking' | 'user'
+
+export const GachaPackVersion: Record<string, string> = {
+	version1: 'OBのいる島',
+}

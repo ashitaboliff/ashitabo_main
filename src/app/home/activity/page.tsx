@@ -102,7 +102,7 @@ const Page = async () => {
 					<br />
 					<span className="font-bold">5月</span>：さつきライブ
 					<br />
-					<span className="font-bold">7月</span>：あしたぼライブ
+					<span className="font-bold">9月</span>：あしたぼライブ
 					<br />
 					<span className="font-bold">10月</span>：光芒祭
 					<br />

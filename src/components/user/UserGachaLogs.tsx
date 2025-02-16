@@ -147,6 +147,7 @@ const UserGachaLogs = ({ session }: { session: Session }) => {
 					frontImage={popupData.gacha.gachaSrc}
 					rarity={popupData.gacha.gachaRarity}
 					count={popupData.totalCount}
+					version={popupData.gacha.gachaVersion}
 					getDate={popupData.gacha.createdAt}
 					open={isPopupOpen}
 					onClose={() => setIsPopupOpen(false)}
