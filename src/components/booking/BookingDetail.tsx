@@ -3,7 +3,9 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { usePathname } from 'next/navigation'
-import { BookingDetailProps } from '@/types/BookingTypes'
+import { format } from 'date-fns'
+import { ja } from 'date-fns/locale/ja'
+import { BookingDetailProps, BookingTime } from '@/types/BookingTypes'
 import ShareButton from '@/components/atoms/ShareButton'
 import { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
@@ -52,7 +54,13 @@ const BookingDetail = ({
 					<ShareButton
 						url={pathname}
 						title="予約を共有"
-						text={`予約日: ${bookingDetail.bookingDate} ${bookingDetail.bookingTime}時`}
+						text={`予約日時: ${format(
+							bookingDetail.bookingDate,
+							'yyyy/MM/dd(E)',
+							{
+								locale: ja,
+							},
+						)} ${BookingTime[Number(bookingDetail.bookingTime)]}`}
 						isFullButton
 					/>
 				</div>

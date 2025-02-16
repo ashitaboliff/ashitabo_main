@@ -3,7 +3,12 @@
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
 import { v4 } from 'uuid'
-import { getUserWithName, createSchedule, createTimeslot, getScheduleById } from '@/db/Schedule'
+import {
+	getUserWithName,
+	createSchedule,
+	createTimeslot,
+	getScheduleById,
+} from '@/db/Schedule'
 import { BookingTime } from '@/types/BookingTypes'
 import {
 	UserWithName,
