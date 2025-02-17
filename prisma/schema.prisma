@@ -92,7 +92,7 @@ model Profile {
   id         String   @id @default(uuid())
   user_id    String   @unique // UserのIDを外部キーとして利用
   name       String?
-  student_id String?  @unique
+  student_id String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   expected   String?                           // 卒業予定年度
