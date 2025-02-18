@@ -1,21 +1,23 @@
+const baseUrl = process.env.AUTH_URL || 'https://www.ashitabo.net'
+
 export const createMetaData = ({
 	title,
 	url,
 	image = '/meta/logo.png',
 	description = '信州大学工学部軽音サークルあしたぼの公式ホームページです',
-	keywords = '信州大学,工学部,ホームページ,サイト,あしたぼ,軽音,バンド,サークル,長野県立大学,どんぐり',
+	keywords = ['信州大学', '工学部', 'ホームページ', 'サイト', 'あしたぼ', '軽音', 'バンド', 'サークル', '長野県立大学', 'どんぐり', '信大', 'コマ表'],
 }: {
 	title: string
 	url: string
 	description?: string
 	image?: string
-	keywords?: string
+	keywords?: string[]
 }) => {
 	title = `${title} | あしたぼホームページ`
-	url = `${process.env.AUTH_URL}${url}`
+	url = `${baseUrl}${url}`
 	return {
 		title,
-		metadataBase: new URL(`${process.env.AUTH_URL}/home`),
+		metadataBase: new URL(baseUrl),
 		generator: 'Next.js',
 		description,
 		keywords,
@@ -24,11 +26,7 @@ export const createMetaData = ({
 			description,
 			url,
 			siteName: 'あしたぼホームページ',
-			images: [
-				{
-					url: image,
-				},
-			],
+			images: [{ url: image }],
 			locale: 'ja_JP',
 			type: 'website',
 		},
@@ -37,11 +35,11 @@ export const createMetaData = ({
 			apple: '/meta/logo.png',
 		},
 		twitter: {
-			card: 'summary',
+			card: 'summary_large_image',
 			site: '@ashitabo_dongri',
 			title,
 			description,
-			image,
-		},
+			images: [{ url: image }],
+		}
 	}
 }
