@@ -23,11 +23,11 @@ const HomePageHeader = () => {
 				{device === 'mobile' ? <HomePageBarSp /> : <HomePageBar />}
 			</div>
 			<div className="flex flex-col items-center justify-center mt-4 bg-bg-white bg-opacity-60 z-10">
-				<div className={`text-xl whitespace-nowrap`}>
+				<h2 className={`text-xl whitespace-nowrap`}>
 					信州大学工学部・教育学部・長野県立大学
-				</div>
-				<div className={`text-xl`}>軽音サークル</div>
-				<div className={`text-7xl`}>あしたぼ</div>
+				</h2>
+				<h2 className={`text-xl`}>軽音サークル</h2>
+				<h1 className={`text-7xl`}>あしたぼ</h1>
 			</div>
 		</div>
 	)

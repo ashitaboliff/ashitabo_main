@@ -8,7 +8,7 @@ import { FaXTwitter, FaInstagram, FaYoutube } from 'react-icons/fa6'
 
 export async function metadata() {
 	return createMetaData({
-		title: 'あしたぼの活動内容',
+		title: '活動内容',
 		description: '信州大学工学部軽音サークルあしたぼの活動内容です！',
 		url: '/home/activity',
 	})
@@ -19,11 +19,11 @@ const inter = Inter({ subsets: ['latin'] })
 const Page = async () => {
 	return (
 		<div className="flex flex-col gap-y-4 mt-6">
-			<div className="text-4xl text-center">あしたぼの活動内容</div>
+			<h1 className="text-4xl text-center">あしたぼの活動内容</h1>
 			<div
 				className={`flex flex-col justify-start px-6 pb-4 ${inter.className} bg-bg-white rounded-lg shadow`}
 			>
-				<div className="text-xl font-bold my-4">1.サークルの概要</div>
+				<h2 className="text-xl font-bold my-4">1.サークルの概要</h2>
 				<div className="text-base">
 					あしたぼは
 					<span className="font-bold">信州大学工学部</span>・
@@ -50,7 +50,7 @@ const Page = async () => {
 						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 transform translate-x-14 -translate-y-28 -rotate-12"
 					/>
 				</div>
-				<div className="text-xl font-bold my-4">2.活動内容</div>
+				<h2 className="text-xl font-bold my-4">2.活動内容</h2>
 				<div className="text-base">
 					あしたぼでの活動は、主に<span className="font-bold">ライブ</span>と
 					<span className="font-bold">部会</span>の2つです
@@ -74,20 +74,20 @@ const Page = async () => {
 				<div className="relative w-full h-64">
 					<Image
 						src="/activity/activity-11.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
 						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 transform -translate-x-14 -translate-y-28 rotate-12"
 					/>
 					<Image
 						src="/activity/activity-10.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
 						className="rounded-lg mt-2 shadow absolute top-0 right-1/2 translate-x-20 translate-y-14 object-cover"
 					/>
 				</div>
-				<div className="text-xl font-bold my-4">3.年間ライブ日程</div>
+				<h2 className="text-xl font-bold my-4">3.年間ライブ日程</h2>
 				<div className="text-base">
 					年間のざっくりとした予定は以下の通りです
 					<br />
@@ -116,20 +116,20 @@ const Page = async () => {
 				<div className="relative w-full h-64">
 					<Image
 						src="/activity/activity-8.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
 						className="rounded-lg mt-2 shadow absolute top-0 left-1/2 -translate-x-20 translate-y-14 object-cover"
 					/>
 					<Image
 						src="/activity/activity-7.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
 						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 transform translate-x-14 -translate-y-28 -rotate-12"
 					/>
 				</div>
-				<div className="text-xl font-bold my-4">4.各種SNS</div>
+				<h2 className="text-xl font-bold my-4">4.各種SNS</h2>
 				<div className="text-base">
 					あしたぼの活動は、Twitter、Instagram、YouTubeで発信しています
 					<br />
@@ -168,35 +168,35 @@ const Page = async () => {
 				<div className="relative w-full h-64">
 					<Image
 						src="/activity/activity-4.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 -translate-x-1 -translate-y-2 object-cover -rotate-45"
 					/>
 					<Image
 						src="/activity/activity-2.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 transform -translate-y-28 -rotate-12"
 					/>
 					<Image
 						src="/activity/activity-1.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 -translate-x-4 object-cover rotate-12"
 					/>
 					<Image
 						src="/activity/activity-9.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 translate-x-5 -translate-y-28 -rotate-6"
 					/>
 					<Image
 						src="/activity/activity-6.jpg"
-						alt="あしたぼの活動風景"
+						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 -translate-x-20 -translate-y-14 object-cover"
