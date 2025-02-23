@@ -145,6 +145,7 @@ const UserPage = ({
 			</div>
 			{isGachaPopupOpen && (
 				<GachaPickupPopup
+					version='version1'
 					createType="user"
 					ref={gachaPopupRef}
 					open={isGachaPopupOpen}

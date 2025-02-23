@@ -178,7 +178,7 @@ export default function NewBooking({ session }: { session: Session }) {
 					<p>時間: {BookingTime[Number(bookingTime)]}</p>
 					<p>バンド名: {watch('registName')}</p>
 					<p>責任者: {watch('name')}</p>
-					{noticePopupOpen && <GachaPickup createType="booking" delay={1} />}
+					{noticePopupOpen && <GachaPickup createType="booking" delay={1} version='version1' />}
 					<div className="flex flex-col justify-center gap-y-2 mt-4">
 						<div className="flex flex-row justify-center space-x-2">
 							<button

@@ -62,6 +62,13 @@ const Sparkle = ({ size, color, style = {}, className }: SparkleProps) => {
 	)
 }
 
+/**
+ * カードの情報を引数に、カードのアニメーションを行うコンポーネント
+ * @param frontImage 表面画像
+ * @param rarity レアリティ
+ * @param delay 表示までの遅延時間
+ * @returns
+ */
 export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	const cardRef = useRef<HTMLDivElement>(null)
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
@@ -271,12 +278,14 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 
 export const GachaPickup = ({
 	createType,
+	version,
 	delay,
 }: {
 	createType: GachaCreateType
+	version: string
 	delay?: number
 }) => {
-	const gacha = useMemo(() => new Gacha('version1'), [])
+	const gacha = useMemo(() => new Gacha(version), [])
 	const [gachaData] = useState<{ data: GachaItem; name: RarityType }>(() =>
 		gacha.pickRandomImage(),
 	)
@@ -330,10 +339,11 @@ const GachaPickupPopup = forwardRef<
 	GachaPickupPopupRef,
 	{
 		createType: GachaCreateType
+		version: string
 		open: boolean
 		onClose: () => void
 	}
->(({ open, onClose, createType }, ref) => {
+>(({ open, onClose, createType, version }, ref) => {
 	useImperativeHandle(ref, () => ({
 		show: () => onClose(),
 		close: () => onClose(),
@@ -349,7 +359,7 @@ const GachaPickupPopup = forwardRef<
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="text-center mb-4 text-xl font-bold">ガチャ結果</div>
-				<GachaPickup createType={createType} />
+				<GachaPickup createType={createType} version={version} delay={1}/>
 				<button className="btn btn-outline" onClick={onClose}>
 					閉じる
 				</button>
