@@ -46,5 +46,5 @@ export const Tabs = ({ children }: TabsProps) => {
 }
 
 export const Tab = ({ children }: TabProps) => {
-	return <div>{children}</div>
+	return <>{children}</>
 }

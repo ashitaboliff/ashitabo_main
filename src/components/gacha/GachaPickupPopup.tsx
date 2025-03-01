@@ -285,7 +285,7 @@ export const GachaPickup = ({
 	version: string
 	delay?: number
 }) => {
-	const gacha = useMemo(() => new Gacha(version), [])
+	const gacha = new Gacha(version)
 	const [gachaData] = useState<{ data: GachaItem; name: RarityType }>(() =>
 		gacha.pickRandomImage(),
 	)
@@ -300,7 +300,7 @@ export const GachaPickup = ({
 			setRes(
 				await createUserGachaResultAction({
 					userId: session?.user.id,
-					gachaVersion: 'version1',
+					gachaVersion: version,
 					gachaRarity: gachaData.name,
 					gachaSrc: gachaData.data.src,
 					createType,
@@ -359,7 +359,7 @@ const GachaPickupPopup = forwardRef<
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="text-center mb-4 text-xl font-bold">ガチャ結果</div>
-				<GachaPickup createType={createType} version={version} delay={1}/>
+				<GachaPickup createType={createType} version={version} delay={1} />
 				<button className="btn btn-outline" onClick={onClose}>
 					閉じる
 				</button>

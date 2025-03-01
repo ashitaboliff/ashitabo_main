@@ -9,6 +9,8 @@ export interface GachaCategoryConfig {
 
 export interface GachaVersionConfig {
 	categories: GachaCategoryConfig[]
+	title: string
+	packImage?: string
 }
 
 export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
@@ -21,14 +23,19 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 			{ name: 'ULTRA_RARE', probability: 5000, count: 2, prefix: 'UR' },
 			{ name: 'SECRET_RARE', probability: 1, count: 1, prefix: 'SECRET' },
 		],
+		title: 'OBのいる島',
+		packImage: '/gacha/version1/pack.png',
 	},
 	// 他のversionの設定もここで定義可能
 	version2: {
 		categories: [
-			{ name: 'COMMON', probability: 20000, count: 25, prefix: 'C' },
-			{ name: 'RARE', probability: 18000, count: 18, prefix: 'R' },
-			{ name: 'SUPER_RARE', probability: 15000, count: 12, prefix: 'SR' },
-			// 必要ならばさらにレアリティを追加
+			{ name: 'COMMON', probability: 20000, count: 20, prefix: 'C' },
+			{ name: 'RARE', probability: 18000, count: 15, prefix: 'R' },
+			{ name: 'SUPER_RARE', probability: 15000, count: 10, prefix: 'SR' },
+			{ name: 'SS_RARE', probability: 12000, count: 4, prefix: 'SSR' },
+			{ name: 'ULTRA_RARE', probability: 5000, count: 1, prefix: 'UR' },
 		],
+		title: '卒業生の暴獣',
+		packImage: '/gacha/version2/pack.png',
 	},
 }
