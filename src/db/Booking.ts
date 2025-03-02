@@ -341,21 +341,7 @@ export const createBooking = async ({
 	password: string
 }) => {
 	try {
-		// await prisma.booking.create({
-		// 	data: {
-		// 		id: bookingId,
-		// 		user_id: userId,
-		// 		created_at: new Date(),
-		// 		booking_date: booking.bookingDate,
-		// 		booking_time: booking.bookingTime,
-		// 		regist_name: booking.registName,
-		// 		name: booking.name,
-		// 		password: password,
-		// 	},
-		// })
 		await prisma.$transaction(async (tx) => {
-			await tx.$executeRaw`SET TRANSACTION ISOLATION LEVEL SERIALIZABLE`
-
 			await tx.booking.create({
 				data: {
 					id: bookingId,
