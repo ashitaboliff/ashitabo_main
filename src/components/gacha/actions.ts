@@ -2,7 +2,7 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { cookies } from 'next/headers'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { addHours } from 'date-fns'
 import {
 	getGachaByUserId,
@@ -137,7 +137,7 @@ export async function createUserGachaResultAction({
 				gachaSrc,
 			})
 		}
-		revalidateTag(`gacha-${gachaSrc}`)
+		revalidateTag(`gacha-${gachaSrc}-${userId}`)
 		revalidateTag(`gacha-${userId}`)
 		return { status: StatusCode.CREATED, response: 'success' }
 	} catch (error) {
@@ -163,12 +163,12 @@ export const checkGachaCookieAction = async () => {
 			gachaDate.getDate() === today.getDate() &&
 			gachaDate.getMonth() === today.getMonth() &&
 			gachaDate.getFullYear() === today.getFullYear() &&
-			gachaCount === 2
+			gachaCount === 3
 		) {
 			return {
 				status: StatusCode.BAD_REQUEST,
 				response:
-					'本日は既にガチャを2回引いているため、これ以上引くことはできません。',
+					'本日は既にガチャを3回引いているため、これ以上引くことはできません。',
 			}
 		} else if (gachaDate.getDate() !== today.getDate()) {
 			cookieStore.set('gachaCount', '0', { maxAge: 60 * 60 * 24 })

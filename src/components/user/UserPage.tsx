@@ -10,9 +10,9 @@ import InstIcon from '@/components/atoms/InstIcon'
 import { Tabs, Tab } from '@/components/atoms/Tabs'
 import LocalFont from 'next/font/local'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import GachaPickupPopup, {
-	GachaPickupPopupRef,
-} from '@/components/gacha/GachaPickupPopup'
+import GachaSelectPopup, {
+	GachaSelectPopupRef,
+} from '@/components/gacha/GachaSelectPopup'
 import UserBookingLogs from '@/components/user/UserBookingLogs'
 import UserGachaLogs from '@/components/user/UserGachaLogs'
 import { checkGachaCookieAction } from '@/components/gacha/actions'
@@ -39,7 +39,7 @@ const UserPage = ({
 	const router = useRouter()
 
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
-	const gachaPopupRef = useRef<GachaPickupPopupRef>(undefined)
+	const gachaPopupRef = useRef<GachaSelectPopupRef>(undefined)
 	const [gachaCount, setGachaCount] = useState<number>(0)
 
 	const [isProvRatioPopupOpen, setIsProvRatioPopupOpen] =
@@ -143,14 +143,11 @@ const UserPage = ({
 					アカウントを削除
 				</button>
 			</div>
-			{isGachaPopupOpen && (
-				<GachaPickupPopup
-					createType="user"
-					ref={gachaPopupRef}
-					open={isGachaPopupOpen}
-					onClose={() => setIsGachaPopupOpen(false)}
-				/>
-			)}
+			<GachaSelectPopup
+				open={isGachaPopupOpen}
+				onClose={() => setIsGachaPopupOpen(false)}
+				ref={gachaPopupRef}
+			/>
 			<Popup
 				title="提供割合"
 				ref={provRatioPopupRef}

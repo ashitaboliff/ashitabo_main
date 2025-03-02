@@ -108,7 +108,7 @@ export const getGachaByGachaSrc = async ({
 	}
 
 	const gachas = unstable_cache(getGachaByGachaSrc, [gachaSrc], {
-		tags: [`gacha-${gachaSrc}`],
+		tags: [`gacha-${gachaSrc}-${userId}`],
 	})
 	const gachaResult = await gachas({ gachaSrc })
 	return gachaResult
