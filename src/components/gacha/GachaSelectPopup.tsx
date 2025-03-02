@@ -155,4 +155,6 @@ const GachaSelectPopup = forwardRef<
 	)
 })
 
+GachaSelectPopup.displayName = 'GachaSelectPopup'
+
 export default GachaSelectPopup
