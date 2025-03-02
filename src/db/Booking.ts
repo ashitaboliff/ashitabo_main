@@ -1,7 +1,7 @@
 'use server'
 
 import 'server-only'
-import prisma from '@/lib/prisma/prisma'
+import prisma, { serializablePrisma } from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
 import { Booking, BuyBookingStatus } from '@/types/BookingTypes'
@@ -341,8 +341,7 @@ export const createBooking = async ({
 	password: string
 }) => {
 	try {
-		await prisma.$transaction(async (tx) => {
-			await tx.booking.create({
+			await serializablePrisma.booking.create({
 				data: {
 					id: bookingId,
 					user_id: userId,
@@ -354,7 +353,6 @@ export const createBooking = async ({
 					password: password,
 				},
 			})
-		})
 	} catch (error) {
 		throw error
 	}
