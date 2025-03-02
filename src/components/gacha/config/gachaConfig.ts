@@ -29,11 +29,11 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 	// 他のversionの設定もここで定義可能
 	version2: {
 		categories: [
-			{ name: 'COMMON', probability: 20000, count: 20, prefix: 'C' },
-			{ name: 'RARE', probability: 18000, count: 15, prefix: 'R' },
-			{ name: 'SUPER_RARE', probability: 15000, count: 10, prefix: 'SR' },
-			{ name: 'SS_RARE', probability: 12000, count: 4, prefix: 'SSR' },
-			{ name: 'ULTRA_RARE', probability: 5000, count: 1, prefix: 'UR' },
+			{ name: 'COMMON', probability: 200, count: 20, prefix: 'C' },
+			{ name: 'RARE', probability: 160, count: 15, prefix: 'R' },
+			{ name: 'SUPER_RARE', probability: 150, count: 10, prefix: 'SR' },
+			{ name: 'SS_RARE', probability: 125, count: 4, prefix: 'SSR' },
+			{ name: 'ULTRA_RARE', probability: 100, count: 1, prefix: 'UR' },
 		],
 		title: '卒業生の暴獣',
 		packImage: '/gacha/version2/pack.png',

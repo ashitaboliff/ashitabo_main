@@ -1,6 +1,12 @@
 'use client'
 
-import { useImperativeHandle, forwardRef, useState, useRef } from 'react'
+import {
+	useImperativeHandle,
+	forwardRef,
+	useState,
+	useRef,
+	useEffect,
+} from 'react'
 import Image from 'next/image'
 import clsx from 'clsx'
 import GachaPickupPopup, {
@@ -26,7 +32,18 @@ const ImageCarousel = () => {
 	const [currentIndex, setCurrentIndex] = useState<number>(packs.length - 1)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [gachaVersion, setGachaVersion] = useState<string>('version1')
+	const [packViewed, setPackViewed] = useState<boolean>(false)
 	const ref = useRef<GachaPickupPopupRef>(undefined)
+
+	useEffect(() => {
+		setPackViewed(false)
+	}, [])
+
+	useEffect(() => {
+		setTimeout(() => {
+			setPackViewed(true)
+		}, 1000)
+	}, [currentIndex])
 
 	const updateIndex = (direction: 'next' | 'prev') => {
 		if (direction === 'next' && currentIndex < packs.length - 1) {
@@ -51,55 +68,61 @@ const ImageCarousel = () => {
 				{'<'}
 			</button>
 
-			<div className="relative flex items-center justify-center w-full">
-				{currentIndex > 0 ? (
-					<div
-						className="absolute left-0 z-10 transform transition-transform"
-						onClick={() => updateIndex('prev')}
-					>
-						<Image
-							src={packs[currentIndex - 1].packImage}
-							alt={`${packs[currentIndex - 1].version} pack`}
-							width={110}
-							height={200}
-						/>
-					</div>
-				) : (
-					<div className="absolute left-0 w-[110px] h-[200px] z-10" />
-				)}
+			{packViewed ? (
+				<div className="relative flex items-center justify-center w-full">
+					{currentIndex > 0 ? (
+						<div
+							className="absolute left-0 z-10 transform transition-transform"
+							onClick={() => updateIndex('prev')}
+						>
+							<Image
+								src={packs[currentIndex - 1].packImage}
+								alt={`${packs[currentIndex - 1].version} pack`}
+								width={110}
+								height={200}
+							/>
+						</div>
+					) : (
+						<div className="absolute left-0 w-[110px] h-[200px] z-10" />
+					)}
 
-				<div className="relative z-20 transform transition-transform">
-					<Image
-						src={packs[currentIndex].packImage}
-						alt={`${packs[currentIndex].version} pack`}
-						width={250}
-						height={400}
-						onClick={gachaPickup}
-					/>
-					<div
-						className="pack-text absolute left-0 w-full text-2xl font-bold bg-bg-dark bg-opacity-50 text-white text-center py-1 -translate-y-80 z-30"
-						onClick={gachaPickup}
-					>
-						このパックを引く
+					<div className="relative z-20 transform transition-transform">
+						<Image
+							src={packs[currentIndex].packImage}
+							alt={`${packs[currentIndex].version} pack`}
+							width={250}
+							height={400}
+							onClick={gachaPickup}
+						/>
+						<div
+							className="pack-text absolute left-0 w-full text-2xl font-bold bg-bg-dark bg-opacity-50 text-white text-center py-1 -translate-y-80 z-30"
+							onClick={gachaPickup}
+						>
+							このパックを引く
+						</div>
 					</div>
+
+					{currentIndex < packs.length - 1 ? (
+						<div
+							className="absolute right-0 z-10 transform transition-transform"
+							onClick={() => updateIndex('next')}
+						>
+							<Image
+								src={packs[currentIndex + 1].packImage}
+								alt={`${packs[currentIndex + 1].version} pack`}
+								width={110}
+								height={200}
+							/>
+						</div>
+					) : (
+						<div className="absolute right-0 w-[110px] h-[200px] z-10" />
+					)}
 				</div>
-
-				{currentIndex < packs.length - 1 ? (
-					<div
-						className="absolute right-0 z-10 transform transition-transform"
-						onClick={() => updateIndex('next')}
-					>
-						<Image
-							src={packs[currentIndex + 1].packImage}
-							alt={`${packs[currentIndex + 1].version} pack`}
-							width={110}
-							height={200}
-						/>
-					</div>
-				) : (
-					<div className="absolute right-0 w-[110px] h-[200px] z-10" />
-				)}
-			</div>
+			) : (
+				<div className="flex flex-col items-center h-100">
+					<div className="loading loading-spinner loading-lg my-auto"></div>
+				</div>
+			)}
 
 			<button
 				className="absolute right-0 z-30 btn btn-ghost"
