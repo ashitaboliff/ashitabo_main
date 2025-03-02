@@ -341,7 +341,26 @@ export const createBooking = async ({
 	password: string
 }) => {
 	try {
-			await serializablePrisma.booking.create({
+		await serializablePrisma.$transaction(async (tx) => {
+			// 予約が既に存在するか確認
+			const atBooking = await tx.booking.findFirst({
+				where: {
+					AND: {
+						booking_date: booking.bookingDate,
+						booking_time: booking.bookingTime,
+						is_deleted: {
+							not: true,
+						},
+					},
+				},
+			})
+
+			if (atBooking) {
+				throw new Error('予約が重複しています')
+			}
+
+			// 予約作成
+			await tx.booking.create({
 				data: {
 					id: bookingId,
 					user_id: userId,
@@ -353,6 +372,7 @@ export const createBooking = async ({
 					password: password,
 				},
 			})
+		})
 	} catch (error) {
 		throw error
 	}

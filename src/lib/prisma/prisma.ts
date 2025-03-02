@@ -18,9 +18,9 @@ class PrismaSingleton {
 			PrismaSingleton.serializableInstance = new PrismaClient({
 				datasources: {
 					db: {
-						url: process.env.POSTGRES_PRISMA_URL + "?isolation=serializable"
-					}
-				}
+						url: process.env.POSTGRES_PRISMA_URL + '?isolation=serializable',
+					},
+				},
 			})
 		}
 		return PrismaSingleton.serializableInstance
