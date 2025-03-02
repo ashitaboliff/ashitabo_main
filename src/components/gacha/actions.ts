@@ -2,7 +2,7 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { cookies } from 'next/headers'
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { addHours } from 'date-fns'
 import {
 	getGachaByUserId,
@@ -137,7 +137,7 @@ export async function createUserGachaResultAction({
 				gachaSrc,
 			})
 		}
-		revalidateTag(`gacha-${gachaSrc}`)
+		revalidateTag(`gacha-${gachaSrc}-${userId}`)
 		revalidateTag(`gacha-${userId}`)
 		return { status: StatusCode.CREATED, response: 'success' }
 	} catch (error) {

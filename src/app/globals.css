@@ -113,6 +113,9 @@
 	.aspect-gacha {
 		aspect-ratio: 3 / 4;
 	}
+	.aspect-gacha-pack {
+		aspect-ratio: 1 / 2;
+	}
 	.btn.btn-offwhite {
 		@apply bg-bg-white text-bg-dark border-none bg-opacity-60;
 	}

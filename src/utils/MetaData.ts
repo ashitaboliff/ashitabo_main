@@ -5,7 +5,20 @@ export const createMetaData = ({
 	url,
 	image = '/meta/logo.png',
 	description = '信州大学工学部軽音サークルあしたぼの公式ホームページです',
-	keywords = ['信州大学', '工学部', 'ホームページ', 'サイト', 'あしたぼ', '軽音', 'バンド', 'サークル', '長野県立大学', 'どんぐり', '信大', 'コマ表'],
+	keywords = [
+		'信州大学',
+		'工学部',
+		'ホームページ',
+		'サイト',
+		'あしたぼ',
+		'軽音',
+		'バンド',
+		'サークル',
+		'長野県立大学',
+		'どんぐり',
+		'信大',
+		'コマ表',
+	],
 }: {
 	title: string
 	url: string
@@ -40,6 +53,6 @@ export const createMetaData = ({
 			title,
 			description,
 			images: [{ url: image }],
-		}
+		},
 	}
 }
