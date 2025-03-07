@@ -80,6 +80,7 @@ const ImageCarousel = () => {
 								alt={`${packs[currentIndex - 1].version} pack`}
 								width={110}
 								height={200}
+								decoding='auto'
 							/>
 						</div>
 					) : (
@@ -93,6 +94,7 @@ const ImageCarousel = () => {
 							width={250}
 							height={400}
 							onClick={gachaPickup}
+							decoding='auto'
 						/>
 						<div
 							className="pack-text absolute left-0 w-full text-2xl font-bold bg-bg-dark bg-opacity-50 text-white text-center py-1 -translate-y-80 z-30"
@@ -112,6 +114,7 @@ const ImageCarousel = () => {
 								alt={`${packs[currentIndex + 1].version} pack`}
 								width={110}
 								height={200}
+								decoding='auto'
 							/>
 						</div>
 					) : (

@@ -216,6 +216,7 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 						alt="Card Front"
 						className="w-full h-full object-cover"
 						onLoad={handleImageLoad}
+						decoding='auto'
 					/>
 				</div>
 				{/* 裏面（rotateY-180で配置） */}
@@ -225,6 +226,7 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 						alt="Card Back"
 						className="w-full h-full object-cover"
 						onLoad={handleImageLoad}
+						decoding='auto'
 					/>
 				</div>
 			</div>
