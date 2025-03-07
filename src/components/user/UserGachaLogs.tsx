@@ -128,6 +128,7 @@ const UserGachaLogs = ({ session }: { session: Session }) => {
 								src={gacha.gachaSrc}
 								alt="Gacha Preview"
 								className="w-full h-auto object-cover rounded cursor-pointer"
+								decoding='auto'
 								onClick={() => {
 									fetchGachaByGachaSrc(gacha.gachaSrc)
 								}}
