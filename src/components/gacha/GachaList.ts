@@ -17,9 +17,9 @@ export class GachaItem {
  */
 class GachaCategory {
 	constructor(
-		public name: RarityType,      // カテゴリー名（レアリティ）
-		public probability: number,    // 出現確率
-		public items: GachaItem[],    // カテゴリーに属するアイテム一覧
+		public name: RarityType, // カテゴリー名（レアリティ）
+		public probability: number, // 出現確率
+		public items: GachaItem[], // カテゴリーに属するアイテム一覧
 	) {}
 }
 
@@ -53,13 +53,17 @@ export default class Gacha {
 	/**
 	 * カテゴリー一覧を初期化
 	 */
-	private initializeCategories(config: GachaVersionConfig, version: string): GachaCategory[] {
-		return config.categories.map(catConfig =>
-			new GachaCategory(
-				catConfig.name,
-				catConfig.probability,
-				this.generateItems(catConfig.prefix, catConfig.count, version),
-			)
+	private initializeCategories(
+		config: GachaVersionConfig,
+		version: string,
+	): GachaCategory[] {
+		return config.categories.map(
+			(catConfig) =>
+				new GachaCategory(
+					catConfig.name,
+					catConfig.probability,
+					this.generateItems(catConfig.prefix, catConfig.count, version),
+				),
 		)
 	}
 
@@ -102,7 +106,10 @@ export default class Gacha {
 	/**
 	 * 重み付き抽選でアイテムを選択
 	 */
-	private selectItemByWeight(randomValue: number): { data: GachaItem; name: RarityType } {
+	private selectItemByWeight(randomValue: number): {
+		data: GachaItem
+		name: RarityType
+	} {
 		let accumulatedWeight = 0
 
 		for (const category of this.categories) {
@@ -117,7 +124,7 @@ export default class Gacha {
 		// フォールバック：最初のカテゴリーの最初のアイテムを返す
 		return {
 			data: this.categories[0].items[0],
-			name: this.categories[0].name
+			name: this.categories[0].name,
 		}
 	}
 }
