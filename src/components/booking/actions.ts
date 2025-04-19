@@ -417,16 +417,10 @@ export async function updateBookingAction({
 	bookingId,
 	userId,
 	booking,
-	isBuyUpdate,
-	state,
-	expiredAt,
 }: {
 	bookingId: string
 	userId: string
 	booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt' | 'userId'>
-	isBuyUpdate?: boolean
-	state?: BuyBookingStatus
-	expiredAt?: string
 }): Promise<ApiResponse<string>> {
 	try {
 		const atBooking = await getBookingById(bookingId)
@@ -440,7 +434,7 @@ export async function updateBookingAction({
 			bookingDate: booking.bookingDate,
 			bookingTime: booking.bookingTime,
 		})
-		if (isBooking)
+		if (isBooking && isBooking.id !== bookingId)
 			return {
 				status: StatusCode.CONFLICT,
 				response: '予約が重複しています',
@@ -448,14 +442,10 @@ export async function updateBookingAction({
 
 		await updateBooking({
 			id: bookingId,
-			userId: userId,
 			bookingDate: booking.bookingDate,
 			bookingTime: booking.bookingTime,
 			registName: booking.registName,
 			name: booking.name,
-			isBuyUpdate: isBuyUpdate ?? false,
-			state: state,
-			expiredAt: expiredAt,
 		})
 
 		revalidateTag('booking')

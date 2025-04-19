@@ -414,24 +414,16 @@ export const checkBookingPassword = async ({
  */
 export const updateBooking = async ({
 	id,
-	userId,
 	bookingDate,
 	bookingTime,
 	registName,
 	name,
-	isBuyUpdate,
-	state,
-	expiredAt,
 }: {
 	id: string
-	userId: string
 	bookingDate: string
 	bookingTime: number
 	registName: string
 	name: string
-	isBuyUpdate: boolean
-	state?: BuyBookingStatus
-	expiredAt?: string
 }) => {
 	try {
 		await prisma.booking.update({
@@ -446,29 +438,6 @@ export const updateBooking = async ({
 				name: name,
 			},
 		})
-
-		if (isBuyUpdate) {
-			if (state === 'UNPAID') {
-				await prisma.buyBooking.create({
-					data: {
-						id: v4(),
-						booking_id: id,
-						user_id: userId,
-						status: state,
-						expire_at: expiredAt ?? '',
-					},
-				})
-			} else {
-				await prisma.buyBooking.update({
-					where: {
-						booking_id: id,
-					},
-					data: {
-						status: state,
-					},
-				})
-			}
-		}
 	} catch (error) {
 		throw error
 	}
