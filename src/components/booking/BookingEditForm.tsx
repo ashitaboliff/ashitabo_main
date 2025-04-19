@@ -287,9 +287,6 @@ const MemoBookingEditForm = memo(
 						name: data.name,
 						isDeleted: false,
 					},
-					isBuyUpdate: isBuyUpdate,
-					state: buyStatus,
-					expiredAt: isPaidExpired,
 				})
 
 				if (response.status === 200) {

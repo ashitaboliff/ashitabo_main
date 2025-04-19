@@ -87,41 +87,27 @@ export default class Gacha {
 	 * @returns 選択されたアイテムとそのレアリティ
 	 */
 	public pickRandomImage(): { data: GachaItem; name: RarityType } {
-		const totalWeight = this.calculateTotalWeight()
-		const randomValue = Math.floor(Math.random() * totalWeight)
-
-		return this.selectItemByWeight(randomValue)
-	}
-
-	/**
-	 * 全カテゴリーの合計重みを計算
-	 */
-	private calculateTotalWeight(): number {
-		return this.categories.reduce(
-			(sum, cat) => sum + cat.probability * cat.items.length,
+		// 重み付き抽選のために確率の合計を計算
+		const totalProbability = this.categories.reduce(
+			(sum, category) => sum + category.probability,
 			0,
 		)
-	}
 
-	/**
-	 * 重み付き抽選でアイテムを選択
-	 */
-	private selectItemByWeight(randomValue: number): {
-		data: GachaItem
-		name: RarityType
-	} {
-		let accumulatedWeight = 0
+		// 0～確率合計の間でランダムな値を生成
+		const randomValue = Math.random() * totalProbability
 
+		// 重み付き抽選でカテゴリを選択
+		let accumulatedProbability = 0
 		for (const category of this.categories) {
-			const categoryWeight = category.probability * category.items.length
-			if (randomValue < accumulatedWeight + categoryWeight) {
-				const index = (randomValue - accumulatedWeight) % category.items.length
-				return { data: category.items[index], name: category.name }
+			accumulatedProbability += category.probability
+			if (randomValue <= accumulatedProbability) {
+				// カテゴリが決まったら、そのカテゴリ内でランダムにアイテムを選択
+				const randomIndex = Math.floor(Math.random() * category.items.length)
+				return { data: category.items[randomIndex], name: category.name }
 			}
-			accumulatedWeight += categoryWeight
 		}
 
-		// フォールバック：最初のカテゴリーの最初のアイテムを返す
+		// フォールバック（ここには通常到達しないはず）
 		return {
 			data: this.categories[0].items[0],
 			name: this.categories[0].name,
