@@ -5,7 +5,7 @@ import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { adminRevalidateTagAction, updateBuyBookingAction } from './action'
-import { getBookingByIdAction } from '@/components/booking/actions'
+import { getBookingByIdAction } from '@/features/booking/components/actions'
 import { ErrorType } from '@/types/ResponseTypes'
 import {
 	Booking,
@@ -13,7 +13,7 @@ import {
 	BuyBookingStatus,
 	BuyBookingStatusMap,
 	BookingTime,
-} from '@/types/BookingTypes'
+} from '@/features/booking/types'
 import Pagination from '@/components/atoms/Pagination'
 import SelectField from '@/components/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/molecules/Popup'

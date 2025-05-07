@@ -17,8 +17,8 @@ import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/molecules/PasswordInputField'
 import { Session } from 'next-auth'
 import { ErrorType } from '@/types/ResponseTypes'
-import { BookingTime } from '@/types/BookingTypes'
-import { GachaPickup } from '@/components/gacha/GachaPickupPopup'
+import { BookingTime } from '../types'
+import { GachaPickup } from '@/components/gacha/GachaPickupPopup' // Reverted path
 
 const today = new Date(
 	new Date().getFullYear(),

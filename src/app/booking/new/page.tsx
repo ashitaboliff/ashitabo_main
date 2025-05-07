@@ -1,6 +1,6 @@
 'use server'
 
-import NewBooking from '@/components/booking/BookingCreate'
+import NewBooking from '@/features/booking/components/BookingCreate'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import SessionForbidden from '@/components/atoms/SessionNotFound'
 import { createMetaData } from '@/utils/MetaData'

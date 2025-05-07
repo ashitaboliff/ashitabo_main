@@ -2,7 +2,7 @@
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
-import { getBuyBookingByExpire } from '@/db/Booking'
+import { getBuyBookingByExpire } from '@/features/booking/db'
 
 export async function updateBuyBookingAction(
 	expireAt: string,

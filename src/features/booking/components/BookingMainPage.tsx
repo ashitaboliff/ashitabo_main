@@ -5,11 +5,11 @@ import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
 import { useScreenSize, getMaxWidth } from '@/utils/ScreenSize'
-import { BookingResponse, BookingTime } from '@/types/BookingTypes'
+import { BookingResponse, BookingTime } from '../types'
 import { ErrorType } from '@/types/ResponseTypes'
 import BookingRule from '@/components/molecules/BookingRule'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import BookingCalendar from '@/components/booking/BookingCalendar'
+import BookingCalendar from './BookingCalendar'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 
 const MainPage = () => {

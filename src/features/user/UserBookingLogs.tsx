@@ -5,12 +5,12 @@ import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Booking, BookingTime } from '@/types/BookingTypes'
+import { Booking, BookingTime } from '@/features/booking/types'
 import Pagination from '@/components/atoms/Pagination'
 import SelectFieldNumber from '@/components/atoms/SelectFieldNumber'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
-import { getBookingByUserIdAction } from '@/components/booking/actions'
+import { getBookingByUserIdAction } from '@/features/booking/components/actions' // Assuming actions.ts is inside components
 
 const UserBookingLogs = ({ session }: { session: Session }) => {
 	const router = useRouter()

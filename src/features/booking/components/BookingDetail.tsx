@@ -5,12 +5,12 @@ import { useRouter } from 'next-nprogress-bar'
 import { usePathname } from 'next/navigation'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale/ja'
-import { BookingDetailProps, BookingTime } from '@/types/BookingTypes'
+import { BookingDetailProps, BookingTime } from '../types'
 import ShareButton from '@/components/atoms/ShareButton'
 import { PopupRef } from '@/components/molecules/Popup'
 import AddCalendarPopup from '@/components/molecules/AddCalendarPopup'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
-import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
+import BookingDetailNotFound from './BookingDetailNotFound'
 
 const BookingDetail = ({
 	bookingDetail,

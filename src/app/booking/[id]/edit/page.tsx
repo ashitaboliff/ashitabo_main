@@ -1,15 +1,15 @@
 'use server'
 
-import { BookingDetailProps } from '@/types/BookingTypes'
+import { BookingDetailProps } from '@/features/booking/types'
 import {
 	getBookingByIdAction,
 	getBuyBookingByIdAction,
-} from '@/components/booking/actions'
+} from '@/features/booking/components/actions'
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
 import SessionForbidden from '@/components/atoms/SessionNotFound'
-import BookingEdit from '@/components/booking/BookingEdit'
-import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
+import BookingEdit from '@/features/booking/components/BookingEdit'
+import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound'
 
 export async function metadata() {
 	return {

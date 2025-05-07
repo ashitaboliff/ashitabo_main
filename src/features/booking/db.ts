@@ -4,7 +4,7 @@ import 'server-only'
 import prisma, { serializablePrisma } from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
-import { Booking, BuyBookingStatus } from '@/types/BookingTypes'
+import { Booking, BuyBookingStatus } from './types'
 
 /**
  * すべての予約情報を取得する関数

@@ -49,7 +49,8 @@ const Layout = ({ className }: { className: string }) => {
 			<div
 				className={`navbar bg-bg-white mb-5 border-b-2 border-border-light ${className}`}
 			>
-				<div className="navbar-start">
+				{/* Hamburger menu for small screens */}
+				<div className="navbar-start lg:hidden">
 					<button
 						className="btn btn-square btn-ghost text-2xl"
 						onClick={handleMenuOpen}
@@ -57,13 +58,44 @@ const Layout = ({ className }: { className: string }) => {
 						<LuMenu />
 					</button>
 				</div>
-				<div className="navbar-center">
+
+				{/* Logo */}
+				<div className="navbar-center lg:navbar-start">
 					<Link href="/home">
-						<p className="font-nicoMoji text-3xl text-center">
+						<p className="font-nicoMoji text-3xl text-center lg:text-left">
 							あしたぼホームページ
 						</p>
 					</Link>
 				</div>
+
+				{/* Links for large screens */}
+				<div className="navbar-center hidden lg:flex">
+					<ul className="menu menu-horizontal px-1 text-base">
+						<li>
+							<Link href="/home">
+								<IoHomeOutline />
+								ホーム
+							</Link>
+						</li>
+						<li>
+							<Link href="/booking">
+								<MdOutlineEditCalendar /> コマ表
+							</Link>
+						</li>
+						<li>
+							<Link href="/booking/logs">
+								<RxCountdownTimer /> 予約ログ
+							</Link>
+						</li>
+						<li>
+							<Link href="/auth/signin">
+								<FaRegUserCircle /> 利用登録
+							</Link>
+						</li>
+					</ul>
+				</div>
+
+				{/* User icon */}
 				<div className="navbar-end">
 					<button className="btn btn-square btn-ghost text-3xl">
 						<Link href="/user">
@@ -97,10 +129,11 @@ const Layout = ({ className }: { className: string }) => {
 			<div className="drawer-side border-r-2 border-border-light z-50">
 				<label
 					htmlFor="menu-drawer"
-					className="drawer-overlay"
+					className="drawer-overlay lg:hidden" // Hide overlay on large screens
 					onClick={handleMenuClose}
 				></label>
-				<ul className="menu p-4 w-5/12 bg-bg-light text-text-light h-full">
+				{/* Drawer menu for small screens */}
+				<ul className="menu p-4 w-64 sm:w-80 bg-bg-light text-text-light h-full lg:hidden">
 					<li className="menu-title text-lg">
 						<span>メニュー</span>
 					</li>

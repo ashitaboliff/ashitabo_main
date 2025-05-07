@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { BookingDetailProps } from '@/types/BookingTypes'
-import BookingEditAuth from '@/components/booking/BookingEditAuth'
-import BookingEditForm from '@/components/booking/BookingEditForm'
+import { BookingDetailProps } from '../types'
+import BookingEditAuth from './BookingEditAuth'
+import BookingEditForm from './BookingEditForm'
 import { Session } from 'next-auth'
 
 const BookingEdit = ({

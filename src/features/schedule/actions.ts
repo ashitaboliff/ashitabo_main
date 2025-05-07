@@ -9,7 +9,7 @@ import {
 	createTimeslot,
 	getScheduleById,
 } from '@/db/Schedule'
-import { BookingTime } from '@/types/BookingTypes'
+import { BookingTime } from '@/features/booking/types'
 import {
 	UserWithName,
 	Schedule,

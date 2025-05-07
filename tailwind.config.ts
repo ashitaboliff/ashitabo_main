@@ -138,12 +138,13 @@ const config: Config = {
 				'8xl': ['6rem', { lineHeight: '1' }],
 				'9xl': ['8rem', { lineHeight: '1' }],
 			},
-		},
-		colors: {
-			...colorPalette,
-			...daisyLight,
-			'bg-white': colorPalette['bg']['white'],
-			white: colorPalette['bg']['white'],
+			// Custom colors defined in colorPalette can be accessed directly
+			// e.g., bg-primary-main, text-bg-dark
+			colors: {
+				...colorPalette,
+				white: colorPalette['bg']['white'], // Keep white alias if needed
+				'bg-white': colorPalette['bg']['white'], // Keep bg-white alias if needed
+			},
 		},
 		screens,
 		maxWidth: {
@@ -176,22 +177,22 @@ const config: Config = {
 				// dark: {
 				// 	...themes['dark'],
 				// 	...daisyDark,
+				// dark: { // Keep dark theme commented out or define similarly if needed
+				// 	...themes['dark'],
+				// 	...daisyDark,
 				// },
 			},
 		],
-	},
-	async headers() {
-		return [
-			{
-				source: '/fonts/(.*)',
-				headers: [
-					{
-						key: 'Cache-Control',
-						value: 'public, max-age=31536000, immutable',
-					},
-				],
-			},
-		]
+		// Base styles (optional)
+		base: true,
+		// Prefixes class names (optional)
+		prefix: '',
+		// Adds important to utilities (optional)
+		utils: true,
+		// RTL support (optional)
+		rtl: false,
+		// Logs config output (optional)
+		logs: true,
 	},
 }
 

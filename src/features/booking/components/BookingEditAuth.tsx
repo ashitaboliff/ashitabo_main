@@ -5,12 +5,12 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useRouter } from 'next-nprogress-bar'
-import { Booking } from '@/types/BookingTypes'
+import { Booking } from '../types'
 import { authBookingAction } from './actions'
 import { ErrorType } from '@/types/ResponseTypes'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import PasswordInputField from '@/components/molecules/PasswordInputField'
-import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
+import BookingDetailNotFound from './BookingDetailNotFound'
 
 const passschema = yup.object({
 	password: yup.string().required('パスワードを入力してください'),

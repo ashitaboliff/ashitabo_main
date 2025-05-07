@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import { BookingDetailProps, BookingTime } from '@/types/BookingTypes'
+import { BookingDetailProps, BookingTime } from '@/features/booking/types'
 
 import { FaApple, FaYahoo } from 'react-icons/fa'
 import { SiGooglecalendar } from 'react-icons/si'

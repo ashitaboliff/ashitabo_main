@@ -19,7 +19,7 @@ import {
 } from '@/db/Admin'
 import { AccountRole, UserDetail } from '@/types/UserTypes'
 import { PadLock } from '@/types/AdminTypes'
-import { BanBooking, BuyBooking } from '@/types/BookingTypes'
+import { BanBooking, BuyBooking } from '@/features/booking/types'
 
 export async function adminRevalidateTagAction(
 	tag: string,

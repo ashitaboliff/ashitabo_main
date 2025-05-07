@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
 import { AccountRole } from '@/types/UserTypes'
-import { BuyBookingStatus } from '@/types/BookingTypes'
+import { BuyBookingStatus } from '@/features/booking/types'
 
 export const getUserWithProfile = async ({
 	sort,

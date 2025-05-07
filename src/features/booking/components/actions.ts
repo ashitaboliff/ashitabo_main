@@ -13,7 +13,7 @@ import {
 	BookingLog,
 	BookingDetailProps,
 	BookingTime,
-} from '@/types/BookingTypes'
+} from '../types'
 import {
 	getAllBooking,
 	getAllBuyBooking,
@@ -30,8 +30,8 @@ import {
 	getBanBookingByDate,
 	getBuyBookingById,
 	getBuyBookingByUserId,
-} from '@/db/Booking'
-import { getUser } from '@/db/Auth'
+} from '../db'
+import { getUser } from '@/db/Auth' // Keep this path as Auth feature is not refactored yet
 import { cookies } from 'next/headers'
 
 export async function getAllBookingAction(): Promise<

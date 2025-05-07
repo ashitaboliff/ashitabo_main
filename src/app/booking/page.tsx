@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Image from 'next/image'
-import MainPage from '@/components/booking/BookingMainPage'
+import MainPage from '@/features/booking/components/BookingMainPage'
 import { notFound } from 'next/navigation'
 
 const Page = async () => {

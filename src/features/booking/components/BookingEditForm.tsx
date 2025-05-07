@@ -17,7 +17,7 @@ import {
 	BookingResponse,
 	BuyBookingStatus,
 	BookingTime,
-} from '@/types/BookingTypes'
+} from '../types'
 import { ErrorType } from '@/types/ResponseTypes'
 import { Session } from 'next-auth'
 import Loading from '@/components/atoms/Loading'
@@ -25,8 +25,8 @@ import TextInputField from '@/components/atoms/TextInputField'
 import InfoMessage from '@/components/atoms/InfoMessage'
 import BookingDetailBox from '@/components/molecules/BookingDetailBox'
 import Popup, { PopupRef } from '@/components/molecules/Popup'
-import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
-import EditCalendar from '@/components/booking/EditCalendar'
+import BookingDetailNotFound from './BookingDetailNotFound'
+import EditCalendar from './EditCalendar'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 
