@@ -206,7 +206,7 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	const sizeVariations = [-10, 0, 10, 0]
 
 	return (
-		<div className="relative w-75 h-100" style={{ perspective: '1000px' }}>
+		<div className="relative w-[18.75rem] h-[25rem]" style={{ perspective: '1000px' }}>
 			{/* カード本体 */}
 			<div ref={cardRef} className="w-full h-full transform-style-3d relative">
 				{/* 表面 */}
@@ -313,13 +313,13 @@ export const GachaPickup = ({
 
 	if (!res) {
 		return (
-			<div className="flex flex-col items-center h-100">
+			<div className="flex flex-col items-center h-[25rem]">
 				<div className="loading loading-spinner loading-lg my-auto"></div>
 			</div>
 		)
 	} else if (res.status !== 201) {
 		return (
-			<div className="flex flex-col items-center h-100">
+			<div className="flex flex-col items-center h-[25rem]">
 				<div className="text-lg text-seconday-main my-auto">
 					今日はもうこれ以上引けません
 				</div>
@@ -327,7 +327,7 @@ export const GachaPickup = ({
 		)
 	} else {
 		return (
-			<div className="flex flex-col items-center h-100">
+			<div className="flex flex-col items-center h-[25rem]">
 				<CardAnimation
 					frontImage={gachaData.data.src}
 					rarity={gachaData.name}

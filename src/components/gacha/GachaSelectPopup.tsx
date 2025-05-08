@@ -122,7 +122,7 @@ const ImageCarousel = () => {
 					)}
 				</div>
 			) : (
-				<div className="flex flex-col items-center h-100">
+				<div className="flex flex-col items-center h-[25rem]">
 					<div className="loading loading-spinner loading-lg my-auto"></div>
 				</div>
 			)}

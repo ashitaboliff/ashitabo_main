@@ -41,7 +41,7 @@ const GachaPreviewPopup = forwardRef<
 				)}
 				onClick={(e) => e.stopPropagation()}
 			>
-				<div className="flex flex-col items-center h-100 my-2">
+				<div className="flex flex-col items-center h-[25rem] my-2">
 					<CardAnimation frontImage={frontImage} rarity={rarity} />
 				</div>
 				<div className="ml-auto">パック: {gachaConfigs[version].title}</div>

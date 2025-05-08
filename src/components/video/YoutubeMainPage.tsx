@@ -215,11 +215,11 @@ const YoutubeMainPage = () => {
 					{isLoading ? (
 						<>
 							<div className="flex flex-col items-center">
-								<div className="skeleton h-52 w-92"></div>
+								<div className="skeleton h-[13rem] w-[23rem]"></div>
 								<div className="flex flex-col gap-y-1 mt-1">
-									<div className="skeleton h-6 w-92"></div>
-									<div className="skeleton h-5 w-92"></div>
-									<div className="skeleton h-5 w-92"></div>
+									<div className="skeleton h-6 w-[23rem]"></div>
+									<div className="skeleton h-5 w-[23rem]"></div>
+									<div className="skeleton h-5 w-[23rem]"></div>
 									<div className="flex flex-row gap-x-2">
 										<div className="skeleton h-5 w-8"></div>
 										<div className="skeleton h-5 w-8"></div>
@@ -227,11 +227,11 @@ const YoutubeMainPage = () => {
 								</div>
 							</div>
 							<div className="flex flex-col items-center">
-								<div className="skeleton h-52 w-92"></div>
+								<div className="skeleton h-[13rem] w-[23rem]"></div>
 								<div className="flex flex-col gap-y-1 mt-1">
-									<div className="skeleton h-6 w-92"></div>
-									<div className="skeleton h-5 w-92"></div>
-									<div className="skeleton h-5 w-92"></div>
+									<div className="skeleton h-6 w-[23rem]"></div>
+									<div className="skeleton h-5 w-[23rem]"></div>
+									<div className="skeleton h-5 w-[23rem]"></div>
 									<div className="flex flex-row gap-x-2">
 										<div className="skeleton h-5 w-8"></div>
 										<div className="skeleton h-5 w-8"></div>
@@ -239,11 +239,11 @@ const YoutubeMainPage = () => {
 								</div>
 							</div>
 							<div className="flex flex-col items-center">
-								<div className="skeleton h-52 w-92"></div>
+								<div className="skeleton h-[13rem] w-[23rem]"></div>
 								<div className="flex flex-col gap-y-1 mt-1">
-									<div className="skeleton h-6 w-92"></div>
-									<div className="skeleton h-5 w-92"></div>
-									<div className="skeleton h-5 w-92"></div>
+									<div className="skeleton h-6 w-[23rem]"></div>
+									<div className="skeleton h-5 w-[23rem]"></div>
+									<div className="skeleton h-5 w-[23rem]"></div>
 									<div className="flex flex-row gap-x-2">
 										<div className="skeleton h-5 w-8"></div>
 										<div className="skeleton h-5 w-8"></div>
@@ -261,7 +261,7 @@ const YoutubeMainPage = () => {
 						))
 					)}
 					{youtubeDetails.length === 0 && !isLoading && (
-						<div className="text-base-content w-92 text-center">
+						<div className="text-base-content w-[23rem] text-center">
 							該当する動画がありません
 						</div>
 					)}

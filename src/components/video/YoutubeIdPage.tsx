@@ -75,7 +75,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 					<div className="flex flex-col my-2 justify-center">
 						<YouTubeEmbed videoid={detail.videoId} width={368} />
 					</div>
-					<div className="flex flex-col justify-center w-92">
+					<div className="flex flex-col justify-center w-[23rem]">
 						<div className="text-xl font-bold">
 							{detail.title.split('(')[0]}
 						</div>
@@ -85,7 +85,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								{format(detail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
 							</div>
 						</div>
-						<div className="flex flex-row justify-between w-92 mt-2">
+						<div className="flex flex-row justify-between w-[23rem] mt-2">
 							<div className="flex flex-row">
 								{detail.tags && (
 									<Tags
@@ -130,7 +130,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							この動画のあるプレイリストはこちら{' '}
 							<HiOutlineExternalLink size={15} />
 						</div>
-						<div className="flex flex-row w-92 justify-between">
+						<div className="flex flex-row w-[23rem] justify-between">
 							<lite-youtube
 								videoid={detail.videoId ?? ''}
 								playlistid={playlist.playlistId}
@@ -147,7 +147,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						</div>
 					</div>
 					<button
-						className="btn btn-outline mt-4 w-92"
+						className="btn btn-outline mt-4 w-[23rem]"
 						onClick={() => router.back()}
 					>
 						戻る
@@ -168,7 +168,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							style={{ width: '368px', height: '207px' }}
 						></lite-youtube>
 					</div>
-					<div className="flex flex-col justify-center w-92">
+					<div className="flex flex-col justify-center w-[23rem]">
 						<div className="text-xl font-bold">
 							{detail.title.split('(')[0]}
 						</div>
@@ -177,7 +177,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								{format(detail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
 							</div>
 						</div>
-						<div className="flex flex-row justify-between w-92 mt-2">
+						<div className="flex flex-row justify-between w-[23rem] mt-2">
 							<div className="flex flex-row">
 								{detail.tags && (
 									<Tags
@@ -210,7 +210,7 @@ const YoutubeIdPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						</button>
 					</div>
 					<button
-						className="btn btn-outline mt-4 w-92"
+						className="btn btn-outline mt-4 w-[23rem]"
 						onClick={() => router.back()}
 					>
 						戻る

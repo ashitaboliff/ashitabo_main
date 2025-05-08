@@ -27,9 +27,9 @@ const YoutubeDetailBox = ({
 					<YouTubeEmbed videoid={youtubeDetail.id} width={368} />
 				)}
 			</div>
-			<div className="flex flex-row gap-x-2 w-92 justify-between">
+			<div className="flex flex-row gap-x-2 w-[23rem] justify-between">
 				<div
-					className="flex flex-col gap-y-1 justify-center w-92 link link-hover"
+					className="flex flex-col gap-y-1 justify-center w-[23rem] link link-hover"
 					onClick={() => router.push(`/video/${youtubeDetail.id}`)}
 				>
 					<div className="text-base font-bold">
