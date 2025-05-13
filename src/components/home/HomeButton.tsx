@@ -8,9 +8,7 @@ import HomePageButton from '@/svg/home/HomePageButton'
 
 const HomeButton = () => {
 	return (
-		<div
-			className='grid gap-4 pt-2 grid-cols-1 md:grid-cols-2'
-		>
+		<div className="grid gap-4 pt-2 grid-cols-1 md:grid-cols-2">
 			{/* Row 1 */}
 			<div className="relative flex flex-row justify-center w-auto h-36">
 				<div className="absolute place-items-end -z-10">

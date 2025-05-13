@@ -77,9 +77,7 @@ const LogsPage = ({
 						>
 							<div className="card-body p-5">
 								<div className="flex justify-between items-start mb-2">
-									<h2 className="card-title text-lg">
-										{log.registName}
-									</h2>
+									<h2 className="card-title text-lg">{log.registName}</h2>
 									{log.isDeleted && (
 										<div className="badge badge-error gap-1">
 											<TiDeleteOutline size={16} />
@@ -88,7 +86,9 @@ const LogsPage = ({
 									)}
 								</div>
 								<p className="text-sm text-base-content/70">
-									{format(log.bookingDate, 'yyyy年MM月dd日 (E)', { locale: ja })}
+									{format(log.bookingDate, 'yyyy年MM月dd日 (E)', {
+										locale: ja,
+									})}
 								</p>
 								<p className="text-sm text-base-content/70">
 									{BookingTime[log.bookingTime]}
@@ -124,8 +124,12 @@ const LogsPage = ({
 				onClose={() => setIsPopupOpen(false)}
 			>
 				{/* ポップアップ内容もカードスタイルに */}
-				<div className="card-body p-0"> {/* card-bodyのデフォルトパディングを削除し、内部で調整 */}
-					<dl className="space-y-1 p-4 text-sm"> {/* パディングとフォントサイズ調整 */}
+				<div className="card-body p-0">
+					{' '}
+					{/* card-bodyのデフォルトパディングを削除し、内部で調整 */}
+					<dl className="space-y-1 p-4 text-sm">
+						{' '}
+						{/* パディングとフォントサイズ調整 */}
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-1">
 							<dt className="font-semibold sm:col-span-1">予約ID:</dt>
 							<dd className="sm:col-span-2 break-all">{popupData?.id}</dd>
@@ -134,16 +138,24 @@ const LogsPage = ({
 							<dt className="font-semibold sm:col-span-1">予約日:</dt>
 							<dd className="sm:col-span-2">
 								{popupData &&
-									format(new Date(popupData.bookingDate), 'yyyy年MM月dd日 (E)', { locale: ja })}
+									format(
+										new Date(popupData.bookingDate),
+										'yyyy年MM月dd日 (E)',
+										{ locale: ja },
+									)}
 							</dd>
 						</div>
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-1 border-t border-base-300">
 							<dt className="font-semibold sm:col-span-1">予約時間:</dt>
-							<dd className="sm:col-span-2">{popupData && BookingTime[popupData.bookingTime]}</dd>
+							<dd className="sm:col-span-2">
+								{popupData && BookingTime[popupData.bookingTime]}
+							</dd>
 						</div>
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-1 border-t border-base-300">
 							<dt className="font-semibold sm:col-span-1">バンド名:</dt>
-							<dd className="sm:col-span-2 break-all">{popupData?.registName}</dd>
+							<dd className="sm:col-span-2 break-all">
+								{popupData?.registName}
+							</dd>
 						</div>
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-1 border-t border-base-300">
 							<dt className="font-semibold sm:col-span-1">責任者:</dt>
@@ -153,27 +165,35 @@ const LogsPage = ({
 							<dt className="font-semibold sm:col-span-1">作成日時:</dt>
 							<dd className="sm:col-span-2">
 								{popupData &&
-									format(new Date(popupData.createdAt), 'yyyy/MM/dd HH:mm:ss', { locale: ja })}
+									format(new Date(popupData.createdAt), 'yyyy/MM/dd HH:mm:ss', {
+										locale: ja,
+									})}
 							</dd>
 						</div>
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-1 border-t border-base-300">
 							<dt className="font-semibold sm:col-span-1">更新日時:</dt>
 							<dd className="sm:col-span-2">
 								{popupData &&
-									format(new Date(popupData.updatedAt), 'yyyy/MM/dd HH:mm:ss', { locale: ja })}
+									format(new Date(popupData.updatedAt), 'yyyy/MM/dd HH:mm:ss', {
+										locale: ja,
+									})}
 							</dd>
 						</div>
 						{popupData?.buyStatus && (
 							<>
 								<div className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-1 border-t border-base-300">
 									<dt className="font-semibold sm:col-span-1">支払い状況:</dt>
-									<dd className="sm:col-span-2">{BuyBookingStatusMap[popupData.buyStatus]}</dd>
+									<dd className="sm:col-span-2">
+										{BuyBookingStatusMap[popupData.buyStatus]}
+									</dd>
 								</div>
 								<div className="grid grid-cols-1 sm:grid-cols-3 gap-1 py-1 border-t border-base-300">
 									<dt className="font-semibold sm:col-span-1">支払い期限:</dt>
 									<dd className="sm:col-span-2">
 										{popupData.buyExpiredAt
-											? format(new Date(popupData.buyExpiredAt), 'yyyy/MM/dd', { locale: ja })
+											? format(new Date(popupData.buyExpiredAt), 'yyyy/MM/dd', {
+													locale: ja,
+												})
 											: 'N/A'}
 									</dd>
 								</div>

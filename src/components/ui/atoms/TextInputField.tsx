@@ -29,7 +29,8 @@ type TextInputFieldProps = {
 	className?: string
 	value?: string
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-	defaultValue?: string // 追加: defaultValue をサポート
+	defaultValue?: string
+	autocomplete?: string
 }
 
 const TextInputField = ({
@@ -44,7 +45,8 @@ const TextInputField = ({
 	className,
 	value,
 	onChange,
-	defaultValue, // 追加: defaultValue をサポート
+	defaultValue,
+	autocomplete,
 	...props
 }: TextInputFieldProps) => {
 	return (
@@ -58,9 +60,10 @@ const TextInputField = ({
 				disabled={disabled}
 				value={value}
 				onChange={onChange}
-				defaultValue={defaultValue} // 追加: defaultValue を設定
+				defaultValue={defaultValue}
 				{...register}
 				{...props}
+				autoComplete={autocomplete}
 			/>
 
 			{errorMessage && (

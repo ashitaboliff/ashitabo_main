@@ -3,19 +3,20 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
-import { signOutUser } from './action'
-import Image from 'next/image'
-import { Profile, RoleMap } from '@/features/user/types'
-import InstIcon from '@/components/ui/atoms/InstIcon'
+import { signOutUser } from '@/features/user/actions'
+import Image from 'next/image' // next/imageをインポート
+import { Profile } from '@/features/user/types'
+import { StatusCode } from '@/utils/types/ResponseTypes' // StatusCodeをインポート
 import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
+import ProfileDisplay from './ProfileDisplay' // 新しいコンポーネントをインポート
 import LocalFont from 'next/font/local'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import GachaSelectPopup, {
 	GachaSelectPopupRef,
 } from '@/features/gacha/components/GachaSelectPopup'
-import UserBookingLogs from '@/features/user/components/UserBookingLogs'
-import UserGachaLogs from '@/features/user/components/UserGachaLogs'
-import { checkGachaCookieAction } from '@/features/gacha/components/actions'
+import BookingLogs from '@/features/user/components/BookingLogs'
+import GachaLogs from '@/features/user/components/GachaLogs'
+// import { checkGachaCookieAction } from '@/features/gacha/components/actions' // 不要なため削除
 
 import { GiCardRandom } from 'react-icons/gi'
 import { MdOutlineEditCalendar } from 'react-icons/md'
@@ -31,115 +32,102 @@ const UserPage = ({
 	profile,
 	session,
 	userRole,
+	gachaStatus, // gachaStatusをpropsとして受け取る
 }: {
 	profile: Profile
 	session: Session
 	userRole: string
+	gachaStatus: { status: StatusCode; response: string } // gachaStatusの型定義
 }) => {
 	const router = useRouter()
 
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
 	const gachaPopupRef = useRef<GachaSelectPopupRef>(undefined)
-	const [gachaCount, setGachaCount] = useState<number>(0)
+	// gachaCount の useState と関連処理を削除
+	// const [gachaCount, setGachaCount] = useState<number>(0)
 
 	const [isProvRatioPopupOpen, setIsProvRatioPopupOpen] =
 		useState<boolean>(false)
 	const provRatioPopupRef = useRef<PopupRef>(undefined)
 
-	useEffect(() => {
-		async function checkGachaCookie() {
-			const res = await checkGachaCookieAction()
-			if (res.status !== 200) {
-				setGachaCount(100)
-			}
-		}
-		checkGachaCookie()
-	}, [gachaCount])
+	const canPlayGacha = gachaStatus.status === StatusCode.OK
 
 	return (
-		<div className="flex flex-col justify-center">
-			<div className="flex flex-row justify-center gap-10 mb-4 p-6 bg-bg-white rounded-lg shadow-md">
-				<Image
-					src={session.user.image}
-					alt="ユーザーアイコン"
-					width={150}
-					height={150}
-					className="rounded-full"
-				/>
-				<div className="flex flex-col items-center justify-center">
-					<div className="text-4xl font-bold">{session.user.name}</div>
-					<div className="text-base">{RoleMap[profile.role]}</div>
-					<InstIcon part={profile.part} size={30} />
-				</div>
-			</div>
+		<div className="container mx-auto p-4 flex flex-col items-center">
+			<ProfileDisplay profile={profile} session={session} />
 			<button
-				className="btn btn-outline"
+				className="btn btn-outline btn-primary w-full md:w-1/2 lg:w-1/3 mb-4"
 				onClick={() => router.push('/user/edit')}
 			>
 				プロフィールを編集
 			</button>
 			{userRole === 'ADMIN' && (
 				<button
-					className="btn btn-secondary btn-outline w-1/2 my-2 mx-auto"
+					className="btn btn-secondary btn-outline w-full md:w-1/2 lg:w-1/3 mb-4"
 					onClick={() => router.push('/admin')}
 				>
 					管理者ページへ
 				</button>
 			)}
 			{userRole === 'TOPADMIN' && (
-				<div className="flex flex-row justify-center gap-2 my-2">
+				<div className="flex flex-col md:flex-row justify-center gap-2 mb-4 w-full md:w-2/3 lg:w-1/2">
 					<button
-						className="btn btn-secondary btn-outline w-5/12"
+						className="btn btn-accent btn-outline w-full md:w-1/2"
 						onClick={() => router.push('/admin')}
 					>
 						管理者ページ
 					</button>
 					<button
-						className="btn btn-secondary btn-outline w-5/12"
+						className="btn btn-accent btn-outline w-full md:w-1/2"
 						onClick={() => router.push('/admin/topadmin')}
 					>
 						トップ管理者ページ
 					</button>
 				</div>
 			)}
-			<Tabs>
-				<Tab label={<MdOutlineEditCalendar size={30} />}>
-					<UserBookingLogs session={session} />
-				</Tab>
-				<Tab label={<GiCardRandom size={30} />}>
-					<div className="flex flex-col justify-center mb-2 gap-y-2">
-						<div className="flex flex-row justify-center gap-x-2">
-							<button
-								className="btn btn-primary"
-								onClick={() => {
-									setIsGachaPopupOpen(true)
-									setGachaCount(gachaCount + 1)
-								}}
-								disabled={gachaCount === 100}
-							>
-								ガチャを引く
-							</button>
-							<button
-								className="btn btn-outline"
-								onClick={() => setIsProvRatioPopupOpen(true)}
-							>
-								提供割合
-							</button>
-						</div>
-						{gachaCount === 100 && (
-							<div className="text-error text-center">
-								本日のガチャは終了しました
+			<div className="w-full">
+				<Tabs>
+					<Tab label={<MdOutlineEditCalendar size={24} />}>
+						<BookingLogs session={session} />
+					</Tab>
+					<Tab label={<GiCardRandom size={24} />}>
+						<div className="flex flex-col items-center mb-4 gap-y-2">
+							<div className="flex flex-col sm:flex-row justify-center gap-2 w-full">
+								<button
+									className="btn btn-primary w-full sm:w-auto"
+									onClick={() => {
+										setIsGachaPopupOpen(true)
+										// router.refresh() // ガチャを引いた後にページをリフレッシュして状態を更新
+									}}
+									disabled={!canPlayGacha} // gachaStatusに基づいてdisabledを制御
+								>
+									ガチャを引く
+								</button>
+								<button
+									className="btn btn-outline w-full sm:w-auto"
+									onClick={() => setIsProvRatioPopupOpen(true)}
+								>
+									提供割合
+								</button>
 							</div>
-						)}
-					</div>
-					<UserGachaLogs session={session} />
-				</Tab>
-			</Tabs>
-			<div className="flex flex-row justify-center gap-x-4">
-				<button className="btn btn-error" onClick={signOutUser}>
+							{!canPlayGacha && ( // gachaStatusに基づいてメッセージを表示
+								<div className="text-error text-center mt-2">
+									{gachaStatus.response}
+								</div>
+							)}
+						</div>
+						<GachaLogs session={session} />
+					</Tab>
+				</Tabs>
+			</div>
+			<div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 w-full md:w-1/2 lg:w-1/3">
+				<button
+					className="btn btn-error btn-outline w-full sm:w-1/2"
+					onClick={signOutUser}
+				>
 					ログアウト
 				</button>
-				<button className="btn btn-error" disabled>
+				<button className="btn btn-disabled w-full sm:w-1/2" disabled>
 					アカウントを削除
 				</button>
 			</div>

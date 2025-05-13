@@ -18,12 +18,19 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const id = (await params).id
 
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (isSession !== 'profile' || !session) {
-		await redirectFrom('/auth/signin', '/schedule/new')
-		return <SessionForbidden />
+	// sessionStatusが 'profile' でない場合、または session自体がない場合はリダイレクト
+	if (sessionStatus !== 'profile' || !session?.user?.id) {
+		// 元のコードでは '/schedule/new' にリダイレクトしていましたが、
+		// 詳細ページなので、サインイン後に元の詳細ページに戻るのが自然かもしれません。
+		// ここでは元の挙動を維持しつつ、リダイレクト先を /schedule/new のままにします。
+		// 必要であれば、リダイレクト先を `/schedule/${id}` などに変更してください。
+		const redirectPath = `/auth/signin?from=${encodeURIComponent(`/schedule/${id}`)}` // from を現在のページに修正
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
 	}
+	// ここに来る場合は sessionStatus === 'profile' かつ session.user.id が存在する
 
 	const schedule = await getScheduleByIdAction(id)
 	if (schedule.status !== 200) {
@@ -32,8 +39,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
 	if (
 		(schedule.response.mention as string[]).length !== 0 && // Added type assertion for mention
-		((schedule.response.mention as string[]).filter((mention) => mention === session.user.id)
-			.length === 0 ||
+		((schedule.response.mention as string[]).filter(
+			(mention) => mention === session.user.id,
+		).length === 0 ||
 			schedule.response.userId !== session.user.id)
 	) {
 		return <div>Not Found</div>

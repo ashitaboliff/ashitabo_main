@@ -9,6 +9,7 @@ import LabelInputField from '@/components/ui/atoms/LabelInputField'
  * @param showPassword パスワード表示の有無
  * @param handleClickShowPassword パスワード表示の切り替え関数、見えるほう
  * @param handleMouseDownPassword パスワード表示の切り替え関数、見えなくするほう
+ * @param autocomplete オートコンプリートの設定
  */
 const PasswordInputField = ({
 	label,
@@ -17,6 +18,7 @@ const PasswordInputField = ({
 	handleClickShowPassword,
 	handleMouseDownPassword,
 	errorMessage,
+	autocomplete = 'new-password',
 }: {
 	label?: string
 	register: UseFormRegisterReturn
@@ -24,6 +26,7 @@ const PasswordInputField = ({
 	handleClickShowPassword: () => void
 	handleMouseDownPassword: (event: React.MouseEvent<HTMLButtonElement>) => void
 	errorMessage?: string
+	autocomplete?: string
 }) => {
 	return (
 		<div>
@@ -34,6 +37,7 @@ const PasswordInputField = ({
 					type={showPassword ? 'text' : 'password'}
 					placeholder="パスワード"
 					errorMessage={errorMessage}
+					autocomplete={autocomplete}
 				/>
 				<button
 					type="button"

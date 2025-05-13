@@ -7,7 +7,7 @@ import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap } from '@/features/user/types'
-import { ErrorType } from '@/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/ResponseTypes'
 import {
 	generateFiscalYearObject,
 	generateAcademicYear,
@@ -133,19 +133,36 @@ const SigninSetting = () => {
 
 	const onSubmit = async (data: any) => {
 		setIsLoading(true)
-		const isSession = await sessionCheck(session.data)
-		if (isSession === 'no-session') {
+		// クライアントサイドのセッション情報を sessionCheck に渡す
+		// session.data が null の可能性も考慮
+		const sessionStatus = session.data
+			? await sessionCheck(session.data)
+			: 'no-session'
+
+		if (sessionStatus === 'no-session') {
 			setIsError({
 				status: 401,
-				response: 'ログイン情報がありません',
+				response: 'ログイン情報がありません。再度ログインしてください。',
 			})
-		} else if (isSession === 'profile') {
+			// router.push('/auth/signin'); // 必要に応じてサインインページへリダイレクト
+		} else if (sessionStatus === 'profile') {
 			setIsError({
 				status: 403,
-				response: 'プロフィールが既に作成されています',
+				response:
+					'プロフィールは既に作成されています。編集ページをご利用ください。',
 			})
-		} else {
+			// router.push('/user/edit'); // 必要に応じて編集ページへリダイレクト
+		} else if (sessionStatus === 'session') {
+			// 'session' はプロファイル未作成の有効なセッション
 			const userId = session.data?.user.id || ''
+			if (!userId) {
+				setIsError({
+					status: 401,
+					response: 'ユーザーIDが取得できませんでした。',
+				})
+				setIsLoading(false)
+				return
+			}
 			try {
 				const res = await createProfileAction(userId, data)
 				if (res.status === 201) {

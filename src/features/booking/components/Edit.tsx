@@ -22,10 +22,7 @@ const EditPage = ({
 			{isAuth ? (
 				<EditFormPage bookingDetail={bookingDetail} session={session} />
 			) : (
-				<EditAuthPage
-					handleSetAuth={setIsAuth}
-					bookingDetail={bookingDetail}
-				/>
+				<EditAuthPage handleSetAuth={setIsAuth} bookingDetail={bookingDetail} />
 			)}
 		</div>
 	)

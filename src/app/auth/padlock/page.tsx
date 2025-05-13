@@ -15,16 +15,20 @@ export async function metadata() {
 
 const Page = async () => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (isSession === 'profile') {
-		await redirectFrom('/user', '/auth/signin')
-		return <SessionForbidden />
-	} else if (isSession === 'session') {
-		await redirectFrom('/auth/signin/setting', '/auth/signin')
-		return <SessionForbidden />
+	if (sessionStatus === 'profile') {
+		// 既にプロファイル設定済みならユーザーページへ
+		const redirectPath = `/user?from=${encodeURIComponent('/auth/padlock')}` // from を修正
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
+	} else if (sessionStatus === 'session') {
+		// セッションはあるがプロファイル未設定なら設定ページへ
+		const redirectPath = `/auth/signin/setting?from=${encodeURIComponent('/auth/padlock')}` // from を修正
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
 	}
-
+	// 'no-session' の場合、または予期せぬ状態の場合はPadLockページを表示
 	return <AuthPadLock />
 }
 

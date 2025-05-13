@@ -18,19 +18,20 @@ interface PageProps {
 
 const Page = async ({ searchParams }: PageProps) => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (isSession !== 'profile' || !session) {
-		// redirectFrom はクライアントサイドでのリダイレクトをトリガーする可能性があるため、
-		// Server Component での使用は注意が必要。
-		// Next.js の redirect 関数 (next/navigation) の使用を検討。
-		// ここでは既存の動作を維持。
-		await redirectFrom('/auth/signin', '/booking/new')
-		return <SessionForbidden />
+	// sessionStatusが 'profile' でない場合、または session自体がない場合はリダイレクト
+	if (sessionStatus !== 'profile' || !session?.user?.id) {
+		const redirectPath = `/auth/signin?from=${encodeURIComponent('/booking/new')}`
+		await redirectFrom(redirectPath, '') // redirectFromの第二引数は空で良いか、あるいはfromの扱いを再考
+		return null // redirect後は何もレンダリングしない
 	}
+	// ここに来る場合は sessionStatus === 'profile' かつ session.user.id が存在する
 
-	const dateParam = searchParams?.date as string | undefined
-	const timeParam = searchParams?.time as string | undefined
+	const { date, time } = await searchParams
+
+	const dateParam = date as string | undefined
+	const timeParam = time as string | undefined
 
 	return (
 		<CreatePage

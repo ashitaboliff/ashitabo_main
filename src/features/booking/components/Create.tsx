@@ -16,7 +16,7 @@ import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import { Session } from 'next-auth'
-import { ErrorType } from '@/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/ResponseTypes'
 import { BookingTime } from '@/features/booking/types'
 import { GachaPickup } from '@/features/gacha/components/GachaPickupPopup'
 
@@ -58,9 +58,7 @@ export default function CreatePage({
 	const [showPassword, setShowPassword] = useState(false)
 
 	// useSearchParams を削除し、props からの値を使用
-	const bookingDate = initialDateParam
-		? new Date(initialDateParam)
-		: new Date()
+	const bookingDate = initialDateParam ? new Date(initialDateParam) : new Date()
 	const bookingTime = initialTimeParam || '0'
 
 	const [bookingId] = useState<string>(v4())
@@ -123,12 +121,14 @@ export default function CreatePage({
 						register={register('bookingDate')}
 						type="date"
 						disabled
+						autocomplete="off"
 					/>
 					<TextInputField
 						label="時間"
 						register={register('bookingTime')}
 						type="text"
 						disabled
+						autocomplete="off"
 					/>
 					<TextInputField
 						type="text"
@@ -136,6 +136,7 @@ export default function CreatePage({
 						register={register('registName')}
 						placeholder="バンド名"
 						errorMessage={errors.registName?.message}
+						autocomplete="off"
 					/>
 					<TextInputField
 						type="text"
@@ -143,6 +144,7 @@ export default function CreatePage({
 						register={register('name')}
 						placeholder="責任者名"
 						errorMessage={errors.name?.message}
+						autocomplete="username"
 					/>
 					<PasswordInputField
 						label="パスワード"

@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap, Profile, Part } from '@/features/user/types'
-import { ErrorType } from '@/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/ResponseTypes'
 import {
 	generateFiscalYearObject,
 	generateAcademicYear,
@@ -143,14 +143,29 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 
 	const onSubmit = async (data: any) => {
 		setIsLoading(true)
-		const isSession = await sessionCheck(session.data)
-		if (isSession === 'no-session') {
+		// クライアントサイドのセッション情報を sessionCheck に渡す
+		// session.data が null の可能性も考慮
+		const sessionStatus = session.data
+			? await sessionCheck(session.data)
+			: 'no-session'
+
+		if (sessionStatus === 'no-session') {
 			setIsError({
 				status: 401,
-				response: 'ログイン情報がありません',
+				response: 'ログイン情報がありません。再度ログインしてください。',
 			})
+			// router.push('/auth/signin'); // 必要に応じてサインインページへリダイレクト
 		} else {
+			// 'session' または 'profile' の場合、プロファイル更新処理を実行
 			const userId = session.data?.user.id || ''
+			if (!userId) {
+				setIsError({
+					status: 401,
+					response: 'ユーザーIDが取得できませんでした。',
+				})
+				setIsLoading(false)
+				return
+			}
 			try {
 				const res = await putProfileAction(userId, data)
 				if (res.status === 200) {

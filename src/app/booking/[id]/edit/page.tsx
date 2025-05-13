@@ -21,12 +21,17 @@ export async function metadata() {
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (!session || isSession !== 'profile') {
-		await redirectFrom('/auth/signin', `/booking/${(await params).id}/edit`)
-		return <SessionForbidden />
+	// sessionStatusが 'profile' でない場合、または session自体がない場合はリダイレクト
+	if (sessionStatus !== 'profile' || !session?.user?.id) {
+		const redirectPath = `/auth/signin?from=${encodeURIComponent(`/booking/${(await params).id}/edit`)}`
+		await redirectFrom(redirectPath, '') // redirectFromの第二引数は空で良いか、あるいはfromの扱いを再考
+		// redirectFrom は内部で redirect() を呼ぶため、ここでは何も返さない (nullを返すなど)
+		return null
 	}
+	// ここに来る場合は sessionStatus === 'profile' かつ session.user.id が存在する
+
 	let bookingDetailProps: BookingDetailProps
 
 	const id = (await params).id

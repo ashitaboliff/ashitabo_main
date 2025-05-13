@@ -1,6 +1,6 @@
 'use server'
 
-import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
+import { ApiResponse, StatusCode } from '@/utils/types/ResponseTypes'
 import {
 	getProfile,
 	checkPadLock,

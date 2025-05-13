@@ -18,7 +18,7 @@ import {
 	BuyBookingStatus,
 	BookingTime,
 } from '@/features/booking/types'
-import { ErrorType } from '@/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/ResponseTypes'
 import { Session } from 'next-auth'
 import Loading from '@/components/ui/atoms/Loading'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -43,7 +43,8 @@ type ResultType = {
 	message: string
 }
 
-const EditFormPage = ({ // コンポーネント名を変更
+const EditFormPage = ({
+	// コンポーネント名を変更
 	bookingDetail,
 	session,
 }: {
@@ -83,7 +84,6 @@ const EditFormPage = ({ // コンポーネント名を変更
 	useEffect(() => {
 		setIsLoading(false)
 	}, [])
-
 
 	if (!bookingDetail) {
 		return <DetailNotFoundPage />

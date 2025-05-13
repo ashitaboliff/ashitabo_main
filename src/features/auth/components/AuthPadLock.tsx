@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { signIn } from 'next-auth/react'
 import Loading from '@/components/ui/atoms/Loading'
 import { padLockAction } from './actions'
-import { ErrorType } from '@/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/ResponseTypes'
 import AuthErrorPage from '@/features/auth/components/AuthErrorPage'
 
 const PasswordSchema = yup.object().shape({
@@ -44,7 +44,12 @@ const AuthPadLock = () => {
 		setFocus,
 		reset,
 		formState: { errors },
-	} = useForm<{ digit1: string; digit2: string; digit3: string; digit4: string }>({
+	} = useForm<{
+		digit1: string
+		digit2: string
+		digit3: string
+		digit4: string
+	}>({
 		mode: 'onBlur',
 		resolver: yupResolver(PasswordSchema),
 	})
@@ -78,7 +83,12 @@ const AuthPadLock = () => {
 		}
 	}
 
-	const onSubmit: SubmitHandler<{ digit1: string; digit2: string; digit3: string; digit4: string }> = async (data) => {
+	const onSubmit: SubmitHandler<{
+		digit1: string
+		digit2: string
+		digit3: string
+		digit4: string
+	}> = async (data) => {
 		setLoading(true)
 		const password = `${data.digit1}${data.digit2}${data.digit3}${data.digit4}`
 		try {

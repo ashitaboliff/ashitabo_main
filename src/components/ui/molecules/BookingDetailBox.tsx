@@ -27,7 +27,9 @@ const BookingDetailBox = ({ props }: { props: BookingDetailProps }) => {
 	const data: BookingDetailItem[] = [
 		{
 			label: '日付',
-			value: format(new Date(props.bookingDate), 'yyyy年MM月dd日(E)', { locale: ja }),
+			value: format(new Date(props.bookingDate), 'yyyy年MM月dd日(E)', {
+				locale: ja,
+			}),
 		},
 		{
 			label: '時間',
@@ -49,7 +51,7 @@ const BookingDetailBox = ({ props }: { props: BookingDetailProps }) => {
 		})
 	}
 
-	const title = "予約詳細"
+	const title = '予約詳細'
 
 	return (
 		<div className="card w-full max-w-md bg-base-100 shadow-xl mx-auto my-4">

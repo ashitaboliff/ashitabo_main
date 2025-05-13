@@ -5,7 +5,7 @@ import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
 import { BookingResponse, BookingTime } from '@/features/booking/types'
-import { ErrorType } from '@/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/ResponseTypes'
 import BookingRule from '@/components/ui/molecules/BookingRule'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import BookingCalendar from '@/features/booking/components/BookingCalendar'
@@ -26,13 +26,16 @@ const MainPage = ({
 	const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
 	const ableViewDayMax = 27 // 連続表示可能な日数
 	const ableViewDayMin = 8 // 連続表示可能な最小日数
-	const [bookingData, setBookingData] =
-		useState<BookingResponse | undefined>(initialBookingData)
+	const [bookingData, setBookingData] = useState<BookingResponse | undefined>(
+		initialBookingData,
+	)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const ReadMePopupRef = useRef<PopupRef>(undefined)
 	const [error, setError] = useState<ErrorType | undefined>(
-		errorStatus ? { status: errorStatus, response: '初期データの取得に失敗しました。' } : undefined
+		errorStatus
+			? { status: errorStatus, response: '初期データの取得に失敗しました。' }
+			: undefined,
 	)
 	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(!!errorStatus)
 
@@ -99,21 +102,25 @@ const MainPage = ({
 				endDate: addDays(viewDay, viewDayMax - 1),
 			})
 		} else if (initialBookingData && bookingData !== initialBookingData) {
-      // propsで渡されたデータと現在のデータが異なる場合（例：親が更新した）、更新する
-      // ただし、これは無限ループのリスクもあるため、慎重な設計が必要
-      // 今回は、propsからの初期値設定に留め、以降はクライアントの状態を正とする
-    }
+			// propsで渡されたデータと現在のデータが異なる場合（例：親が更新した）、更新する
+			// ただし、これは無限ループのリスクもあるため、慎重な設計が必要
+			// 今回は、propsからの初期値設定に留め、以降はクライアントの状態を正とする
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [viewDay, viewDayMax]) // initialBookingData, initialViewDay は依存配列に含めない
 
 	// 初期エラーがある場合、useEffectでエラーポップアップを開く
 	useEffect(() => {
-		if (errorStatus && !bookingData) { // bookingDataがない（初期取得失敗）場合のみ
-			setError({ status: errorStatus, response: '初期データの取得に失敗しました。画面を更新するか、時間をおいて再度お試しください。'})
+		if (errorStatus && !bookingData) {
+			// bookingDataがない（初期取得失敗）場合のみ
+			setError({
+				status: errorStatus,
+				response:
+					'初期データの取得に失敗しました。画面を更新するか、時間をおいて再度お試しください。',
+			})
 			setErrorPopupOpen(true)
 		}
 	}, [errorStatus, bookingData])
-
 
 	return (
 		<div>

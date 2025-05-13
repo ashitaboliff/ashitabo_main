@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { adminRevalidateTagAction, updateBuyBookingAction } from './action'
 import { getBookingByIdAction } from '@/features/booking/components/actions'
-import { ErrorType } from '@/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/ResponseTypes'
 import {
 	Booking,
 	BuyBooking,

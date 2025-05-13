@@ -6,14 +6,14 @@ import { addDays, subDays } from 'date-fns'
 import { BookingResponse } from '@/features/booking/types'
 
 const Page = async () => {
-	const viewDayMax = 7 
-	const yesterDate = subDays(new Date(), 1) 
+	const viewDayMax = 7
+	const yesterDate = subDays(new Date(), 1)
 	const initialViewDay = yesterDate
 
 	const startDate = DateToDayISOstring(initialViewDay).split('T')[0]
-	const endDate = DateToDayISOstring(addDays(initialViewDay, viewDayMax - 1)).split(
-		'T',
-	)[0]
+	const endDate = DateToDayISOstring(
+		addDays(initialViewDay, viewDayMax - 1),
+	).split('T')[0]
 
 	let initialBookingData: BookingResponse | undefined = undefined
 	let errorStatus: number | undefined = undefined

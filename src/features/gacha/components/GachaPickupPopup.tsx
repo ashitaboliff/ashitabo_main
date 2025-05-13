@@ -14,7 +14,7 @@ import Gacha, { GachaItem } from '@/features/gacha/components/GachaList'
 import { RarityType, GachaCreateType } from '@/features/gacha/types'
 import { createUserGachaResultAction } from '@/features/gacha/components/actions'
 import { getSession } from '@/app/actions'
-import { ApiResponse } from '@/types/ResponseTypes'
+import { ApiResponse } from '@/utils/types/ResponseTypes'
 
 export type GachaPickupPopupRef =
 	| {
@@ -206,7 +206,10 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	const sizeVariations = [-10, 0, 10, 0]
 
 	return (
-		<div className="relative w-[18.75rem] h-[25rem]" style={{ perspective: '1000px' }}>
+		<div
+			className="relative w-[18.75rem] h-[25rem]"
+			style={{ perspective: '1000px' }}
+		>
 			{/* カード本体 */}
 			<div ref={cardRef} className="w-full h-full transform-style-3d relative">
 				{/* 表面 */}

@@ -1,38 +1,36 @@
 import { PrismaClient } from '@prisma/client'
 
-class PrismaSingleton {
-	private static instance: PrismaClient
-	private static serializableInstance: PrismaClient
-
-	private constructor() {}
-
-	public static getInstance(): PrismaClient {
-		if (!PrismaSingleton.instance) {
-			PrismaSingleton.instance = new PrismaClient()
-		}
-		return PrismaSingleton.instance
-	}
-
-	public static getSerializableInstance(): PrismaClient {
-		if (!PrismaSingleton.serializableInstance) {
-			PrismaSingleton.serializableInstance = new PrismaClient({
-				datasources: {
-					db: {
-						url: process.env.POSTGRES_PRISMA_URL + '?isolation=serializable',
-					},
-				},
-			})
-		}
-		return PrismaSingleton.serializableInstance
-	}
+// グローバルスコープに型を宣言
+declare global {
+	// eslint-disable-next-line no-var
+	var prismaInstance: PrismaClient | undefined
+	// eslint-disable-next-line no-var
+	var serializablePrismaInstance: PrismaClient | undefined
 }
 
-const prisma = PrismaSingleton.getInstance()
-export const serializablePrisma = PrismaSingleton.getSerializableInstance()
+// 通常のPrisma Clientインスタンス
+const prisma =
+	global.prismaInstance ||
+	new PrismaClient({
+		// log: ['query'], // 必要に応じてログ設定
+	})
+if (process.env.NODE_ENV !== 'production') {
+	global.prismaInstance = prisma
+}
 
-// アプリケーション終了時に接続を切断
-process.on('beforeExit', async () => {
-	await prisma.$disconnect()
-})
+// シリアライズ可能なトランザクション分離レベル用のPrisma Clientインスタンス
+const serializablePrisma =
+	global.serializablePrismaInstance ||
+	new PrismaClient({
+		datasources: {
+			db: {
+				url: process.env.POSTGRES_PRISMA_URL + '?isolation=serializable',
+			},
+		},
+	})
+if (process.env.NODE_ENV !== 'production') {
+	global.serializablePrismaInstance = serializablePrisma
+}
 
 export default prisma
+export { serializablePrisma }

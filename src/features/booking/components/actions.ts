@@ -1,6 +1,6 @@
 'use server'
 
-import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
+import { ApiResponse, StatusCode } from '@/utils/types/ResponseTypes'
 import { revalidateTag } from 'next/cache'
 import { eachDayOfInterval, formatISO } from 'date-fns'
 import { hashSync, compareSync } from 'bcryptjs'

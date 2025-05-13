@@ -14,12 +14,15 @@ export async function metadata() {
 
 const Page = async () => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (isSession !== 'profile' || !session) {
-		await redirectFrom('/auth/signin', '/schedule/new')
-		return <SessionForbidden />
+	// sessionStatusが 'profile' でない場合、または session自体がない場合はリダイレクト
+	if (sessionStatus !== 'profile' || !session?.user?.id) {
+		const redirectPath = `/auth/signin?from=${encodeURIComponent('/schedule/new')}`
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
 	}
+	// ここに来る場合は sessionStatus === 'profile' かつ session.user.id が存在する
 	return <ScheduleCreatePage session={session} />
 }
 
