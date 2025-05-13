@@ -4,7 +4,7 @@ import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
 import { getProfileAction } from '@/app/actions'
 import { Profile } from '@/types/UserTypes'
-import ProfileEdit from '@/components/user/ProfileEdit'
+import ProfileEdit from '@/features/user/components/ProfileEdit'
 
 export async function metadata() {
 	return {

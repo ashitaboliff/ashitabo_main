@@ -1,10 +1,10 @@
 'use server'
 
 import { ApiResponse, StatusCode } from '@/types/ResponseTypes'
-import { auth } from '@/lib/auth/AuthOption'
+import { auth } from '@/features/auth/lib/AuthOption'
 import { Session } from 'next-auth'
 import { redirect } from 'next/navigation'
-import { getProfile, getUser } from '@/db/Auth'
+import { getProfile, getUser } from '@/features/auth/lib/repository'
 import { getAllBookingId, getAllYoutubeId } from '@/db/Root'
 import { Profile } from '@/types/UserTypes'
 

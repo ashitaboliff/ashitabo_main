@@ -1,8 +1,8 @@
 'use server'
 
-import BookingDetail from '@/components/booking/BookingDetail'
-import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
-import { getBookingByIdAction } from '@/components/booking/actions'
+import BookingDetail from '@/features/booking/components/BookingDetail'
+import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound'
+import { getBookingByIdAction } from '@/features/booking/components/actions'
 import { BookingDetailProps } from '@/types/BookingTypes'
 import { createMetaData } from '@/utils/MetaData'
 

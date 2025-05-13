@@ -1,9 +1,9 @@
 'use server'
 
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 import { createMetaData } from '@/utils/MetaData'
-import ScheduleCreatePage from '@/components/schedule/CreatePage'
+import ScheduleCreatePage from '@/features/schedule/components/CreatePage'
 
 export async function metadata() {
 	return createMetaData({

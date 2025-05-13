@@ -1,6 +1,6 @@
 'use server'
 
-import ScheduleMainPage from '@/components/schedule/MainPage'
+import ScheduleMainPage from '@/features/schedule/components/MainPage'
 
 const Page = async () => {
 	return <ScheduleMainPage />

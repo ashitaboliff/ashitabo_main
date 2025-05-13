@@ -1,11 +1,11 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import YoutubeIdPage from '@/components/video/YoutubeIdPage'
+import YoutubeIdPage from '@/features/video/components/YoutubeIdPage'
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
-} from '@/components/video/actions'
+} from '@/features/video/components/actions'
 import { getSession } from '@/app/actions'
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {

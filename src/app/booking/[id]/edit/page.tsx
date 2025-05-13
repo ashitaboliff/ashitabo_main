@@ -3,13 +3,13 @@
 import { BookingDetailProps } from '@/types/BookingTypes'
 import {
 	getBookingByIdAction,
-	getBuyBookingByIdAction,
-} from '@/components/booking/actions'
-import { redirectFrom } from '@/app/actions'
-import { getSession, sessionCheck } from '@/app/actions'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
-import BookingEdit from '@/components/booking/BookingEdit'
-import BookingDetailNotFound from '@/components/booking/BookingDetailNotFound'
+	getBuyBookingByUserId,
+	updateBookingAction,
+} from '@/features/booking/components/actions'
+import { getSession, sessionCheck, redirectFrom } from '@/app/actions' // Added getSession, sessionCheck
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
+import BookingEdit from '@/features/booking/components/BookingEdit' // Corrected path
+import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound' // Corrected path
 
 export async function metadata() {
 	return {

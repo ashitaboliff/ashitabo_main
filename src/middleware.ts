@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-// export { auth as middleware } from '@/lib/auth/AuthOption'
-import authConfig from '@/lib/auth/auth.config'
+// export { auth as middleware } from '@/features/auth/lib/AuthOption' // Corrected path
+import authConfig from '@/features/auth/lib/auth.config' // Corrected path
 import NextAuth from 'next-auth'
 const { auth } = NextAuth(authConfig)
 

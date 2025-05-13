@@ -1,8 +1,8 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import AdminUserPage from '@/components/admin/AdminUserPage'
-import { getUserRoleAction } from '@/components/admin/action'
+import AdminUserPage from '@/features/admin/components/AdminUserPage'
+import { getUserRoleAction } from '@/features/admin/components/action'
 import { getSession } from '@/app/actions'
 
 const Page = async () => {

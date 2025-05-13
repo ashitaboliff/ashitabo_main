@@ -1,7 +1,7 @@
 'use server'
 
-import AuthPadLock from '@/components/auth/AuthPadLock'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
+import AuthPadLock from '@/features/auth/components/AuthPadLock'
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import { createMetaData } from '@/utils/MetaData'
 

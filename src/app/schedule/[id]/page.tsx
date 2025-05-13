@@ -1,8 +1,8 @@
 'use server'
 
-import IdPage from '@/components/schedule/IdPage'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
-import { getScheduleByIdAction } from '@/components/schedule/actions'
+import IdPage from '@/features/schedule/components/IdPage'
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
+import { getScheduleByIdAction } from '@/features/schedule/components/actions' // Corrected import path
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import { createMetaData } from '@/utils/MetaData'
 
@@ -31,8 +31,8 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	}
 
 	if (
-		schedule.response.mention.length !== 0 &&
-		(schedule.response.mention.filter((mention) => mention === session.user.id)
+		(schedule.response.mention as string[]).length !== 0 && // Added type assertion for mention
+		((schedule.response.mention as string[]).filter((mention) => mention === session.user.id)
 			.length === 0 ||
 			schedule.response.userId !== session.user.id)
 	) {

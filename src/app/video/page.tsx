@@ -1,7 +1,7 @@
 'use server'
 
-import Loading from '@/components/atoms/Loading'
-import YoutubeMainPage from '@/components/video/YoutubeMainPage'
+import Loading from '@/components/ui/atoms/Loading'
+import YoutubeMainPage from '@/features/video/components/YoutubeMainPage'
 import { Suspense } from 'react'
 
 const Page = async () => {

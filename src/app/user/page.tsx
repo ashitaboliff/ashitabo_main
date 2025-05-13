@@ -3,9 +3,9 @@
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
 import { getProfileAction } from '@/app/actions'
-import { getUserRoleAction } from '@/components/admin/action'
+import { getUserRoleAction } from '@/features/admin/components/action'
 import { Profile } from '@/types/UserTypes'
-import UserPage from '@/components/user/UserPage'
+import UserPage from '@/features/user/components/UserPage'
 import { notFound } from 'next/navigation'
 import { createMetaData } from '@/utils/MetaData'
 

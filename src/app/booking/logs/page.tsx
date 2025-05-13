@@ -1,8 +1,8 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import BookingLogs from '@/components/booking/BookingLogs'
-import { getAllBookingAction } from '@/components/booking/actions'
+import BookingLogs from '@/features/booking/components/BookingLogs'
+import { getAllBookingAction } from '@/features/booking/components/actions'
 import { createMetaData } from '@/utils/MetaData'
 
 export async function metadata() {

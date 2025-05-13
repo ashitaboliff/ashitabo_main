@@ -1,13 +1,13 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import TopAdminBuyPage from '@/components/admin/TopAdminBuyPage'
+import TopAdminBuyPage from '@/features/admin/components/TopAdminBuyPage'
 import {
 	getUserRoleAction,
 	getBuyBookingByStatusAction,
-} from '@/components/admin/action'
+} from '@/features/admin/components/action'
 import { getSession } from '@/app/actions'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 
 const Page = async () => {
 	const session = await getSession()

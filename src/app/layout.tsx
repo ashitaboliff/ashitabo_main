@@ -1,12 +1,12 @@
 import { Inter } from 'next/font/google'
 import LocalFont from 'next/font/local'
 import './globals.css'
-import ProgressBarProvider from '@/components/atoms/ProgressBarProvider'
-import Header from '@/components/molecules/Header'
-import Footer from '@/components/molecules/Footer'
+import ProgressBarProvider from '@/components/ui/atoms/ProgressBarProvider'
+import Header from '@/components/ui/molecules/Header'
+import Footer from '@/components/ui/molecules/Footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { LiffProvider } from '@/lib/liff/LiffOption'
-import NextAuthProvider from '@/lib/auth/AuthProvider'
+import NextAuthProvider from '@/features/auth/lib/AuthProvider'
 import { createMetaData } from '@/utils/MetaData'
 
 const inter = Inter({ subsets: ['latin'] })
