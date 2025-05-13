@@ -27,7 +27,7 @@ const DetailPage = ({
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center">
+		<div className="container mx-auto flex flex-col items-center">
 			<BookingDetailBox
 				props={{
 					bookingDate: bookingDetail.bookingDate,
@@ -37,41 +37,39 @@ const DetailPage = ({
 					isPaidStatus: bookingDetail.isPaidStatus,
 				}}
 			/>
-			<div className="flex flex-col justify-center space-y-2">
-				<div className="flex flex-row justify-center space-x-2">
-					<button
-						className="btn btn-primary w-32"
-						onClick={() => router.push(`/booking/${bookingDetail?.id}/edit`)}
-					>
-						編集
-					</button>
-					<button
-						className="btn btn-tetiary btn-outline w-32"
-						onClick={() => setIsPopupOpen(true)}
-					>
-						スマホに追加
-					</button>
-					<ShareButton
-						url={pathname}
-						title="予約を共有"
-						text={`予約日時: ${format(
-							bookingDetail.bookingDate,
-							'yyyy/MM/dd(E)',
-							{
-								locale: ja,
-							},
-						)} ${BookingTime[Number(bookingDetail.bookingTime)]}`}
-						isFullButton
-					/>
-				</div>
-				<div className="flex justify-center space-x-2">
-					<button
-						className="btn btn-outline w-40"
-						onClick={() => router.push('/booking')}
-					>
-						コマ表に戻る
-					</button>
-				</div>
+			<div className="mt-6 flex flex-col sm:flex-row justify-center items-center gap-2 w-full max-w-md">
+				<button
+					className="btn btn-primary w-full sm:w-auto"
+					onClick={() => router.push(`/booking/${bookingDetail?.id}/edit`)}
+				>
+					編集
+				</button>
+				<button
+					className="btn btn-accent btn-outline w-full sm:w-auto" // tetiary から accent に変更 (daisyUIの標準的な色)
+					onClick={() => setIsPopupOpen(true)}
+				>
+					スマホに追加
+				</button>
+				<ShareButton
+					url={pathname}
+					title="LINEで共有"
+					text={`予約日時: ${format(
+						new Date(bookingDetail.bookingDate), // Dateオブジェクトに変換
+						'yyyy/MM/dd(E)',
+						{
+							locale: ja,
+						},
+					)} ${BookingTime[Number(bookingDetail.bookingTime)]}`}
+					isFullButton
+				/>
+			</div>
+			<div className="mt-4 flex justify-center w-full max-w-md">
+				<button
+					className="btn btn-ghost w-full sm:w-auto" // outline から ghost に変更
+					onClick={() => router.push('/booking')}
+				>
+					コマ表に戻る
+				</button>
 			</div>
 			<AddCalendarPopup
 				bookingDetail={bookingDetail}

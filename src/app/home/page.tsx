@@ -1,12 +1,9 @@
-'use client'
+'use server'
 
 import Carousel from '@/components/home/HomeCarousel'
 import HomeButton from '@/components/home/HomeButton'
-import { useScreenSize, getMaxWidth } from '@/utils/ScreenSize'
 
 const Page = () => {
-	const width = useScreenSize()
-	const { device } = getMaxWidth(width)
 	return (
 		<div>
 			<Carousel />
@@ -17,7 +14,7 @@ const Page = () => {
 				<div className={`text-2xl`}>軽音サークル♪</div>
 				<div className={`text-2xl`}>長野市で活動しています！</div>
 			</div>
-			<HomeButton device={device} />
+			<HomeButton />
 		</div>
 	)
 }

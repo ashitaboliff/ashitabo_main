@@ -1,3 +1,5 @@
+'use client'
+
 import { Part, PartMap } from '@/features/user/types'
 
 import { MdPiano as PianoIcon } from 'react-icons/md'
@@ -7,11 +9,8 @@ import { FaDrum as DrumIcon } from 'react-icons/fa'
 import { IoMdMicrophone as MicIcon } from 'react-icons/io'
 import { IoEllipsisHorizontalCircleSharp as OtherIcon } from 'react-icons/io5'
 
-import { useScreenSize } from '@/utils/ScreenSize'
-
-export const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
+const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 	const iconSize = size || 20
-	const width = useScreenSize()
 
 	// アイコン定義
 	const icons = {
@@ -29,23 +28,17 @@ export const InstIcon = ({ part, size }: { part: Part[]; size?: number }) => {
 		part.includes(key as Part),
 	)
 
-	// スマホ画面（width < 768）の場合は4個ごとに改行
-	const isMobile = width < 768
-	const rows = isMobile ? Math.ceil(sortedParts.length / 4) : 2
-
 	return (
 		<div className="flex flex-wrap justify-around">
-			{Array.from({ length: rows }).map((_, rowIndex) => (
-				<div key={rowIndex} className="flex flex-row mb-2">
-					{sortedParts.slice(rowIndex * 4, (rowIndex + 1) * 4).map((p) => (
-						<div key={p} className="tooltip mr-1" data-tip={PartMap[p as Part]}>
-							<div className="btn btn-sm btn-ghost no-animation btn-circle">
-								{icons[p as Part]}
-							</div>
+			<div className="grid grid-cols-4 md:flex md:flex-row gap-1 w-full">
+				{sortedParts.map((p) => (
+					<div key={p} className="tooltip" data-tip={PartMap[p as Part]}>
+						<div className="btn btn-sm btn-ghost no-animation btn-circle">
+							{icons[p as Part]}
 						</div>
-					))}
-				</div>
-			))}
+					</div>
+				))}
+			</div>
 		</div>
 	)
 }

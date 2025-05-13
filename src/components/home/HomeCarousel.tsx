@@ -1,4 +1,4 @@
-'use client'
+'use server'
 
 import Image from 'next/image'
 import list from '@/utils/home/CarouselList'

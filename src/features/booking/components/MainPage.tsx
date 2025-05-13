@@ -22,7 +22,6 @@ const MainPage = ({
 	initialViewDay,
 	errorStatus,
 }: MainPageProps) => {
-	// const yesterDate = subDays(new Date(), 1) // initialViewDay を使用
 	const [viewDay, setViewday] = useState<Date>(initialViewDay)
 	const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
 	const ableViewDayMax = 27 // 連続表示可能な日数
@@ -161,18 +160,12 @@ const MainPage = ({
 						{'>'}
 					</button>
 				</div>
-				{bookingData ? (
-					isLoading ? (
-						<div className="flex justify-center">
-							<div className="skeleton h-96 w-96"></div>
-						</div>
-					) : (
-						<BookingCalendar bookingDate={bookingData} timeList={BookingTime} />
-					)
-				) : (
+				{isLoading || !bookingData ? (
 					<div className="flex justify-center">
-						<div className="skeleton h-96 w-96"></div>
+						<div className="skeleton w-[360px] h-[400px] sm:w-[520px] sm:h-[580px]"></div>
 					</div>
+				) : (
+					<BookingCalendar bookingDate={bookingData} timeList={BookingTime} />
 				)}
 			</div>
 			<Popup

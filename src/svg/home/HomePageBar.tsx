@@ -2,14 +2,16 @@ const lightBlue = '#3C87E0'
 const lightyellow = '#F0CB51'
 const lightred = '#E3646B'
 
-export const HomePageBar = () => {
+const HomePageBar = () => {
 	return (
+	<div>
 		<svg
 			width="661"
 			height="158"
 			viewBox="0 0 661 158"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
+			className="hidden md:block"
 		>
 			<rect x="378" y="21" width="13" height="136" fill={lightyellow} />
 			<rect x="396" y="13" width="13" height="145" fill={lightyellow} />
@@ -49,17 +51,13 @@ export const HomePageBar = () => {
 			<rect x="306" y="6" width="13" height="152" fill={lightred} />
 			<rect x="324" width="13" height="158" fill={lightBlue} />
 		</svg>
-	)
-}
-
-export const HomePageBarSp = () => {
-	return (
 		<svg
 			width="337"
 			height="142"
 			viewBox="0 0 337 142"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
+			className="md:hidden"
 		>
 			<rect x="36" y="31" width="13" height="111" fill={lightyellow} />
 			<rect x="54" y="36" width="13" height="106" fill={lightyellow} />
@@ -81,5 +79,8 @@ export const HomePageBarSp = () => {
 			<rect x="306" y="13" width="13" height="129" fill={lightred} />
 			<rect x="324" y="13" width="13" height="129" fill={lightBlue} />
 		</svg>
+	</div>
 	)
 }
+
+export default HomePageBar

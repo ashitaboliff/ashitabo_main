@@ -1,17 +1,13 @@
-// 'use server' // page.tsx はデフォルトでServer Component
-
 import React from 'react'
-// import Image from 'next/image' // 未使用のためコメントアウト
-import MainPage from '@/features/booking/components/MainPage' // インポートパス変更
-// import { notFound } from 'next/navigation' // 未使用のためコメントアウト
+import MainPage from '@/features/booking/components/MainPage'
 import { getBookingByDateAction } from '@/features/booking/components/actions'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { addDays, subDays } from 'date-fns'
 import { BookingResponse } from '@/features/booking/types'
 
 const Page = async () => {
-	const viewDayMax = 7 // MainPageコンポーネントのデフォルト値と合わせる
-	const yesterDate = subDays(new Date(), 1) // MainPageコンポーネントのデフォルト値と合わせる
+	const viewDayMax = 7 
+	const yesterDate = subDays(new Date(), 1) 
 	const initialViewDay = yesterDate
 
 	const startDate = DateToDayISOstring(initialViewDay).split('T')[0]
@@ -39,27 +35,11 @@ const Page = async () => {
 	}
 
 	return (
-		<>
-			<div className="flex justify-center space-x-2 m-2 mt-6">
-				{/* <Image
-					src={'/animal_dance.png'}
-					alt={'animal dance'}
-					width={150}
-					height={150}
-				/>
-				<Image
-					src={'/animal_music_band.png'}
-					alt={'animal dance'}
-					width={150}
-					height={150}
-				/> */}
-			</div>
-			<MainPage
-				initialBookingData={initialBookingData}
-				initialViewDay={initialViewDay}
-				errorStatus={errorStatus}
-			/>
-		</>
+		<MainPage
+			initialBookingData={initialBookingData}
+			initialViewDay={initialViewDay}
+			errorStatus={errorStatus}
+		/>
 	)
 }
 

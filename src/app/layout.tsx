@@ -63,14 +63,13 @@ export default function RootLayout({
 				></script>
 			</head>
 			<body className={inter.className}>
-				<div
-					className="flex space-x-4"
-					dangerouslySetInnerHTML={{
-						__html:
-							'<!-- 拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ 変態糞学生 -->' +
-							'<!-- てことでソースコードはこちらからhttps://github.com/watabegg/k_on_line -->',
-					}}
-				/>
+				<script dangerouslySetInnerHTML={{
+					__html: `
+						console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #bada55; font-size: 16px; padding: 10px;');
+						console.log('%cソースコードはこちらから', 'color: #ffcc00; font-size: 14px; padding: 5px;');
+						console.log('%chttps://github.com/ashitaboliff/', 'color: #58a6ff; font-size: 14px; padding: 5px; text-decoration: underline;');
+					`
+				}} />
 				<NextAuthProvider>
 					<ProgressBarProvider>
 						<div className="relative">

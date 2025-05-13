@@ -53,7 +53,7 @@ export const BookingTableBox = ({
 					}
 				}}
 			>
-				<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
+				<div className="w-11 h-13 sm:w-16 sm:h-16 flex flex-col justify-center items-center text-center break-words py-1">
 					<p className="text-xxxs sm:text-xs text-base-content bold">
 						<CircleIcon color="blue" size={20} />
 					</p>
@@ -64,7 +64,7 @@ export const BookingTableBox = ({
 	} else if (registName === 'ForbiddenBooking') {
 		return (
 			<td key={index} className={tdClassName}>
-				<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
+				<div className="w-11 h-13 sm:w-16 sm:h-16 flex flex-col justify-center items-center text-center break-words py-1">
 					<p className="text-xxxs sm:text-xs text-base-content bold">
 						<ForbiddenIcon color="red" size={20} />
 					</p>
@@ -85,7 +85,7 @@ export const BookingTableBox = ({
 					}
 				}}
 			>
-				<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
+				<div className="w-11 h-13 sm:w-16 sm:h-16 flex flex-col justify-center items-center text-center break-words py-1">
 					<p className="text-xxxs sm:text-xs text-base-content bold">
 						{registName.length > 21
 							? registName.slice(0, 20) + '...'
