@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { getUserAction } from '@/features/auth/components/actions'
-import { User } from '@/types/UserTypes'
+import { User } from '@/features/user/types'
 
 import { LuMenu } from 'react-icons/lu'
 import { FaRegUserCircle } from 'react-icons/fa'

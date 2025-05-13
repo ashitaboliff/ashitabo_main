@@ -10,7 +10,7 @@ import {
 } from '@/features/auth/lib/repository'
 import { signIn } from '@/features/auth/lib/AuthOption'
 import { cookies } from 'next/headers'
-import { Profile, User } from '@/types/UserTypes'
+import { Profile, User } from '@/features/user/types'
 import { revalidateTag } from 'next/cache'
 
 const oneDay = 60 * 60 * 24

@@ -1,4 +1,4 @@
-import { Part, PartMap } from '@/types/UserTypes'
+import { Part, PartMap } from '@/features/user/types'
 
 import { MdPiano as PianoIcon } from 'react-icons/md'
 import { GiGuitarBassHead as BassIcon } from 'react-icons/gi'

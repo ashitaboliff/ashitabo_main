@@ -6,7 +6,7 @@ import { useRouter } from 'next-nprogress-bar'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { RoleMap, Role, PartMap, Profile, Part } from '@/types/UserTypes'
+import { RoleMap, Role, PartMap, Profile, Part } from '@/features/user/types'
 import { ErrorType } from '@/types/ResponseTypes'
 import {
 	generateFiscalYearObject,

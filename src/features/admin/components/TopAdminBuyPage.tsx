@@ -13,7 +13,7 @@ import {
 	BuyBookingStatus,
 	BuyBookingStatusMap,
 	BookingTime,
-} from '@/types/BookingTypes'
+} from '@/features/booking/types'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'

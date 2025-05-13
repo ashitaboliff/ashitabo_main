@@ -7,7 +7,7 @@ import {
 	BuyBookingStatus,
 	BuyBookingStatusMap,
 	BookingTime,
-} from '@/types/BookingTypes'
+} from '@/features/booking/types'
 
 interface BookingDetailProps {
 	bookingDate: string

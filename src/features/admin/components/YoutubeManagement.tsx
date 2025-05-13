@@ -9,7 +9,7 @@ import {
 	createPlaylistAction,
 	revalidateYoutubeTag,
 } from '@/features/video/components/actions'
-import { Playlist } from '@/types/YoutubeTypes'
+import { Playlist } from '@/features/video/types'
 import { ErrorType } from '@/types/ResponseTypes'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'

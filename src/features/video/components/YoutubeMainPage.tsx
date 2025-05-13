@@ -3,7 +3,7 @@
 import LocalFont from 'next/font/local'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { YoutubeDetail, YoutubeSearchQuery } from '@/types/YoutubeTypes'
+import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ErrorType } from '@/types/ResponseTypes'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import SelectFieldNumber from '@/components/ui/atoms/SelectFieldNumber'

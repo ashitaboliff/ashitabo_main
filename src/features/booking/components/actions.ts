@@ -13,7 +13,7 @@ import {
 	BookingLog,
 	BookingDetailProps,
 	BookingTime,
-} from '@/types/BookingTypes'
+} from '@/features/booking/types'
 import {
 	getAllBooking,
 	getAllBuyBooking,

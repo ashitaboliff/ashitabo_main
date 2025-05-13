@@ -17,9 +17,9 @@ import {
 	getBuyBookingByStatus,
 	updateBuyBooking,
 } from '@/features/admin/lib/repository'
-import { AccountRole, UserDetail } from '@/types/UserTypes'
-import { PadLock } from '@/types/AdminTypes'
-import { BanBooking, BuyBooking } from '@/types/BookingTypes'
+import { AccountRole, UserDetail } from '@/features/user/types'
+import { PadLock } from '@/features/admin/types'
+import { BanBooking, BuyBooking } from '@/features/booking/types'
 
 export async function adminRevalidateTagAction(
 	tag: string,

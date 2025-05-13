@@ -10,7 +10,7 @@ import {
 	YoutubeDetail,
 	YoutubeSearchQuery,
 	liveOrBand,
-} from '@/types/YoutubeTypes'
+} from '@/features/video/types'
 import {
 	createPlaylistBatch,
 	getAccessToken,

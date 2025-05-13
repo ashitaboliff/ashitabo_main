@@ -7,7 +7,7 @@ import {
 	YoutubeDetail,
 	YoutubeSearchQuery,
 	liveOrBand,
-} from '@/types/YoutubeTypes'
+} from '@/features/video/types'
 
 export const getAccessToken = async () => {
 	async function getAccessToken() {

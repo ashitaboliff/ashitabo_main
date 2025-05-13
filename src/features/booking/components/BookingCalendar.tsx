@@ -3,7 +3,7 @@
 import { memo } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { BookingResponse } from '@/types/BookingTypes'
+import { BookingResponse } from '@/features/booking/types'
 import BookingTableBox from '@/components/ui/molecules/BookingTableBox'
 
 /**

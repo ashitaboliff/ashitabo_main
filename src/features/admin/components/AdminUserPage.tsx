@@ -16,7 +16,7 @@ import {
 	PartMap,
 	AccountRoleMap,
 	AccountRole,
-} from '@/types/UserTypes'
+} from '@/features/user/types'
 import { ErrorType } from '@/types/ResponseTypes'
 import { Session } from 'next-auth'
 import Pagination from '@/components/ui/atoms/Pagination'

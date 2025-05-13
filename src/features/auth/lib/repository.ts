@@ -2,7 +2,7 @@
 
 import { compareSync } from 'bcryptjs'
 import prisma from '@/lib/prisma/prisma'
-import { Profile } from '@/types/UserTypes'
+import { Profile } from '@/features/user/types'
 
 /**
  * DBからパスワードを取得し、入力されたパスワードと照合する関数

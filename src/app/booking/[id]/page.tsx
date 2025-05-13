@@ -3,7 +3,7 @@
 import BookingDetail from '@/features/booking/components/BookingDetail'
 import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound'
 import { getBookingByIdAction } from '@/features/booking/components/actions'
-import { BookingDetailProps } from '@/types/BookingTypes'
+import { BookingDetailProps } from '@/features/booking/types'
 import { createMetaData } from '@/utils/MetaData'
 
 export async function metadata() {

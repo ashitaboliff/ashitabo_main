@@ -6,7 +6,7 @@ import { YouTubeEmbed } from '@next/third-parties/google'
 import 'lite-youtube-embed/src/lite-yt-embed.css'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { YoutubeDetail, liveOrBand } from '@/types/YoutubeTypes'
+import { YoutubeDetail, liveOrBand } from '@/features/video/types'
 import Tags from '@/components/ui/atoms/Tags'
 
 const YoutubeDetailBox = ({

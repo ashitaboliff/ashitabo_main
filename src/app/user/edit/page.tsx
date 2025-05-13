@@ -3,7 +3,7 @@
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
 import { getProfileAction } from '@/app/actions'
-import { Profile } from '@/types/UserTypes'
+import { Profile } from '@/features/user/types'
 import ProfileEdit from '@/features/user/components/ProfileEdit'
 
 export async function metadata() {

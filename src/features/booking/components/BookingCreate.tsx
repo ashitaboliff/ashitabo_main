@@ -17,7 +17,7 @@ import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
 import { Session } from 'next-auth'
 import { ErrorType } from '@/types/ResponseTypes'
-import { BookingTime } from '@/types/BookingTypes'
+import { BookingTime } from '@/features/booking/types'
 import { GachaPickup } from '@/features/gacha/components/GachaPickupPopup'
 
 const today = new Date(

@@ -6,7 +6,7 @@ import { Session } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { getProfile, getUser } from '@/features/auth/lib/repository'
 import { getAllBookingId, getAllYoutubeId } from '@/db/Root'
-import { Profile } from '@/types/UserTypes'
+import { Profile } from '@/features/user/types'
 
 export async function getSession() {
 	return await auth()

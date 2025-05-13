@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BookingDetailProps } from '@/types/BookingTypes'
+import { BookingDetailProps } from '@/features/booking/types'
 import BookingEditAuth from '@/features/booking/components/BookingEditAuth'
 import BookingEditForm from '@/features/booking/components/BookingEditForm'
 import { Session } from 'next-auth'

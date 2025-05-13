@@ -1,6 +1,6 @@
 'use server'
 
-import { BookingDetailProps } from '@/types/BookingTypes'
+import { BookingDetailProps } from '@/features/booking/types'
 import {
 	getBookingByIdAction,
 	getBuyBookingByUserId,

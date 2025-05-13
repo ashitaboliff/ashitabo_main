@@ -4,7 +4,7 @@ import 'server-only'
 import prisma from '@/lib/prisma/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
-import { Schedule } from '@/types/ScheduleTypes'
+import { Schedule } from '@/features/schedule/types'
 
 export const getUserWithName = async () => {
 	async function getUserWithName() {

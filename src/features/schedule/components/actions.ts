@@ -9,13 +9,13 @@ import {
 	createTimeslot,
 	getScheduleById,
 } from '@/features/schedule/lib/repository'
-import { BookingTime } from '@/types/BookingTypes'
+import { BookingTime } from '@/features/booking/types'
 import {
 	UserWithName,
 	Schedule,
 	generateScheduleTimeExtend,
 	SchedulePost,
-} from '@/types/ScheduleTypes'
+} from '@/features/schedule/types'
 
 export const getUserIdWithNames = async (): Promise<
 	ApiResponse<UserWithName[]>
