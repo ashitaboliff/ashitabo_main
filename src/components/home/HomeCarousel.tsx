@@ -1,7 +1,7 @@
 'use server'
 
 import Image from 'next/image'
-import list from '@/utils/home/CarouselList'
+import list from '@/utils/home/carouselList'
 
 const Carousel = () => {
 	return (

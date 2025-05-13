@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import prisma from '@/lib/prisma/prisma' // 共有Prismaクライアントを使用
+import prisma from '@/lib/prisma' // 共有Prismaクライアントを使用
 import authConfig from '@/features/auth/lib/auth.config'
 import type { User as PrismaUser } from '@prisma/client'
 import type {

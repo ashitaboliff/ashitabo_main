@@ -17,7 +17,7 @@ import {
 	AccountRoleMap,
 	AccountRole,
 } from '@/features/user/types'
-import { ErrorType } from '@/utils/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/responseTypes'
 import { Session } from 'next-auth'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'

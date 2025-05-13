@@ -1,7 +1,7 @@
 'use server'
 
 import 'server-only'
-import prisma, { serializablePrisma } from '@/lib/prisma/prisma'
+import prisma, { serializablePrisma } from '@/lib/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
 import { Booking, BuyBookingStatus } from '@/features/booking/types'

@@ -7,7 +7,7 @@ import { useRouter } from 'next-nprogress-bar'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap } from '@/features/user/types'
-import { ErrorType } from '@/utils/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/responseTypes'
 import {
 	generateFiscalYearObject,
 	generateAcademicYear,

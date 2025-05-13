@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/lib/prisma/prisma'
+import prisma from '@/lib/prisma'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
 import { AccountRole } from '@/features/user/types'

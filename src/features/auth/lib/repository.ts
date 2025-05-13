@@ -1,7 +1,7 @@
 'use server'
 
 import { compareSync } from 'bcryptjs'
-import prisma from '@/lib/prisma/prisma'
+import prisma from '@/lib/prisma'
 import { Profile } from '@/features/user/types'
 
 /**

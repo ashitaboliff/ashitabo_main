@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap, Profile, Part } from '@/features/user/types'
-import { ErrorType } from '@/utils/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/responseTypes'
 import {
 	generateFiscalYearObject,
 	generateAcademicYear,

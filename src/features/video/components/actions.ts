@@ -2,7 +2,7 @@
 
 import { google, youtube_v3 } from 'googleapis'
 import { GaxiosResponse } from 'gaxios'
-import { ApiResponse, StatusCode } from '@/utils/types/ResponseTypes'
+import { ApiResponse, StatusCode } from '@/utils/types/responseTypes'
 import {
 	Playlist,
 	Token,

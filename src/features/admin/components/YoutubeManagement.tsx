@@ -10,7 +10,7 @@ import {
 	revalidateYoutubeTag,
 } from '@/features/video/components/actions'
 import { Playlist } from '@/features/video/types'
-import { ErrorType } from '@/utils/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/responseTypes'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Tags from '@/components/ui/atoms/Tags'

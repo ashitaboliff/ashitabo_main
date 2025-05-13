@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/features/auth/lib/AuthOption' // AuthOption.tsx から auth をインポート
+import { auth } from '@/features/auth/lib/authOption' // AuthOption.tsx から auth をインポート
 
 // import authConfig from '@/features/auth/lib/auth.config' // 不要
 // import NextAuth from 'next-auth' // 不要

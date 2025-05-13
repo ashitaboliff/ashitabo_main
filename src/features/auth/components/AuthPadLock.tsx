@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { signIn } from 'next-auth/react'
 import Loading from '@/components/ui/atoms/Loading'
 import { padLockAction } from './actions'
-import { ErrorType } from '@/utils/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/responseTypes'
 import AuthErrorPage from '@/features/auth/components/AuthErrorPage'
 
 const PasswordSchema = yup.object().shape({

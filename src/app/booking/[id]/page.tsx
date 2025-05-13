@@ -4,7 +4,7 @@ import DetailPage from '@/features/booking/components/Detail'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
 import { getBookingByIdAction } from '@/features/booking/components/actions'
 import { BookingDetailProps } from '@/features/booking/types'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({

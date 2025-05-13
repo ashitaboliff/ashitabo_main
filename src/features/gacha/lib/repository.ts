@@ -1,7 +1,7 @@
 'use server'
 
 import 'server-only'
-import prisma from '@/lib/prisma/prisma'
+import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'

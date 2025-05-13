@@ -1,6 +1,6 @@
 'use server'
 
-import { auth } from '@/features/auth/lib/AuthOption'
+import { auth } from '@/features/auth/lib/authOption'
 import { Session } from 'next-auth' // Session型は引き続き使用
 import { redirect } from 'next/navigation'
 // import { getProfile, getUser } from '@/features/auth/lib/repository' // 不要になるため削除

@@ -3,7 +3,7 @@
 import privacy from '@/app/(term_privacy)/privacy/privacyJson'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import parse from 'html-react-parser'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({

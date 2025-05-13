@@ -1,6 +1,6 @@
 'use server'
 
-import list from '@/utils/molecules/FooterList'
+import list from '@/utils/molecules/footerList'
 import HomePageBar from '@/svg/home/HomePageBar'
 
 const Footer = () => {

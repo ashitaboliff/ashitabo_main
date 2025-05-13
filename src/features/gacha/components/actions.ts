@@ -1,6 +1,6 @@
 'use server'
 
-import { ApiResponse, StatusCode } from '@/utils/types/ResponseTypes'
+import { ApiResponse, StatusCode } from '@/utils/types/responseTypes'
 import { cookies } from 'next/headers'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { addHours } from 'date-fns'

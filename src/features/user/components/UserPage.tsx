@@ -6,7 +6,7 @@ import { Session } from 'next-auth'
 import { signOutUser } from '@/features/user/actions'
 import Image from 'next/image' // next/imageをインポート
 import { Profile } from '@/features/user/types'
-import { StatusCode } from '@/utils/types/ResponseTypes' // StatusCodeをインポート
+import { StatusCode } from '@/utils/types/responseTypes' // StatusCodeをインポート
 import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
 import ProfileDisplay from './ProfileDisplay' // 新しいコンポーネントをインポート
 import LocalFont from 'next/font/local'

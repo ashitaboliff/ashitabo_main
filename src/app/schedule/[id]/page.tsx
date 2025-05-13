@@ -4,7 +4,7 @@ import IdPage from '@/features/schedule/components/IdPage'
 import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 import { getScheduleByIdAction } from '@/features/schedule/components/actions' // Corrected import path
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({

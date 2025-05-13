@@ -2,7 +2,7 @@
 
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 import ScheduleCreatePage from '@/features/schedule/components/CreatePage'
 
 export async function metadata() {

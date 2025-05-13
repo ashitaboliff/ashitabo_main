@@ -7,7 +7,7 @@ import Footer from '@/components/ui/molecules/Footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { LiffProvider } from '@/lib/liff/LiffOption'
 import NextAuthProvider from '@/features/auth/lib/AuthProvider'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 const inter = Inter({ subsets: ['latin'] })
 

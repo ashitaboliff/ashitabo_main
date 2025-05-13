@@ -8,7 +8,7 @@ import { checkGachaCookieAction } from '@/features/gacha/components/actions' // 
 import type { Profile } from '@/features/user/types' // Profile型はUserPageコンポーネントの型として必要
 import UserPage from '@/features/user/components/UserPage'
 import { notFound } from 'next/navigation'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({

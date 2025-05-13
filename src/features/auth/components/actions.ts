@@ -1,6 +1,6 @@
 'use server'
 
-import { ApiResponse, StatusCode } from '@/utils/types/ResponseTypes'
+import { ApiResponse, StatusCode } from '@/utils/types/responseTypes'
 import {
 	getProfile,
 	checkPadLock,
@@ -8,7 +8,7 @@ import {
 	createProfile,
 	updateProfile,
 } from '@/features/auth/lib/repository'
-import { signIn } from '@/features/auth/lib/AuthOption'
+import { signIn } from '@/features/auth/lib/authOption'
 import { cookies } from 'next/headers'
 import { Profile, User } from '@/features/user/types'
 import { revalidateTag } from 'next/cache'

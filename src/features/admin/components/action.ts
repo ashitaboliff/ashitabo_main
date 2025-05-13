@@ -1,6 +1,6 @@
 'use server'
 
-import { ApiResponse, StatusCode } from '@/utils/types/ResponseTypes'
+import { ApiResponse, StatusCode } from '@/utils/types/responseTypes'
 import { revalidateTag } from 'next/cache'
 import { hashSync } from 'bcryptjs'
 import { getUser } from '@/features/auth/lib/repository'

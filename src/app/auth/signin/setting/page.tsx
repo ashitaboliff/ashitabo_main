@@ -2,7 +2,7 @@
 
 import SigninSetting from '@/features/auth/components/SigninSetting'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({

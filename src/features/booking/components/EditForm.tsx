@@ -18,7 +18,7 @@ import {
 	BuyBookingStatus,
 	BookingTime,
 } from '@/features/booking/types'
-import { ErrorType } from '@/utils/types/ResponseTypes'
+import { ErrorType } from '@/utils/types/responseTypes'
 import { Session } from 'next-auth'
 import Loading from '@/components/ui/atoms/Loading'
 import TextInputField from '@/components/ui/atoms/TextInputField'
