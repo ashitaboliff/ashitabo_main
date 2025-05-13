@@ -11,7 +11,7 @@ import {
 import gsap from 'gsap'
 import clsx from 'clsx'
 import Gacha, { GachaItem } from '@/features/gacha/components/GachaList'
-import { RarityType, GachaCreateType } from '@/types/GachaTypes'
+import { RarityType, GachaCreateType } from '@/features/gacha/types'
 import { createUserGachaResultAction } from '@/features/gacha/components/actions'
 import { getSession } from '@/app/actions'
 import { ApiResponse } from '@/types/ResponseTypes'

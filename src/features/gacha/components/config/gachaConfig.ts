@@ -1,4 +1,4 @@
-import { RarityType } from '@/types/GachaTypes'
+import { RarityType } from '@/features/gacha/types'
 
 export interface GachaCategoryConfig {
 	name: RarityType

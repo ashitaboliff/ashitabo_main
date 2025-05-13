@@ -14,7 +14,7 @@ import {
 	GachaData,
 	RarityType,
 	GachaCreateType,
-} from '@/types/GachaTypes'
+} from '@/features/gacha/types'
 
 export async function getGachaByUserIdAction({
 	userId,

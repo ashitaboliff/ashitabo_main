@@ -1,5 +1,5 @@
 import { gachaConfigs, GachaVersionConfig } from './config/gachaConfig'
-import { RarityType } from '@/types/GachaTypes'
+import { RarityType } from '@/features/gacha/types'
 
 /**
  * ガチャで獲得可能なアイテムを表すクラス

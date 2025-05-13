@@ -4,7 +4,7 @@ import { useImperativeHandle, forwardRef } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale/ja'
 import clsx from 'clsx'
-import { RarityType } from '@/types/GachaTypes'
+import { RarityType } from '@/features/gacha/types'
 import { gachaConfigs } from '@/features/gacha/components/config/gachaConfig'
 import { CardAnimation } from '@/features/gacha/components/GachaPickupPopup'
 

@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma/prisma'
 import { Prisma } from '@prisma/client'
 import { v4 } from 'uuid'
 import { unstable_cache } from 'next/cache'
-import { RarityType, GachaSort } from '@/types/GachaTypes'
+import { RarityType, GachaSort } from '@/features/gacha/types'
 
 export const getGachaByUserId = async ({
 	userId,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Session } from 'next-auth'
-import { GachaSort, GachaData } from '@/types/GachaTypes'
+import { GachaSort, GachaData } from '@/features/gacha/types'
 import Pagination from '@/components/ui/atoms/Pagination'
 import SelectFieldNumber from '@/components/ui/atoms/SelectFieldNumber'
 import GachaPreviewPopup, {
