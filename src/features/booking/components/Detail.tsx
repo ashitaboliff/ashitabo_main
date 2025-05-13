@@ -10,9 +10,9 @@ import ShareButton from '@/components/ui/atoms/ShareButton'
 import { PopupRef } from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
-import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound'
+import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
 
-const BookingDetail = ({
+const DetailPage = ({
 	bookingDetail,
 }: {
 	bookingDetail: BookingDetailProps
@@ -23,7 +23,7 @@ const BookingDetail = ({
 	const pathname = usePathname()
 
 	if (!bookingDetail) {
-		return <BookingDetailNotFound />
+		return <DetailNotFoundPage />
 	}
 
 	return (
@@ -83,4 +83,4 @@ const BookingDetail = ({
 	)
 }
 
-export default BookingDetail
+export default DetailPage // export名も変更

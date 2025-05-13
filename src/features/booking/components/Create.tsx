@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { v4 } from 'uuid'
@@ -37,7 +37,17 @@ const schema = yup.object().shape({
 	password: yup.string().required('パスワードを入力してください'),
 })
 
-export default function NewBooking({ session }: { session: Session }) {
+interface CreatePageProps {
+	session: Session
+	initialDateParam?: string
+	initialTimeParam?: string
+}
+
+export default function CreatePage({
+	session,
+	initialDateParam,
+	initialTimeParam,
+}: CreatePageProps) {
 	const router = useRouter()
 	const [loading, setLoading] = useState(false)
 	const [noticePopupOpen, setNoticePopupOpen] = useState(false)
@@ -47,12 +57,11 @@ export default function NewBooking({ session }: { session: Session }) {
 	const addCalendarPopupRef = useRef<PopupRef>()
 	const [showPassword, setShowPassword] = useState(false)
 
-	const queryParams = useSearchParams()
-	const bookingDateParam = queryParams.get('date')
-	const bookingTimeParam = queryParams.get('time')
-
-	const bookingDate = bookingDateParam ? new Date(bookingDateParam) : new Date()
-	const bookingTime = bookingTimeParam || '0'
+	// useSearchParams を削除し、props からの値を使用
+	const bookingDate = initialDateParam
+		? new Date(initialDateParam)
+		: new Date()
+	const bookingTime = initialTimeParam || '0'
 
 	const [bookingId] = useState<string>(v4())
 

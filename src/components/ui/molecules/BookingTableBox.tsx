@@ -53,22 +53,22 @@ export const BookingTableBox = ({
 					}
 				}}
 			>
-				<div className="w-11 h-13 flex flex-col justify-center items-center text-center break-words py-1">
-					<p className="text-xxxs text-base-content bold">
+				<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
+					<p className="text-xxxs sm:text-xs text-base-content bold">
 						<CircleIcon color="blue" size={20} />
 					</p>
-					<p className="text-xxxs text-base-content"></p>
+					<p className="text-xxxs sm:text-xs text-base-content"></p>
 				</div>
 			</td>
 		)
 	} else if (registName === 'ForbiddenBooking') {
 		return (
 			<td key={index} className={tdClassName}>
-				<div className="w-11 h-13 flex flex-col justify-center items-center text-center break-words py-1">
-					<p className="text-xxxs text-base-content bold">
+				<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
+					<p className="text-xxxs sm:text-xs text-base-content bold">
 						<ForbiddenIcon color="red" size={20} />
 					</p>
-					<p className="text-xxxs text-base-content">{name}</p>
+					<p className="text-xxxs sm:text-xs text-base-content">{name}</p>
 				</div>
 			</td>
 		)
@@ -85,13 +85,13 @@ export const BookingTableBox = ({
 					}
 				}}
 			>
-				<div className="w-11 h-13 flex flex-col justify-center items-center text-center break-words py-1">
-					<p className="text-xxxs text-base-content bold">
+				<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
+					<p className="text-xxxs sm:text-xs text-base-content bold">
 						{registName.length > 21
 							? registName.slice(0, 20) + '...'
 							: registName}
 					</p>
-					<p className="text-xxxs text-base-content">
+					<p className="text-xxxs sm:text-xs text-base-content">
 						{name && name.length > 14 ? name.slice(0, 13) + '...' : name}
 					</p>
 				</div>

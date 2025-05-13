@@ -6,10 +6,10 @@ import {
 	getBuyBookingByUserId,
 	updateBookingAction,
 } from '@/features/booking/components/actions'
-import { getSession, sessionCheck, redirectFrom } from '@/app/actions' // Added getSession, sessionCheck
+import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
-import BookingEdit from '@/features/booking/components/BookingEdit' // Corrected path
-import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound' // Corrected path
+import EditPage from '@/features/booking/components/Edit' // インポート名とパスを変更
+import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
 
 export async function metadata() {
 	return {
@@ -34,12 +34,12 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	if (bookingDetail.status === 200) {
 		bookingDetailProps = bookingDetail.response
 	} else {
-		return <BookingDetailNotFound />
+		return <DetailNotFoundPage />
 	}
 	if (!bookingDetailProps) {
-		return <BookingDetailNotFound />
+		return <DetailNotFoundPage />
 	}
-	return <BookingEdit bookingDetail={bookingDetailProps} session={session} />
+	return <EditPage bookingDetail={bookingDetailProps} session={session} />
 }
 
 export default Page

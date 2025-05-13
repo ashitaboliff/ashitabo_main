@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { BookingDetailProps } from '@/features/booking/types'
-import BookingEditAuth from '@/features/booking/components/BookingEditAuth'
-import BookingEditForm from '@/features/booking/components/BookingEditForm'
+import EditAuthPage from '@/features/booking/components/EditAuth'
+import EditFormPage from '@/features/booking/components/EditForm' // インポート名とパスを変更
 import { Session } from 'next-auth'
 
-const BookingEdit = ({
+const EditPage = ({
 	bookingDetail,
 	session,
 }: {
@@ -20,9 +20,9 @@ const BookingEdit = ({
 	return (
 		<div className="flex-col">
 			{isAuth ? (
-				<BookingEditForm bookingDetail={bookingDetail} session={session} />
+				<EditFormPage bookingDetail={bookingDetail} session={session} />
 			) : (
-				<BookingEditAuth
+				<EditAuthPage
 					handleSetAuth={setIsAuth}
 					bookingDetail={bookingDetail}
 				/>
@@ -31,4 +31,4 @@ const BookingEdit = ({
 	)
 }
 
-export default BookingEdit
+export default EditPage

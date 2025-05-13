@@ -1,7 +1,7 @@
 'use server'
 
-import BookingDetail from '@/features/booking/components/BookingDetail'
-import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound'
+import DetailPage from '@/features/booking/components/Detail'
+import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
 import { getBookingByIdAction } from '@/features/booking/components/actions'
 import { BookingDetailProps } from '@/features/booking/types'
 import { createMetaData } from '@/utils/MetaData'
@@ -22,12 +22,12 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 	if (bookingDetail.status === 200) {
 		bookingDetailProps = bookingDetail.response
 	} else {
-		return <BookingDetailNotFound />
+		return <DetailNotFoundPage />
 	}
 	if (!bookingDetailProps) {
-		return <BookingDetailNotFound />
+		return <DetailNotFoundPage />
 	}
-	return <BookingDetail bookingDetail={bookingDetailProps} />
+	return <DetailPage bookingDetail={bookingDetailProps} />
 }
 
 export default Page

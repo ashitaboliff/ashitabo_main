@@ -15,7 +15,7 @@ import SelectField from '@/components/ui/atoms/SelectField'
 
 import { TiDeleteOutline } from 'react-icons/ti'
 
-const BookingLogs = ({
+const LogsPage = ({ // コンポーネント名を変更
 	bookingLog,
 }: {
 	bookingLog: BookingLog[] | undefined | null
@@ -172,4 +172,4 @@ const BookingLogs = ({
 	)
 }
 
-export default BookingLogs
+export default LogsPage // export名を変更

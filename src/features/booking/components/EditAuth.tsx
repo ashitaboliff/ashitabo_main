@@ -10,13 +10,13 @@ import { authBookingAction } from './actions'
 import { ErrorType } from '@/types/ResponseTypes'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import PasswordInputField from '@/components/ui/molecules/PasswordInputField'
-import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound'
+import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
 
 const passschema = yup.object({
 	password: yup.string().required('パスワードを入力してください'),
 })
 
-const BookingEditAuth = ({
+const EditAuthPage = ({ // コンポーネント名を変更
 	handleSetAuth,
 	bookingDetail,
 }: {
@@ -72,7 +72,7 @@ const BookingEditAuth = ({
 	}, [])
 
 	if (!bookingDetail) {
-		return <BookingDetailNotFound />
+		return <DetailNotFoundPage />
 	}
 
 	return (
@@ -132,4 +132,4 @@ const BookingEditAuth = ({
 	)
 }
 
-export default BookingEditAuth
+export default EditAuthPage // export名を変更

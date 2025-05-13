@@ -25,7 +25,7 @@ import TextInputField from '@/components/ui/atoms/TextInputField'
 import InfoMessage from '@/components/ui/atoms/InfoMessage'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
-import BookingDetailNotFound from '@/features/booking/components/BookingDetailNotFound'
+import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
 import EditCalendar from '@/features/booking/components/EditCalendar'
 import { DateToDayISOstring } from '@/lib/CommonFunction'
 import { MdOutlineEditCalendar } from 'react-icons/md'
@@ -43,7 +43,7 @@ type ResultType = {
 	message: string
 }
 
-const BookingEditForm = ({
+const EditFormPage = ({ // コンポーネント名を変更
 	bookingDetail,
 	session,
 }: {
@@ -52,7 +52,7 @@ const BookingEditForm = ({
 }) => {
 	const router = useRouter()
 	const [editState, setEditState] = useState<'edit' | 'select'>('select')
-	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [isLoading, setIsLoading] = useState<boolean>(true) // useEffectでfalseになるので初期値はtrueのまま
 	const [deletePopupOpen, setDeletePopupOpen] = useState(false)
 	const [successPopupOpen, setSuccessPopupOpen] = useState(false)
 	const [error, setError] = useState<ErrorType>()
@@ -79,9 +79,14 @@ const BookingEditForm = ({
 			})
 		}
 	}
+	// BookingEditFormがマウントされたときにisLoadingをfalseにする
+	useEffect(() => {
+		setIsLoading(false)
+	}, [])
+
 
 	if (!bookingDetail) {
-		return <BookingDetailNotFound />
+		return <DetailNotFoundPage />
 	}
 
 	return (
@@ -523,4 +528,4 @@ const MemoBookingEditForm = memo(
 
 MemoBookingEditForm.displayName = 'MemoBookingEditForm'
 
-export default BookingEditForm
+export default EditFormPage // export名を変更

@@ -6,7 +6,7 @@ import InfoMessage from '@/components/ui/atoms/InfoMessage'
 /**
  * 予約情報が見つからなかった場合のコンポーネント、静的
  */
-const BookingDetailNotFound = () => {
+const DetailNotFoundPage = () => { // コンポーネント名を変更
 	const router = useRouter()
 
 	return (
@@ -34,4 +34,4 @@ const BookingDetailNotFound = () => {
 	)
 }
 
-export default BookingDetailNotFound
+export default DetailNotFoundPage // export名を変更
