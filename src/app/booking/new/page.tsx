@@ -1,8 +1,5 @@
-// 'use server' // page.tsx はデフォルトでServer Component
-
-import CreatePage from '@/features/booking/components/Create' // インポート名とパスを変更
+import CreatePage from '@/features/booking/components/Create'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
@@ -13,7 +10,7 @@ export async function metadata() {
 }
 
 interface PageProps {
-	searchParams: { [key: string]: string | string[] | undefined }
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 const Page = async ({ searchParams }: PageProps) => {

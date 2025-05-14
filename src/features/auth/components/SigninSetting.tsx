@@ -8,10 +8,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { RoleMap, Role, PartMap } from '@/features/user/types'
 import { ErrorType } from '@/utils/types/responseTypes'
-import {
-	generateFiscalYearObject,
-	generateAcademicYear,
-} from '@/lib/CommonFunction'
+import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
 import Loading from '@/components/ui/atoms/Loading'
 import InfoMessage from '@/components/ui/atoms/InfoMessage'
 import TextInputField from '@/components/ui/atoms/TextInputField'

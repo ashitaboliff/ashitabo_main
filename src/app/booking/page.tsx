@@ -1,7 +1,7 @@
 import React from 'react'
 import MainPage from '@/features/booking/components/MainPage'
 import { getBookingByDateAction } from '@/features/booking/components/actions'
-import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { DateToDayISOstring } from '@/utils'
 import { addDays, subDays } from 'date-fns'
 import { BookingResponse } from '@/features/booking/types'
 

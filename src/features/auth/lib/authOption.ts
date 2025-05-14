@@ -7,9 +7,7 @@ import type {
 	Profile as UserProfile,
 	Part,
 	Role as AccountRole,
-} from '@/features/user/types' // UserProfileからPartとRoleをインポート
-
-// const prisma = new PrismaClient() // ローカルのPrismaClientインスタンスは削除
+} from '@/features/user/types'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	adapter: PrismaAdapter(prisma), // 共有インスタンスを使用
@@ -69,27 +67,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 					if (dbProfileData) {
 						session.user.is_profile = true
-						// next-auth.d.tsで定義されたカスタムフィールドをdbProfileから設定
-						session.user.full_name = dbProfileData.name ?? '' // UserProfile.nameがnull/undefinedの場合、空文字にフォールバック
-						// UserProfileのpartとroleの型がPart[]とAccountRoleにキャスト可能であると仮定
+						session.user.full_name = dbProfileData.name ?? ''
 						session.user.part = dbProfileData.part as Part[]
 						session.user.role = dbProfileData.role as AccountRole
 					} else {
-						// dbProfileData が null (つまりプロファイルが存在しない) 場合
 						session.user.is_profile = false
-						// プロファイルが存在しない場合、関連フィールドを初期化またはデフォルト値に設定
-						session.user.full_name = session.user.dbUser?.name ?? '' // Userのnameをフォールバックとして使用
-						session.user.part = [] // partは空配列
-						// session.user.role = undefined; // roleは未設定 (型定義でオプショナルにするか、デフォルト値を設定)
-						// もしデフォルトロールを設定するなら:
-						// session.user.role = 'USER' as AccountRole;
+						session.user.full_name = session.user.dbUser?.name ?? ''
+						session.user.part = []
+						session.user.role = 'USER' as AccountRole
 					}
 				} else {
-					// token.dbProfile が undefined (jwtでProfile情報を取得できなかった場合など)
 					session.user.is_profile = false
 					session.user.full_name = session.user.dbUser?.name ?? ''
 					session.user.part = []
-					// session.user.role = undefined; // またはデフォルト値
+					session.user.role = 'USER' as AccountRole
 				}
 			}
 			return session

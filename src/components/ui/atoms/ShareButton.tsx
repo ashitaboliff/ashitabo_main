@@ -8,20 +8,34 @@ const ShareButton = ({
 	title,
 	text,
 	isFullButton,
-	className, // className を追加
+	className,
+	isOnlyLine,
 }: {
 	url: string
 	title: string
 	text: string
 	isFullButton?: boolean
-	className?: string // className をオプショナルなpropsとして追加
+	className?: string
+	isOnlyLine?: boolean
 }) => {
 	const handleShare = async () => {
-		// 環境変数 NEXT_PUBLIC_AUTH_URL を使うべき (例)
-		const baseUrl =
-			process.env.NEXT_PUBLIC_AUTH_URL || 'https://www.ashitabo.net'
-		const shareUrl = `https://social-plugins.line.me/lineit/share?url=${baseUrl}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
-		window.open(shareUrl, '_blank')
+		if (isOnlyLine) {
+			const baseUrl =
+				process.env.NEXT_PUBLIC_AUTH_URL || 'https://www.ashitabo.net'
+			const shareUrl = `https://social-plugins.line.me/lineit/share?url=${baseUrl}${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
+			window.open(shareUrl, '_blank')
+		} else {
+			const shareData = {
+				title: title,
+				text: text,
+				url: url,
+			}
+			if (navigator.share) {
+				await navigator.share(shareData)
+			} else {
+				alert('このブラウザはシェア機能に対応していません。')
+			}
+		}
 	}
 
 	return isFullButton ? (

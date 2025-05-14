@@ -1,4 +1,4 @@
-import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { DateToDayISOstring } from '@/utils'
 import { updateBuyBookingAction } from '@/features/schedule/actions/actions'
 
 export async function LocalUpdateBuyStateFunction() {

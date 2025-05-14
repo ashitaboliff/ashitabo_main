@@ -8,7 +8,7 @@ import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { v4 } from 'uuid'
-import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { DateToDayISOstring } from '@/utils'
 import { createBookingAction } from './actions'
 import ShareButton from '@/components/ui/atoms/ShareButton'
 import TextInputField from '@/components/ui/atoms/TextInputField'
@@ -206,11 +206,12 @@ export default function CreatePage({
 							</button>
 							<ShareButton
 								url={`${window.location.origin}/booking/${bookingId}`}
-								title="予約をバンドに共有"
+								title="LINEで共有"
 								text={`予約日時: ${format(bookingDate, 'yyyy/MM/dd(E)', {
 									locale: ja,
 								})} ${BookingTime[Number(bookingTime)]}`}
 								isFullButton
+								isOnlyLine
 							/>
 						</div>
 						<button

@@ -1,7 +1,7 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import YoutubeIdPage from '@/features/video/components/YoutubeIdPage'
+import VideoDetailPage from '@/features/video/components/VideoDetailPage' // 修正
 import {
 	getPlaylistByIdAction,
 	getVideoByIdAction,
@@ -18,7 +18,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 			return notFound()
 		}
 		return (
-			<YoutubeIdPage
+			<VideoDetailPage
 				detail={playlist.response}
 				liveOrBand={liveOrBand}
 				session={session}
@@ -34,7 +34,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 			return notFound()
 		}
 		return (
-			<YoutubeIdPage
+			<VideoDetailPage
 				detail={video.response}
 				liveOrBand={liveOrBand}
 				session={session}

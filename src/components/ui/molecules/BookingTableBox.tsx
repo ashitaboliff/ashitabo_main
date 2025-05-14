@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next-nprogress-bar'
 import { addWeeks, addDays } from 'date-fns'
-import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { DateToDayISOstring } from '@/utils'
 
 import { PiCircle as CircleIcon } from 'react-icons/pi'
 import { HiMiniXMark as ForbiddenIcon } from 'react-icons/hi2'

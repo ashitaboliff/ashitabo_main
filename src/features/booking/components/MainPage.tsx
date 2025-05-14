@@ -9,7 +9,7 @@ import { ErrorType } from '@/utils/types/responseTypes'
 import BookingRule from '@/components/ui/molecules/BookingRule'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import BookingCalendar from '@/features/booking/components/BookingCalendar'
-import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { DateToDayISOstring } from '@/utils'
 
 interface MainPageProps {
 	initialBookingData?: BookingResponse

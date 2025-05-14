@@ -27,7 +27,7 @@ import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
 import EditCalendar from '@/features/booking/components/EditCalendar'
-import { DateToDayISOstring } from '@/lib/CommonFunction'
+import { DateToDayISOstring } from '@/utils'
 import { MdOutlineEditCalendar } from 'react-icons/md'
 
 const schema = yup.object().shape({

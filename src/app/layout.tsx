@@ -66,9 +66,9 @@ export default function RootLayout({
 				<script
 					dangerouslySetInnerHTML={{
 						__html: `
-						console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #bada55; font-size: 16px; padding: 10px;');
-						console.log('%cソースコードはこちらから', 'color: #ffcc00; font-size: 14px; padding: 5px;');
-						console.log('%chttps://github.com/ashitaboliff/', 'color: #58a6ff; font-size: 14px; padding: 5px; text-decoration: underline;');
+						console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #000000; font-size: 20px; padding: 10px; font-weight: bold;');
+						console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');
+						console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size: 14px; padding: 5px; text-decoration: underline;');
 					`,
 					}}
 				/>

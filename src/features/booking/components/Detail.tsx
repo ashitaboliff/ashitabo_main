@@ -10,7 +10,7 @@ import ShareButton from '@/components/ui/atoms/ShareButton'
 import { PopupRef } from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import BookingDetailBox from '@/components/ui/molecules/BookingDetailBox'
-import DetailNotFoundPage from '@/features/booking/components/DetailNotFound' // インポート名とパスを変更
+import DetailNotFoundPage from '@/features/booking/components/DetailNotFound'
 
 const DetailPage = ({
 	bookingDetail,
@@ -61,6 +61,7 @@ const DetailPage = ({
 						},
 					)} ${BookingTime[Number(bookingDetail.bookingTime)]}`}
 					isFullButton
+					isOnlyLine
 				/>
 			</div>
 			<div className="mt-4 flex justify-center w-full max-w-md">

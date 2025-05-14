@@ -50,6 +50,7 @@ export interface YoutubeSearchQuery {
 	bandName?: string
 	liveName?: string
 	tag?: string[]
+	tagSearchMode?: 'and' | 'or' // タグ検索モードを追加
 	sort: 'new' | 'old'
 	page: number
 	videoPerPage: number

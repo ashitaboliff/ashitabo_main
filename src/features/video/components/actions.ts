@@ -23,6 +23,37 @@ import {
 } from '@/features/video/lib/repository'
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import * as yup from 'yup'
+
+// バリデーションスキーマ
+const youtubeSearchQuerySchema = yup.object().shape({
+	liveOrBand: yup.string().oneOf(['live', 'band']).required(),
+	bandName: yup
+		.string()
+		.optional()
+		.max(100, 'バンド名は100文字以内で入力してください。'),
+	liveName: yup
+		.string()
+		.optional()
+		.max(100, 'ライブ名は100文字以内で入力してください。'),
+	tag: yup
+		.array()
+		.of(yup.string().max(50, '各タグは50文字以内で入力してください。'))
+		.optional(),
+	tagSearchMode: yup.string().oneOf(['and', 'or']).optional(), // tagSearchModeのバリデーション追加
+	sort: yup.string().oneOf(['new', 'old']).required(),
+	page: yup.number().integer().min(1).required(),
+	videoPerPage: yup.number().integer().min(1).max(50).required(), // Max 50件など制限を設ける
+})
+
+const updateTagsSchema = yup.object().shape({
+	id: yup.string().required('IDは必須です。'),
+	tags: yup
+		.array()
+		.of(yup.string().max(50, '各タグは50文字以内で入力してください。'))
+		.required(),
+	liveOrBand: yup.string().oneOf(['live', 'band']).required('種別は必須です。'),
+})
 
 export async function getAuthUrl(): Promise<ApiResponse<string>> {
 	const oauth2Client = new google.auth.OAuth2(
@@ -60,6 +91,13 @@ export async function getAccessTokenAction(): Promise<ApiResponse<Token>> {
 
 			try {
 				const { credentials } = await oauth2Client.refreshAccessToken()
+				if (!credentials.access_token) {
+					return {
+						status: StatusCode.INTERNAL_SERVER_ERROR,
+						response:
+							'アクセストークンの更新に失敗しました。(トークン取得不可)',
+					}
+				}
 				await upsertAccessToken({
 					tokens: {
 						id: accessToken?.google_id || '',
@@ -80,11 +118,16 @@ export async function getAccessTokenAction(): Promise<ApiResponse<Token>> {
 					is_deleted: accessToken?.is_deleted || false,
 				}
 				return { status: StatusCode.OK, response: token }
-			} catch (error) {
+			} catch (error: any) {
+				console.error('Error refreshing access token:', error)
+				let errorMessage =
+					'アクセストークンの更新に失敗しました。再度YouTube認証を行ってください。'
+				if (error.response?.data?.error_description) {
+					errorMessage += ` (${error.response.data.error_description})`
+				}
 				return {
 					status: StatusCode.INTERNAL_SERVER_ERROR,
-					response:
-						'アクセストークンの更新に失敗しました。再度YouTube認証を行ってください。',
+					response: errorMessage,
 				}
 			}
 		} else {
@@ -188,9 +231,19 @@ export async function createPlaylistAction(): Promise<ApiResponse<string>> {
 
 		await createPlaylistBatch(results)
 		revalidateTag('youtube')
-		return { status: StatusCode.OK, response: 'Playlist created successfully' }
-	} catch (error) {
-		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+		return {
+			status: StatusCode.OK,
+			response: 'プレイリストと動画情報を更新しました。',
+		}
+	} catch (error: any) {
+		console.error('Error creating playlist action:', error)
+		let errorMessage = 'プレイリスト情報の取得または保存に失敗しました。'
+		if (error.response?.data?.error?.message) {
+			errorMessage += ` (APIエラー: ${error.response.data.error.message})`
+		} else if (error.message) {
+			errorMessage += ` (${error.message})`
+		}
+		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: errorMessage }
 	}
 }
 
@@ -198,10 +251,21 @@ export async function searchYoutubeDetailsAction(
 	query: YoutubeSearchQuery,
 ): Promise<ApiResponse<{ results: YoutubeDetail[]; totalCount: number }>> {
 	try {
+		await youtubeSearchQuerySchema.validate(query)
 		const results = await searchYoutubeDetails(query)
 		return { status: StatusCode.OK, response: results }
-	} catch (error) {
-		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	} catch (error: any) {
+		if (error instanceof yup.ValidationError) {
+			return {
+				status: StatusCode.BAD_REQUEST,
+				response: error.errors.join(', '),
+			}
+		}
+		console.error('Error searching YouTube details:', error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: '検索処理中にエラーが発生しました。',
+		}
 	}
 }
 
@@ -213,12 +277,16 @@ export async function getPlaylistByIdAction(
 		if (!playlist) {
 			return {
 				status: StatusCode.NOT_FOUND,
-				response: 'プレイリストが見つけられませんでした',
+				response: '指定されたプレイリストは見つかりませんでした。',
 			}
 		}
 		return { status: StatusCode.OK, response: playlist }
-	} catch (error) {
-		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	} catch (error: any) {
+		console.error(`Error fetching playlist by ID (${id}):`, error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'プレイリスト情報の取得に失敗しました。',
+		}
 	}
 }
 
@@ -230,12 +298,16 @@ export async function getVideoByIdAction(
 		if (!video) {
 			return {
 				status: StatusCode.NOT_FOUND,
-				response: '動画が見つけられませんでした',
+				response: '指定された動画は見つかりませんでした。',
 			}
 		}
 		return { status: StatusCode.OK, response: video }
-	} catch (error) {
-		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	} catch (error: any) {
+		console.error(`Error fetching video by ID (${id}):`, error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: '動画情報の取得に失敗しました。',
+		}
 	}
 }
 
@@ -243,8 +315,12 @@ export async function getPlaylistAction(): Promise<ApiResponse<Playlist[]>> {
 	try {
 		const playlists = await getPlaylist()
 		return { status: StatusCode.OK, response: playlists }
-	} catch (error) {
-		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+	} catch (error: any) {
+		console.error('Error fetching all playlists:', error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'プレイリスト一覧の取得に失敗しました。',
+		}
 	}
 }
 
@@ -254,19 +330,31 @@ export async function updateTagsAction(
 	liveOrBand: liveOrBand,
 ): Promise<ApiResponse<string>> {
 	try {
-		if (tags.length === 1 && tags[0] === '') {
-			tags = []
-		}
-		await updateTags({ id, tags, liveOrBand })
+		await updateTagsSchema.validate({ id, tags, liveOrBand })
+		const sanitizedTags = tags
+			.filter((tag) => tag.trim() !== '')
+			.map((tag) => tag.trim()) // 空タグ除去とトリム
+		await updateTags({ id, tags: sanitizedTags, liveOrBand })
 		if (liveOrBand === 'live') {
 			revalidateTag(`playlist-${id}`)
 		}
 		if (liveOrBand === 'band') {
 			revalidateTag(`video-${id}`)
 		}
-		return { status: StatusCode.OK, response: 'Tags updated successfully' }
-	} catch (error) {
-		return { status: StatusCode.INTERNAL_SERVER_ERROR, response: String(error) }
+		revalidateTag('youtube') // 関連するリスト表示も更新されるように
+		return { status: StatusCode.OK, response: 'タグを更新しました。' }
+	} catch (error: any) {
+		if (error instanceof yup.ValidationError) {
+			return {
+				status: StatusCode.BAD_REQUEST,
+				response: error.errors.join(', '),
+			}
+		}
+		console.error(`Error updating tags for ${liveOrBand} ID (${id}):`, error)
+		return {
+			status: StatusCode.INTERNAL_SERVER_ERROR,
+			response: 'タグの更新に失敗しました。',
+		}
 	}
 }
 

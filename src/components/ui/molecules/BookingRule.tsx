@@ -1,4 +1,4 @@
-'use static'
+'use server'
 
 const BookingRule = () => {
 	return (

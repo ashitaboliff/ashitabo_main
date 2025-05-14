@@ -62,58 +62,84 @@ export const upsertAccessToken = async ({
 }
 
 export const createPlaylistBatch = async (playlists: Playlist[]) => {
-	const createPlaylistBatch = async (
-		playlists: Playlist[],
-		batchSize: number,
-	) => {
-		try {
-			for (let i = 0; i < playlists.length; i += batchSize) {
-				const batch = playlists.slice(i, i + batchSize)
-				await prisma.$transaction(async (prisma) => {
-					for (const playlist of batch) {
-						await prisma.playlist.upsert({
-							where: { playlistId: playlist.playlistId },
-							update: {
-								title: playlist.title,
-								link: playlist.link,
-								liveDate: playlist.liveDate,
-							},
-							create: {
-								playlistId: playlist.playlistId,
-								title: playlist.title,
-								link: playlist.link,
-								liveDate: playlist.liveDate,
-							},
-						})
+	try {
+		// 処理対象のプレイリストIDとビデオIDを抽出
+		const allPlaylistIds = playlists.map(p => p.playlistId);
+		const allVideoIds = playlists.flatMap(p => p.videos.map(v => v.videoId));
 
-						for (const video of playlist.videos) {
-							await prisma.video.upsert({
-								where: { videoId: video.videoId },
-								update: {
-									title: video.title,
-									link: video.link,
-									playlistId: playlist.playlistId,
-									liveDate: video.liveDate,
-								},
-								create: {
-									videoId: video.videoId,
-									title: video.title,
-									link: video.link,
-									liveDate: video.liveDate,
-									playlistId: playlist.playlistId,
-								},
-							})
-						}
-					}
-				})
-			}
-		} catch (error) {
-			throw error
+		// データベースに既に存在するプレイリストIDとビデオIDを取得
+		const existingPlaylists = await prisma.playlist.findMany({
+			where: { playlistId: { in: allPlaylistIds } },
+			select: { playlistId: true },
+		});
+		const existingPlaylistIds = new Set(existingPlaylists.map(p => p.playlistId));
+
+		const existingVideos = await prisma.video.findMany({
+			where: { videoId: { in: allVideoIds } },
+			select: { videoId: true },
+		});
+		const existingVideoIds = new Set(existingVideos.map(v => v.videoId));
+
+		// 新規プレイリストデータと新規ビデオデータを準備
+		const newPlaylistsToCreate = playlists
+			.filter(p => !existingPlaylistIds.has(p.playlistId))
+			.map(p => ({
+				playlistId: p.playlistId,
+				title: p.title,
+				link: p.link,
+				liveDate: p.liveDate,
+				// tags: p.tags, // createManyではリレーションや配列のデフォルト以外の初期化が複雑な場合があるため、別途検討
+			}));
+
+		const newVideosToCreate = playlists.flatMap(p =>
+			p.videos
+				.filter(v => !existingVideoIds.has(v.videoId))
+				.map(v => ({
+					videoId: v.videoId,
+					title: v.title,
+					link: v.link,
+					liveDate: v.liveDate,
+					playlistId: p.playlistId,
+					// tags: v.tags,
+				}))
+		);
+
+		// トランザクション内で新規データのみを一括作成
+		// createMany はリレーションシップのネストした作成をサポートしていないため、
+		// Playlist と Video を別々に作成する必要がある。
+		// また、tagsのような配列フィールドのデフォルト値以外の設定も createMany では直接できない場合がある。
+		// そのため、ここでは基本的なフィールドのみをcreateManyで作成し、
+		// tagsなどは別途更新するか、個別のcreateにフォールバックするなどの対応が必要になる可能性がある。
+		// 今回はまず、主要なフィールドのcreateManyを試みる。
+
+		if (newPlaylistsToCreate.length > 0) {
+			await prisma.playlist.createMany({
+				data: newPlaylistsToCreate,
+				skipDuplicates: true, // 念のため重複をスキップ
+			});
 		}
-	}
 
-	const batchSize = 1
-	await createPlaylistBatch(playlists, batchSize)
+		if (newVideosToCreate.length > 0) {
+			// 関連するプレイリストが先に存在している必要があるため、プレイリスト作成後にビデオを作成
+			// もしプレイリストが新規作成された場合、そのIDは newPlaylistsToCreate に含まれる。
+			// newVideosToCreate の playlistId がDBに存在することを確認する必要があるが、
+			// YouTubeから取得するデータ構造上、videoは必ずplaylistに紐づくため、
+			// playlistを先に処理すれば問題ないはず。
+			await prisma.video.createMany({
+				data: newVideosToCreate,
+				skipDuplicates: true, // 念のため重複をスキップ
+			});
+		}
+
+		// 注意: この方法では既存データの更新は行われません。
+		// タイトル変更などの更新も行う場合は、別途update処理を追加するか、
+		// やはりupsertを使い、update部分を軽量化するアプローチを検討する必要があります。
+		// 今回はユーザーの「新規のデータのみをinsert」という要望を優先します。
+
+	} catch (error) {
+		console.error("Error in createPlaylistBatch:", error);
+		throw error; // エラーを呼び出し元にスローして処理させる
+	}
 }
 
 export const getPlaylistById = async (id: string) => {
@@ -162,8 +188,16 @@ export async function searchYoutubeDetails(
 	query: YoutubeSearchQuery,
 ): Promise<{ results: YoutubeDetail[]; totalCount: number }> {
 	try {
-		const { liveOrBand, bandName, liveName, tag, sort, page, videoPerPage } =
-			query
+		const {
+			liveOrBand,
+			bandName,
+			liveName,
+			tag,
+			tagSearchMode = 'or',
+			sort,
+			page,
+			videoPerPage,
+		} = query
 
 		const pageNumber = Number(page) || 1
 		const videoPerPageNumber = Number(videoPerPage) || 10
@@ -188,12 +222,10 @@ export async function searchYoutubeDetails(
 										},
 									}
 								: {},
-							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-								? {
-										tags: {
-											hasSome: tag,
-										},
-									}
+							tag && tag.length > 0
+								? tagSearchMode === 'and'
+									? { tags: { hasEvery: tag } }
+									: { tags: { hasSome: tag } }
 								: {},
 						],
 					},
@@ -221,12 +253,10 @@ export async function searchYoutubeDetails(
 										},
 									}
 								: {},
-							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-								? {
-										tags: {
-											hasSome: tag,
-										},
-									}
+							tag && tag.length > 0
+								? tagSearchMode === 'and'
+									? { tags: { hasEvery: tag } }
+									: { tags: { hasSome: tag } }
 								: {},
 						],
 					},
@@ -260,12 +290,10 @@ export async function searchYoutubeDetails(
 										},
 									}
 								: {},
-							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-								? {
-										tags: {
-											hasSome: tag,
-										},
-									}
+							tag && tag.length > 0
+								? tagSearchMode === 'and'
+									? { tags: { hasEvery: tag } }
+									: { tags: { hasSome: tag } }
 								: {},
 						],
 					},
@@ -291,12 +319,10 @@ export async function searchYoutubeDetails(
 										},
 									}
 								: {},
-							tag && !(tag.length === 1 && tag[0] === '') && tag.length > 0
-								? {
-										tags: {
-											hasSome: tag,
-										},
-									}
+							tag && tag.length > 0
+								? tagSearchMode === 'and'
+									? { tags: { hasEvery: tag } }
+									: { tags: { hasSome: tag } }
 								: {},
 						],
 					},
