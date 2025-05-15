@@ -27,19 +27,6 @@ const TagInputField = ({
 	const [tags, setTags] = useState<string[]>(defaultValue)
 	const [inputValue, setInputValue] = useState<string>('')
 
-	useEffect(() => {
-		setTags(defaultValue)
-	}, [defaultValue])
-
-	useEffect(() => {
-		if (setValue) {
-			setValue(name, tags)
-		}
-		if (onChange) {
-			onChange(tags)
-		}
-	}, [tags, setValue, name, onChange])
-
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInputValue(e.target.value)
 	}
@@ -47,7 +34,14 @@ const TagInputField = ({
 	const addTag = (tagValue: string) => {
 		const newTag = tagValue.trim()
 		if (newTag && !tags.includes(newTag)) {
-			setTags([...tags, newTag])
+			const newTags = [...tags, newTag];
+			setTags(newTags)
+			if (setValue) {
+				setValue(name, newTags)
+			}
+			if (onChange) {
+				onChange(newTags)
+			}
 		}
 		setInputValue('')
 	}
@@ -60,7 +54,14 @@ const TagInputField = ({
 	}
 
 	const removeTag = (tagToRemove: string) => {
-		setTags(tags.filter((tag) => tag !== tagToRemove))
+		const newTags = tags.filter((tag) => tag !== tagToRemove);
+		setTags(newTags)
+		if (setValue) {
+			setValue(name, newTags)
+		}
+		if (onChange) {
+			onChange(newTags)
+		}
 	}
 
 	const renderInput = (field?: any) => (

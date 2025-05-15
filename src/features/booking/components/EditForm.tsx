@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, memo } from 'react'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next-nprogress-bar'
+import { useRouter as useNProgressRouter } from 'next-nprogress-bar' // Alias for clarity
+import { usePathname, useSearchParams } from 'next/navigation' // Import for path and search params
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { addDays, subDays } from 'date-fns'
@@ -43,17 +44,22 @@ type ResultType = {
 	message: string
 }
 
+interface EditFormPageProps {
+  bookingDetail: BookingDetailProps;
+  session: Session;
+  initialBookingResponse: BookingResponse | null; // Add prop for calendar data
+  initialViewDay: Date; // Add prop for initial calendar view day
+}
+
 const EditFormPage = ({
-	// コンポーネント名を変更
 	bookingDetail,
 	session,
-}: {
-	bookingDetail: BookingDetailProps
-	session: Session
-}) => {
-	const router = useRouter()
+  initialBookingResponse,
+  initialViewDay,
+}: EditFormPageProps) => {
+	const router = useNProgressRouter()
 	const [editState, setEditState] = useState<'edit' | 'select'>('select')
-	const [isLoading, setIsLoading] = useState<boolean>(true) // useEffectでfalseになるので初期値はtrueのまま
+	const [isLoading, setIsLoading] = useState<boolean>(false) // Changed initial state to false
 	const [deletePopupOpen, setDeletePopupOpen] = useState(false)
 	const [successPopupOpen, setSuccessPopupOpen] = useState(false)
 	const [error, setError] = useState<ErrorType>()
@@ -80,10 +86,6 @@ const EditFormPage = ({
 			})
 		}
 	}
-	// BookingEditFormがマウントされたときにisLoadingをfalseにする
-	useEffect(() => {
-		setIsLoading(false)
-	}, [])
 
 	if (!bookingDetail) {
 		return <DetailNotFoundPage />
@@ -132,6 +134,8 @@ const EditFormPage = ({
 					bookingDetail={bookingDetail}
 					session={session}
 					setEditState={setEditState}
+          initialBookingResponse={initialBookingResponse} // Pass down the prop
+          initialViewDay={initialViewDay} // Pass down the prop
 				/>
 			)}
 
@@ -197,13 +201,20 @@ const MemoBookingEditForm = memo(
 		bookingDetail,
 		session,
 		setEditState,
+    initialBookingResponse, // Add new prop for initial booking data for the calendar view
+    initialViewDay, // Add new prop for the initial view day
 	}: {
 		BookingTime: string[]
 		bookingDetail: BookingDetailProps
 		session: Session
 		setEditState: (state: 'edit' | 'select') => void
+    initialBookingResponse: BookingResponse | null;
+    initialViewDay: Date;
 	}) => {
-		const router = useRouter()
+		const router = useNProgressRouter() // Use aliased router for navigation
+		const pathname = usePathname() // Get current pathname
+		const searchParams = useSearchParams() // Get current search params
+
 		const [isPaid, setIsPaid] = useState<boolean>(
 			bookingDetail.isPaidStatus && bookingDetail.isPaidStatus !== 'CANCELED'
 				? true
@@ -221,14 +232,23 @@ const MemoBookingEditForm = memo(
 		const [error, setError] = useState<ErrorType>()
 		const successPopupRef = useRef<PopupRef>(undefined)
 
-		const yesterDate = subDays(new Date(), 1)
-		const [viewDay, setViewday] = useState<Date>(yesterDate)
-		const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
-		const ableViewDayMax = 27 // 連続表示可能な日数
-		const ableViewDayMin = 1 // 連続表示可能な最小日数
-		const [bookingResponse, setBookingResponse] = useState<BookingResponse>()
+		const yesterDate = subDays(new Date(), 1) // This might need to be passed or derived consistently if SSR
+		const [viewDay, setViewDay] = useState<Date>(initialViewDay) // Use prop for initial state
+		const [viewDayMax, setViewDayMax] = useState<number>(7)
+		const ableViewDayMax = 27
+		const ableViewDayMin = 1
+		// const [bookingResponse, setBookingResponse] = useState<BookingResponse>() // Data comes from prop
+		const bookingResponse = initialBookingResponse;
 
-		const [loading, setLoading] = useState<boolean>(false)
+		const [loading, setLoading] = useState<boolean>(false) // For form submission, not for fetching bookingResponse
+
+		const updateViewDayInUrl = (newViewDay: Date) => {
+			const newViewStartDate = DateToDayISOstring(newViewDay).split('T')[0];
+			const currentParams = new URLSearchParams(Array.from(searchParams.entries()));
+			currentParams.set('viewStartDate', newViewStartDate);
+			router.push(`${pathname}?${currentParams.toString()}`, { scroll: false });
+			setViewDay(newViewDay);
+		}
 
 		let nextAble =
 			addDays(viewDay, viewDayMax) <= addDays(yesterDate, ableViewDayMax)
@@ -240,11 +260,13 @@ const MemoBookingEditForm = memo(
 				: true
 
 		const nextWeek = () => {
-			setViewday(addDays(viewDay, viewDayMax))
+			const newViewDay = addDays(viewDay, viewDayMax);
+			updateViewDayInUrl(newViewDay);
 		}
 
 		const prevWeek = () => {
-			setViewday(subDays(viewDay, viewDayMax))
+			const newViewDay = subDays(viewDay, viewDayMax);
+			updateViewDayInUrl(newViewDay);
 		}
 
 		const {
@@ -308,46 +330,6 @@ const MemoBookingEditForm = memo(
 			}
 			setLoading(false)
 		}
-
-		const getBooking = async ({
-			startDate, // Date
-			endDate, // Date
-			cache,
-		}: {
-			startDate: Date
-			endDate: Date
-			cache?: 'no-cache'
-		}) => {
-			if (cache === 'no-cache') {
-				await bookingRevalidateTagAction({ tag: 'booking' })
-			}
-			const startDay = DateToDayISOstring(startDate).split('T')[0]
-			const endDay = DateToDayISOstring(endDate).split('T')[0]
-			const res = await getBookingByDateAction({
-				startDate: startDay,
-				endDate: endDay,
-			})
-			if (res.status === 200) {
-				setBookingResponse({ ...res.response })
-			} else {
-				console.error('Failed to get booking data')
-				return null
-			}
-		}
-
-		useEffect(() => {
-			getBooking({
-				startDate: viewDay,
-				endDate: addDays(viewDay, viewDayMax - 1),
-			})
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-		}, [viewDay])
-
-		useEffect(() => {
-			setValue('bookingDate', bookingDate)
-			setValue('bookingTime', BookingTime[bookingTime])
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-		}, [bookingDate, bookingTime])
 
 		return (
 			<div className="p-8">
@@ -481,6 +463,7 @@ const MemoBookingEditForm = memo(
 								setBookingTime={setBookingTime}
 								setIsPaid={setIsPaid}
 								setCalendarOpen={setCalendarOpen}
+                setValue={setValue} // Pass setValue to EditCalendar
 							/>
 						) : (
 							<div className="flex justify-center">

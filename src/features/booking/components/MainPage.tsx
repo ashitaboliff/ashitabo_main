@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useRouter as useNProgressRouter } from 'next-nprogress-bar' // Aliased for clarity
+import { usePathname, useSearchParams } from 'next/navigation' // Import for path and search params
 import { addDays, subDays, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { bookingRevalidateTagAction, getBookingByDateAction } from './actions'
+import { bookingRevalidateTagAction } from './actions' // getBookingByDateAction will be used by parent
 import { BookingResponse, BookingTime } from '@/features/booking/types'
 import { ErrorType } from '@/utils/types/responseTypes'
 import BookingRule from '@/components/ui/molecules/BookingRule'
@@ -22,14 +24,17 @@ const MainPage = ({
 	initialViewDay,
 	errorStatus,
 }: MainPageProps) => {
-	const [viewDay, setViewday] = useState<Date>(initialViewDay)
-	const [viewDayMax, setViewDayMax] = useState<number>(7) // いずれなんとかするかこれ
-	const ableViewDayMax = 27 // 連続表示可能な日数
-	const ableViewDayMin = 8 // 連続表示可能な最小日数
-	const [bookingData, setBookingData] = useState<BookingResponse | undefined>(
-		initialBookingData,
-	)
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const router = useNProgressRouter() // Use aliased router
+	const pathname = usePathname() // Get current pathname
+	const currentSearchParams = useSearchParams() // Get current search params
+
+	const [viewDay, setViewDay] = useState<Date>(initialViewDay)
+	const [viewDayMax, setViewDayMax] = useState<number>(7)
+	const ableViewDayMax = 27
+	const ableViewDayMin = 8
+	// bookingData is now directly from props: initialBookingData
+	const bookingData = initialBookingData;
+	const [isLoading, setIsLoading] = useState<boolean>(false) // This might be removed if parent handles loading via Suspense
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const ReadMePopupRef = useRef<PopupRef>(undefined)
 	const [error, setError] = useState<ErrorType | undefined>(
@@ -40,7 +45,14 @@ const MainPage = ({
 	const [errorPopupOpen, setErrorPopupOpen] = useState<boolean>(!!errorStatus)
 
 	// yesterDate を initialViewDay を元に再計算するか、propsで渡されたものを基準にする
-	const componentBaseDate = initialViewDay // もしyesterDate相当のものを動的にしたい場合は調整
+	const componentBaseDate = initialViewDay
+
+	const updateViewDayInUrl = (newViewDay: Date) => {
+    const newViewStartDate = DateToDayISOstring(newViewDay).split('T')[0];
+    // Assuming the current path is /booking
+    router.push(`/booking?viewStartDate=${newViewStartDate}`, { scroll: false });
+    setViewDay(newViewDay);
+  };
 
 	let nextAble =
 		addDays(viewDay, viewDayMax) <= addDays(componentBaseDate, ableViewDayMax)
@@ -52,67 +64,19 @@ const MainPage = ({
 			: true
 
 	const nextWeek = () => {
-		setViewday(addDays(viewDay, viewDayMax))
+		const newViewDay = addDays(viewDay, viewDayMax);
+    updateViewDayInUrl(newViewDay);
 	}
 
 	const prevWeek = () => {
-		setViewday(subDays(viewDay, viewDayMax))
+		const newViewDay = subDays(viewDay, viewDayMax);
+    updateViewDayInUrl(newViewDay);
 	}
 
-	const getBooking = async ({
-		startDate, // Date
-		endDate, // Date
-		cache,
-	}: {
-		startDate: Date
-		endDate: Date
-		cache?: 'no-cache'
-	}) => {
-		setIsLoading(true)
-		if (cache === 'no-cache') {
-			await bookingRevalidateTagAction({ tag: 'booking' })
-		}
-		const startDay = DateToDayISOstring(startDate).split('T')[0]
-		const endDay = DateToDayISOstring(endDate).split('T')[0]
-		const res = await getBookingByDateAction({
-			startDate: startDay,
-			endDate: endDay,
-		})
-		if (res.status === 200) {
-			setBookingData({ ...res.response })
-		} else {
-			setError({
-				status: res.status,
-				response: String(res.response),
-			})
-			setErrorPopupOpen(true)
-		}
-		setIsLoading(false)
-	}
+	// getBooking function and its useEffect are removed. Data is fetched by parent.
 
 	useEffect(() => {
-		// initialBookingData があり、かつ viewDay が initialViewDay の場合はAPI呼び出しをスキップ
-		// ただし、viewDayMaxが変更された場合は再取得が必要なので、この条件分岐は単純ではない
-		// ここでは、viewDayまたはviewDayMaxが変更されたら常にAPIを叩く方針を維持
-		// ただし、initialBookingDataがない場合（エラー時など）や、
-		// viewDayがinitialViewDayと異なる場合にのみ setIsLoading(true) から始める
-		if (!initialBookingData || viewDay !== initialViewDay) {
-			getBooking({
-				startDate: viewDay,
-				endDate: addDays(viewDay, viewDayMax - 1),
-			})
-		} else if (initialBookingData && bookingData !== initialBookingData) {
-			// propsで渡されたデータと現在のデータが異なる場合（例：親が更新した）、更新する
-			// ただし、これは無限ループのリスクもあるため、慎重な設計が必要
-			// 今回は、propsからの初期値設定に留め、以降はクライアントの状態を正とする
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [viewDay, viewDayMax]) // initialBookingData, initialViewDay は依存配列に含めない
-
-	// 初期エラーがある場合、useEffectでエラーポップアップを開く
-	useEffect(() => {
-		if (errorStatus && !bookingData) {
-			// bookingDataがない（初期取得失敗）場合のみ
+		if (errorStatus && !initialBookingData) { // Check against initialBookingData
 			setError({
 				status: errorStatus,
 				response:
@@ -120,7 +84,7 @@ const MainPage = ({
 			})
 			setErrorPopupOpen(true)
 		}
-	}, [errorStatus, bookingData])
+	}, [errorStatus, initialBookingData]) // Dependency updated
 
 	return (
 		<div>
@@ -128,12 +92,21 @@ const MainPage = ({
 				<button
 					className="btn btn-blue"
 					onClick={async () => {
-						getBooking({
-							startDate: viewDay,
-							endDate: addDays(viewDay, viewDayMax - 1),
-							cache: 'no-cache',
-						})
-						await bookingRevalidateTagAction({ tag: 'banBooking' })
+            // This button now only needs to revalidate, data fetching is via URL change
+            setIsLoading(true); // Show loading for revalidation
+						await bookingRevalidateTagAction({ tag: 'booking' }); // Revalidate booking data
+						await bookingRevalidateTagAction({ tag: 'banBooking' });
+            // Force re-fetch by navigating to the current URL (or a slightly modified one if needed to trigger RSC)
+            // For simplicity, we can rely on parent re-fetching due to revalidation if data sources are shared,
+            // or explicitly trigger a navigation to current path to force RSC refresh.
+            // router.push(router.asPath, { scroll: false }); // This might be needed if revalidation alone isn't enough
+            // For now, let's assume revalidation is sufficient or parent handles refresh.
+            // If direct refresh is needed to reflect revalidated data:
+            const newSearchParams = new URLSearchParams(Array.from(currentSearchParams.entries()));
+            // Optionally add a cache-busting param if needed, though revalidateTag should handle server-side cache
+            // newSearchParams.set('_t', Date.now().toString());
+            router.push(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
+            setIsLoading(false);
 					}}
 				>
 					コマ表を更新

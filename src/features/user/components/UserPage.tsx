@@ -4,9 +4,11 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { signOutUser } from '@/features/user/actions'
-import Image from 'next/image' // next/imageをインポート
+import Image from 'next/image'
 import { Profile } from '@/features/user/types'
-import { StatusCode } from '@/utils/types/responseTypes' // StatusCodeをインポート
+import { Booking } from '@/features/booking/types'
+import { GachaData, GachaSort } from '@/features/gacha/types' // Import Gacha types
+import { StatusCode } from '@/utils/types/responseTypes'
 import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
 import ProfileDisplay from './ProfileDisplay' // 新しいコンポーネントをインポート
 import LocalFont from 'next/font/local'
@@ -28,17 +30,40 @@ const gkktt = LocalFont({
 	variable: '--851-gkktt',
 })
 
+interface UserPageProps {
+  profile: Profile;
+  session: Session;
+  userRole: string;
+  gachaStatus: { status: StatusCode; response: string };
+  initialBookings: Booking[];
+  initialPageMax: number;
+  initialCurrentPage: number;
+  initialLogsPerPage: number;
+  initialSort: 'new' | 'old';
+  // Gacha Logs Props
+  initialGachas: GachaData[];
+  initialGachaPageMax: number;
+  initialGachaCurrentPage: number;
+  initialGachaLogsPerPage: number;
+  initialGachaSort: GachaSort;
+}
+
 const UserPage = ({
 	profile,
 	session,
 	userRole,
-	gachaStatus, // gachaStatusをpropsとして受け取る
-}: {
-	profile: Profile
-	session: Session
-	userRole: string
-	gachaStatus: { status: StatusCode; response: string } // gachaStatusの型定義
-}) => {
+	gachaStatus,
+  initialBookings,
+  initialPageMax,
+  initialCurrentPage,
+  initialLogsPerPage,
+  initialSort,
+  initialGachas,
+  initialGachaPageMax,
+  initialGachaCurrentPage,
+  initialGachaLogsPerPage,
+  initialGachaSort,
+}: UserPageProps) => {
 	const router = useRouter()
 
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
@@ -88,7 +113,14 @@ const UserPage = ({
 			<div className="w-full">
 				<Tabs>
 					<Tab label={<MdOutlineEditCalendar size={24} />}>
-						<BookingLogs session={session} />
+						<BookingLogs
+              session={session}
+              initialBookings={initialBookings}
+              initialPageMax={initialPageMax}
+              initialCurrentPage={initialCurrentPage}
+              initialLogsPerPage={initialLogsPerPage}
+              initialSort={initialSort}
+            />
 					</Tab>
 					<Tab label={<GiCardRandom size={24} />}>
 						<div className="flex flex-col items-center mb-4 gap-y-2">
@@ -116,7 +148,14 @@ const UserPage = ({
 								</div>
 							)}
 						</div>
-						<GachaLogs session={session} />
+						<GachaLogs
+              session={session}
+              initialGachas={initialGachas}
+              initialPageMax={initialGachaPageMax}
+              initialCurrentPage={initialGachaCurrentPage}
+              initialLogsPerPage={initialGachaLogsPerPage}
+              initialSort={initialGachaSort}
+            />
 					</Tab>
 				</Tabs>
 			</div>

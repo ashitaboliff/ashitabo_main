@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -35,7 +35,12 @@ const ScheduleCreateSchema = yup.object().shape({
 	description: yup.string(),
 })
 
-const ScheduleCreatePage = ({ session }: { session: Session }) => {
+interface ScheduleCreatePageProps {
+  session: Session;
+  initialUsers: Record<string, string>;
+}
+
+const ScheduleCreatePage = ({ session, initialUsers }: ScheduleCreatePageProps) => {
 	const router = useRouter()
 	const {
 		register,
@@ -51,7 +56,7 @@ const ScheduleCreatePage = ({ session }: { session: Session }) => {
 	const watchMention = watch('mention')
 	const watchAll = watch()
 	const isMentionChecked = watch('isMentionChecked')
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	// const [isLoading, setIsLoading] = useState<boolean>(false) // isLoading for users is removed
 	const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
@@ -59,7 +64,7 @@ const ScheduleCreatePage = ({ session }: { session: Session }) => {
 
 	const [scheduleId] = useState<string>(v4())
 
-	const [users, setUsers] = useState<Record<string, string>>({})
+	// const [users, setUsers] = useState<Record<string, string>>({}) // users are now from props
 
 	const onSubmit = async (data: any) => {
 		setIsSubmitLoading(true)
@@ -87,26 +92,6 @@ const ScheduleCreatePage = ({ session }: { session: Session }) => {
 
 		setIsSubmitLoading(false)
 	}
-
-	const getMentionUsers = async () => {
-		setIsLoading(true)
-		const res = await getUserIdWithNames()
-		if (res.status === 200) {
-			const userRecord = res.response.reduce(
-				(acc, user) => {
-					acc[user.id ?? ''] = user.name ?? ''
-					return acc
-				},
-				{} as Record<string, string>,
-			)
-			setUsers(userRecord)
-		}
-		setIsLoading(false)
-	}
-
-	useEffect(() => {
-		getMentionUsers()
-	}, [])
 
 	return (
 		<div className="flex flex-col items-center justify-center py-6 bg-bg-white rounded-lg shadow-md">
@@ -147,21 +132,18 @@ const ScheduleCreatePage = ({ session }: { session: Session }) => {
 					<span className="label-text text-base">メンションをオン</span>
 				</label>
 				<p className="text-sm">特定の部員とだけの予定を作成できます。</p>
-				{isMentionChecked &&
-					(Object.keys(users).length === 0 && isLoading ? (
-						<p>ユーザ情報を取得中...</p>
-					) : (
+				{isMentionChecked && (
 						<SelectField
 							name="mention"
 							label="メンション"
-							options={users}
+							options={initialUsers} // Use initialUsers from props
 							register={register('mention')}
 							isMultiple={true}
 							setValue={setValue}
 							watchValue={watchMention}
 							errorMessage={errors.mention?.message}
 						/>
-					))}
+					)}
 				<Controller
 					name="startDate"
 					control={control}
@@ -248,14 +230,14 @@ const ScheduleCreatePage = ({ session }: { session: Session }) => {
 								: '未入力'}
 						</p>
 						{watchAll?.isMentionChecked && (
-							<p>
-								メンション:{' '}
-								{watchAll?.mention
-									?.map((mention: string) => users[mention])
-									.join(', ') || '未入力'}
-							</p>
-						)}
-					</div>
+						<p>
+							メンション:{' '}
+							{watchAll?.mention
+								?.map((mention: string) => initialUsers[mention]) // Use initialUsers here as well
+								.join(', ') || '未入力'}
+						</p>
+					)}
+				</div>
 					<div className="flex flex-row justify-center space-x-2">
 						<ShareButton
 							url={`${window.location.origin}/schedule/${scheduleId}`}

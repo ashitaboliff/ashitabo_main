@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, use } from 'react'
+import { useState, useRef } from 'react' // Removed useEffect, use
 import { useRouter } from 'next-nprogress-bar'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -23,12 +23,28 @@ import Pagination from '@/components/ui/atoms/Pagination'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 
-const AdminUserPage = ({ session }: { session: Session }) => {
+interface AdminUserPageProps {
+  session: Session;
+  initialUsers: UserDetail[];
+  initialPageMax: number;
+  initialCurrentPage: number;
+  initialUsersPerPage: number;
+  initialSort: 'new' | 'old';
+}
+
+const AdminUserPage = ({
+  session,
+  initialUsers,
+  initialPageMax,
+  initialCurrentPage,
+  initialUsersPerPage,
+  initialSort,
+}: AdminUserPageProps) => {
 	const router = useRouter()
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [usersPerPage, setUsersPerPage] = useState(10)
-	const [sort, setSort] = useState<'new' | 'old'>('new')
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [currentPage, setCurrentPage] = useState<number>(initialCurrentPage || 1)
+	const [usersPerPage, setUsersPerPage] = useState(initialUsersPerPage || 10)
+	const [sort, setSort] = useState<'new' | 'old'>(initialSort || 'new')
+	const [isLoading, setIsLoading] = useState<boolean>(false) // For actions like delete/role change, not for fetching list
 	const [popupData, setPopupData] = useState<UserDetail>()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const popupRef = useRef<PopupRef>(undefined)
@@ -39,11 +55,30 @@ const AdminUserPage = ({ session }: { session: Session }) => {
 	const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState<boolean>(false)
 	const successPopupRef = useRef<PopupRef>(undefined)
 
-	const [pageMax, setPageMax] = useState<number>(1)
-	const [users, setUsers] = useState<UserDetail[]>([])
+	// pageMax and users are now from props
+	const users = initialUsers;
+	const pageMax = initialPageMax;
+
+	const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    router.push(`?adminUserPage=${page}&adminUserLimit=${usersPerPage}&adminUserSort=${sort}`, { scroll: false });
+  };
+
+  const handleUsersPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newUsersPerPage = parseInt(e.target.value);
+    setUsersPerPage(newUsersPerPage);
+    setCurrentPage(1); // Reset to first page
+    router.push(`?adminUserPage=1&adminUserLimit=${newUsersPerPage}&adminUserSort=${sort}`, { scroll: false });
+  };
+
+  const handleSortChange = (newSort: 'new' | 'old') => {
+    setSort(newSort);
+    setCurrentPage(1); // Reset to first page
+    router.push(`?adminUserPage=1&adminUserLimit=${usersPerPage}&adminUserSort=${newSort}`, { scroll: false });
+  };
 
 	const onDelete = async (id: string) => {
-		setIsLoading(true)
+		setIsLoading(true) // Keep isLoading for this action
 		const res = await deleteUserAction({ id, role: 'ADMIN' })
 		if (res.status === 200) {
 			setIsPopupOpen(false)
@@ -67,21 +102,6 @@ const AdminUserPage = ({ session }: { session: Session }) => {
 		setIsLoading(false)
 	}
 
-	useEffect(() => {
-		const fetchUsers = async () => {
-			const res = await getAllUserDetailsAction({
-				sort,
-				page: currentPage,
-				perPage: usersPerPage,
-			})
-			if (res.status === 200) {
-				setUsers(res.response.users)
-				setPageMax(Math.ceil(res.response.totalCount / usersPerPage))
-			}
-		}
-		fetchUsers()
-	}, [currentPage, usersPerPage, sort])
-
 	return (
 		<div className="flex flex-col items-center justify-center gap-y-2">
 			<h1 className="text-2xl font-bold">ユーザ管理</h1>
@@ -103,10 +123,7 @@ const AdminUserPage = ({ session }: { session: Session }) => {
 					<p className="text-sm whitespace-nowrap">表示件数:</p>
 					<SelectField
 						value={usersPerPage}
-						onChange={(e) => {
-							setUsersPerPage(Number(e.target.value))
-							setCurrentPage(1)
-						}}
+						onChange={handleUsersPerPageChange}
 						options={{ 10: '10件', 20: '20件', 50: '50件', 100: '100件' }}
 						name="usersPerPage"
 					/>
@@ -114,20 +131,21 @@ const AdminUserPage = ({ session }: { session: Session }) => {
 				<div className="flex flex-row gap-x-2">
 					<input
 						type="radio"
-						name="sort"
+						name="adminUserSort" // Changed name to avoid conflict
 						value="new"
-						defaultChecked
+						checked={sort === 'new'}
 						className="btn btn-tetiary btn-sm"
 						aria-label="新しい順"
-						onChange={() => setSort('new')}
+						onChange={() => handleSortChange('new')}
 					/>
 					<input
 						type="radio"
-						name="sort"
+						name="adminUserSort" // Changed name to avoid conflict
 						value="old"
+						checked={sort === 'old'}
 						className="btn btn-tetiary btn-sm"
 						aria-label="古い順"
-						onChange={() => setSort('old')}
+						onChange={() => handleSortChange('old')}
 					/>
 				</div>
 				<table className="table table-zebra table-sm w-full max-w-36 justify-center">
@@ -259,7 +277,7 @@ const AdminUserPage = ({ session }: { session: Session }) => {
 			<Pagination
 				currentPage={currentPage}
 				totalPages={pageMax}
-				onPageChange={(page) => setCurrentPage(page)}
+				onPageChange={handlePageChange}
 			/>
 			<div className="flex flex-row justify-center mt-2">
 				<button

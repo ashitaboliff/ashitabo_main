@@ -32,17 +32,18 @@ const ImageCarousel = () => {
 	const [currentIndex, setCurrentIndex] = useState<number>(packs.length - 1)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [gachaVersion, setGachaVersion] = useState<string>('version1')
-	const [packViewed, setPackViewed] = useState<boolean>(false)
+	const [packViewed, setPackViewed] = useState<boolean>(false) // Initial state is false
 	const ref = useRef<GachaPickupPopupRef>(undefined)
 
 	useEffect(() => {
-		setPackViewed(false)
-	}, [])
+    // When currentIndex changes, immediately set packViewed to false
+    // then set it to true after a delay to allow for transition/loading effect.
+    setPackViewed(false);
+    const timer = setTimeout(() => {
+      setPackViewed(true);
+    }, 300); // Adjusted delay to 300ms, can be tuned
 
-	useEffect(() => {
-		setTimeout(() => {
-			setPackViewed(true)
-		}, 1000)
+    return () => clearTimeout(timer); // Cleanup timer on unmount or if currentIndex changes again
 	}, [currentIndex])
 
 	const updateIndex = (direction: 'next' | 'prev') => {

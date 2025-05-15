@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { UseFormSetValue } from 'react-hook-form' // Import UseFormSetValue
 import { addWeeks, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { BookingResponse } from '@/features/booking/types'
@@ -26,9 +27,10 @@ const EditCalendar = memo(
 		setBookingTime,
 		setIsPaid,
 		setCalendarOpen,
+    setValue, // Add setValue to props
 	}: {
 		bookingResponse: BookingResponse
-		timeList: string[]
+		timeList: string[] // This is BookingTime array from parent
 		actualBookingDate: string
 		actualBookingTime: number
 		bookingDate: string
@@ -37,6 +39,7 @@ const EditCalendar = memo(
 		setBookingTime: (bookingTime: number) => void
 		setIsPaid: (isPaid: boolean) => void
 		setCalendarOpen: (calendarOpen: boolean) => void
+    setValue: UseFormSetValue<any>; // Or a more specific form values type
 	}) => {
 		const dateList = Object.keys(bookingResponse)
 		const bookingAbleMaxDate = addWeeks(new Date(), 2)
@@ -102,6 +105,8 @@ const EditCalendar = memo(
 												onClick={() => {
 													setBookingDate(day)
 													setBookingTime(timeIndex)
+                          setValue('bookingDate', day);
+                          setValue('bookingTime', timeList[timeIndex]); // Use timeList which is BookingTime
 													setCalendarOpen(false)
 													if (new Date(day) > bookingAbleMaxDate) {
 														setIsPaid(true)
@@ -142,6 +147,8 @@ const EditCalendar = memo(
 												onClick={() => {
 													setBookingDate(day)
 													setBookingTime(timeIndex)
+                          setValue('bookingDate', day);
+                          setValue('bookingTime', timeList[timeIndex]); // Use timeList which is BookingTime
 													setCalendarOpen(false)
 													if (new Date(day) > bookingAbleMaxDate) {
 														setIsPaid(true)

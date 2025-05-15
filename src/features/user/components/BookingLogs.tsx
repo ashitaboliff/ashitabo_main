@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next-nprogress-bar'
-import { Session } from 'next-auth'
+import { Session } from 'next-auth' // Session might still be needed for other parts or can be removed if userId is the only thing used from it by the parent
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Booking, BookingTime } from '@/features/booking/types'
@@ -10,13 +10,29 @@ import Pagination from '@/components/ui/atoms/Pagination'
 import SelectFieldNumber from '@/components/ui/atoms/SelectFieldNumber'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
-import { getBookingByUserIdAction } from '@/features/booking/components/actions'
+import { getBookingByUserIdAction } from '@/features/booking/components/actions' // This action will be called by the parent Server Component
 
-const UserBookingLogs = ({ session }: { session: Session }) => {
+interface UserBookingLogsProps {
+  session: Session; // Or just userId: string if that's all that's needed from session by parent for fetching
+  initialBookings: Booking[];
+  initialPageMax: number;
+  initialCurrentPage: number;
+  initialLogsPerPage: number;
+  initialSort: 'new' | 'old';
+}
+
+const UserBookingLogs = ({
+  session,
+  initialBookings,
+  initialPageMax,
+  initialCurrentPage,
+  initialLogsPerPage,
+  initialSort,
+}: UserBookingLogsProps) => {
 	const router = useRouter()
-	const [currentPage, setCurrentPage] = useState<number>(1)
-	const [logsPerPage, setLogsPerPage] = useState(10)
-	const [sort, setSort] = useState<'new' | 'old'>('new')
+	const [currentPage, setCurrentPage] = useState<number>(initialCurrentPage)
+	const [logsPerPage, setLogsPerPage] = useState(initialLogsPerPage)
+	const [sort, setSort] = useState<'new' | 'old'>(initialSort)
 	const [popupData, setPopupData] = useState<Booking>()
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [isAddCalendarPopupOpen, setIsAddCalendarPopupOpen] =
@@ -24,24 +40,27 @@ const UserBookingLogs = ({ session }: { session: Session }) => {
 	const popupRef = useRef<PopupRef>(undefined)
 	const addCalendarPopupRef = useRef<PopupRef>(undefined)
 
-	const [pageMax, setPageMax] = useState<number>(1)
-	const [bookings, setBookings] = useState<Booking[]>([])
+	// bookings and pageMax are now derived from props
+	const bookings = initialBookings;
+	const pageMax = initialPageMax;
 
-	useEffect(() => {
-		const fetchBooking = async () => {
-			const res = await getBookingByUserIdAction({
-				userId: session.user.id,
-				sort: sort,
-				page: currentPage,
-				perPage: logsPerPage,
-			})
-			if (res.status === 200) {
-				setBookings(res.response.bookings)
-				setPageMax(Math.ceil(res.response.totalCount / logsPerPage))
-			}
-		}
-		fetchBooking()
-	}, [currentPage, logsPerPage, sort])
+	const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    router.push(`?page=${page}&limit=${logsPerPage}&sort=${sort}`, { scroll: false });
+  };
+
+  const handleLogsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLogsPerPage = parseInt(e.target.value);
+    setLogsPerPage(newLogsPerPage);
+    setCurrentPage(1); // Reset to first page when logs per page changes
+    router.push(`?page=1&limit=${newLogsPerPage}&sort=${sort}`, { scroll: false });
+  };
+
+  const handleSortChange = (newSort: 'new' | 'old') => {
+    setSort(newSort);
+    setCurrentPage(1); // Reset to first page when sort changes
+    router.push(`?page=1&limit=${logsPerPage}&sort=${newSort}`, { scroll: false });
+  };
 
 	return (
 		<div className="flex flex-col justify-center">
@@ -52,7 +71,7 @@ const UserBookingLogs = ({ session }: { session: Session }) => {
 						name="logsPerPage"
 						options={{ '10件': 10, '20件': 20, '30件': 30 }}
 						value={logsPerPage}
-						onChange={(e) => setLogsPerPage(parseInt(e.target.value))}
+						onChange={handleLogsPerPageChange}
 					/>
 				</div>
 				<div className="flex flex-row gap-x-2">
@@ -60,18 +79,19 @@ const UserBookingLogs = ({ session }: { session: Session }) => {
 						type="radio"
 						name="sort"
 						value="new"
-						defaultChecked
+						checked={sort === 'new'}
 						className="btn btn-tetiary btn-sm"
 						aria-label="新しい順"
-						onChange={() => setSort('new')}
+						onChange={() => handleSortChange('new')}
 					/>
 					<input
 						type="radio"
 						name="sort"
 						value="old"
+						checked={sort === 'old'}
 						className="btn btn-tetiary btn-sm"
 						aria-label="古い順"
-						onChange={() => setSort('old')}
+						onChange={() => handleSortChange('old')}
 					/>
 				</div>
 				<table className="table table-zebra table-sm w-full max-w-36 justify-center my-2">
@@ -107,7 +127,7 @@ const UserBookingLogs = ({ session }: { session: Session }) => {
 				<Pagination
 					currentPage={currentPage}
 					totalPages={pageMax}
-					onPageChange={(page) => setCurrentPage(page)}
+					onPageChange={handlePageChange}
 				/>
 			</div>
 			{popupData && (

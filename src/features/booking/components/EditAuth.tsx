@@ -24,7 +24,7 @@ const EditAuthPage = ({
 	bookingDetail: Booking
 }) => {
 	const router = useRouter()
-	const [isLoading, setIsLoading] = useState<boolean>(true)
+	const [isLoading, setIsLoading] = useState<boolean>(false) // Changed initial state to false
 	const [showPassword, setShowPassword] = useState<boolean>(false)
 	const [error, setError] = useState<ErrorType>()
 	const {
@@ -43,7 +43,7 @@ const EditAuthPage = ({
 	}
 
 	const onSubmit = async (data: { password: string }) => {
-		setIsLoading(true)
+		setIsLoading(true) // Set loading true only during submission
 		try {
 			const response = await authBookingAction({
 				bookingId: bookingDetail.id,
@@ -66,10 +66,10 @@ const EditAuthPage = ({
 	}
 
 	useEffect(() => {
-		setIsLoading(false)
+		// setIsLoading(false) // Removed as isLoading is now initially false
 		handleSetAuth(false)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, []) // handleSetAuth might need to be in dependency array if it changes, but typically it doesn't for setters from parent.
 
 	if (!bookingDetail) {
 		return <DetailNotFoundPage />

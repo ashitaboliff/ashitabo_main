@@ -80,63 +80,87 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	}
 
 	useEffect(() => {
-		if (!cardRef.current || imagesLoaded < 2) return
+		if (!cardRef.current || imagesLoaded < 2) return;
+
+    let timeoutId: NodeJS.Timeout | null = null;
+    const tweens: gsap.core.Tween[] = [];
 
 		if (delay) {
-			setTimeout(() => {
-				gsap.to(cardRef.current, {
-					opacity: 1,
-					duration: 0.5,
-				})
-			}, delay)
-		}
+			timeoutId = setTimeout(() => {
+				if (cardRef.current) {
+					tweens.push(gsap.to(cardRef.current, {
+						opacity: 1,
+						duration: 0.5,
+					}));
+				}
+			}, delay);
+		} else {
+      // If no delay, ensure opacity is 1 immediately if it's meant to be visible
+      if (cardRef.current) {
+        gsap.set(cardRef.current, { opacity: 1 });
+      }
+    }
 
 		// カード本体のアニメーション（レアリティに応じた処理）
-		if (rarity === 'COMMON') {
-			gsap.to(cardRef.current, {
-				scale: 1.1,
-				duration: 0.2,
-				yoyo: true,
-				repeat: 1,
-				ease: 'none',
-			})
-		} else if (rarity === 'RARE' || rarity === 'SUPER_RARE') {
-			gsap.to(cardRef.current, {
-				rotationY: 360,
-				duration: 2,
-				ease: 'power1.inOut',
-			})
-		} else if (rarity === 'SS_RARE') {
-			gsap.to(cardRef.current, {
-				rotationY: 360,
-				duration: 2,
-				ease: 'expo.inOut',
-			})
-		} else if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
-			gsap.to(cardRef.current, {
-				rotationY: 360,
-				duration: 2,
-				ease: 'expo.inOut',
-			})
-			gsap.to(cardRef.current, {
-				scale: 1.1,
-				duration: 1.1,
-				yoyo: true,
-				repeat: 1,
-				ease: 'back.out',
-			})
+		if (cardRef.current) { // Ensure cardRef.current exists before animating
+			if (rarity === 'COMMON') {
+				tweens.push(gsap.to(cardRef.current, {
+					scale: 1.1,
+					duration: 0.2,
+					yoyo: true,
+					repeat: 1,
+					ease: 'none',
+				}));
+			} else if (rarity === 'RARE' || rarity === 'SUPER_RARE') {
+				tweens.push(gsap.to(cardRef.current, {
+					rotationY: 360,
+					duration: 2,
+					ease: 'power1.inOut',
+				}));
+			} else if (rarity === 'SS_RARE') {
+				tweens.push(gsap.to(cardRef.current, {
+					rotationY: 360,
+					duration: 2,
+					ease: 'expo.inOut',
+				}));
+			} else if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
+				tweens.push(gsap.to(cardRef.current, {
+					rotationY: 360,
+					duration: 2,
+					ease: 'expo.inOut',
+				}));
+				tweens.push(gsap.to(cardRef.current, {
+					scale: 1.1,
+					duration: 1.1,
+					yoyo: true,
+					repeat: 1,
+					ease: 'back.out',
+				}));
+			}
 		}
 
 		// ※ 星のアニメーション自体は gsap で共通に実施（固定パラメータ）
-		gsap.to('.sparkle-star', {
+    const sparkleTween = gsap.to('.sparkle-star', {
 			opacity: 0.5,
 			scale: 1.5,
 			duration: 0.8,
 			yoyo: true,
 			repeat: -1,
 			ease: 'power1.inOut',
-		})
-	}, [rarity, imagesLoaded])
+		});
+    tweens.push(sparkleTween);
+
+    const currentCardRef = cardRef.current;
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      tweens.forEach(tween => tween.kill());
+      // Ensure to kill tweens on specific elements if they are not covered by the array
+      if (currentCardRef) gsap.killTweensOf(currentCardRef);
+      gsap.killTweensOf('.sparkle-star');
+    }
+	}, [rarity, imagesLoaded, delay])
 
 	// レアリティに合わせた基準サイズ設定
 	// SUPER_RAREは15、それ以外は20
@@ -305,14 +329,14 @@ export const GachaPickup = ({
 			setRes(
 				await createUserGachaResultAction({
 					userId: session?.user.id,
-					gachaVersion: version,
+					gachaVersion: version, // version was missing in original deps
 					gachaRarity: gachaData.name,
 					gachaSrc: gachaData.data.src,
 					createType,
 				}),
 			)
 		})()
-	}, [gachaData, createType])
+	}, [gachaData, createType, version]) // Added version to dependency array
 
 	if (!res) {
 		return (

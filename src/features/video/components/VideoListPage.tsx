@@ -1,16 +1,14 @@
 'use client'
 
 import LocalFont from 'next/font/local'
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ErrorType } from '@/utils/types/responseTypes'
-import ShareButton from '@/components/ui/atoms/ShareButton'
 import SelectFieldNumber from '@/components/ui/atoms/SelectFieldNumber'
 import Pagination from '@/components/ui/atoms/Pagination'
-import VideoItem from '@/features/video/components/VideoItem' // 修正
+import VideoItem from '@/features/video/components/VideoItem'
 import VideoSearchForm from '@/features/video/components/VideoSearchForm'
-import { searchYoutubeDetailsAction } from './actions'
 
 const gkktt = LocalFont({
 	src: '../../../lib/fonts/851Gkktt_005.woff',
@@ -49,40 +47,31 @@ const parseSearchParams = (params: URLSearchParams): YoutubeSearchQuery => {
 	}
 }
 
-const VideoListPage = () => {
+interface VideoListPageProps {
+  initialYoutubeDetails: YoutubeDetail[];
+  initialPageMax: number;
+  initialIsLoading: boolean; // Or handle loading with Suspense in parent
+  initialError?: ErrorType;
+  // currentQuery will be derived from searchParams inside, but initial values might be passed if needed
+}
+
+const VideoListPage = ({
+  initialYoutubeDetails,
+  initialPageMax,
+  initialIsLoading,
+  initialError,
+}: VideoListPageProps) => {
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const router = useRouter()
-	const [pageMax, setPageMax] = useState<number>(1)
-	const [youtubeDetails, setYoutubeDetails] = useState<YoutubeDetail[]>([])
-	const [isLoading, setIsLoading] = useState<boolean>(true)
-	const [error, setError] = useState<ErrorType>()
+	const [pageMax, setPageMax] = useState<number>(initialPageMax)
+	const [youtubeDetails, setYoutubeDetails] = useState<YoutubeDetail[]>(initialYoutubeDetails)
+	const [isLoading, setIsLoading] = useState<boolean>(initialIsLoading) // Use prop for initial loading state
+	const [error, setError] = useState<ErrorType | undefined>(initialError) // Use prop for initial error state
 	const [isPending, startTransition] = useTransition()
 
-	const currentQuery = parseSearchParams(searchParams)
+	const currentQuery = parseSearchParams(searchParams) 
 	const isSearching = searchParams.toString() !== ''
-
-	useEffect(() => {
-		startTransition(async () => {
-			setIsLoading(true)
-			const res = await searchYoutubeDetailsAction(currentQuery)
-			if (res.status === 200) {
-				setYoutubeDetails(res.response.results)
-				setPageMax(
-					Math.ceil(res.response.totalCount / currentQuery.videoPerPage),
-				)
-				setError(undefined)
-			} else {
-				setError({
-					status: res.status,
-					response: String(res.response),
-				})
-				setYoutubeDetails([])
-				setPageMax(1)
-			}
-			setIsLoading(false)
-		})
-	}, [searchParams.toString()]) // searchParams の文字列としての変更を監視
 
 	const updateQueryAndNavigate = (
 		newQueryParts: Partial<YoutubeSearchQuery>,

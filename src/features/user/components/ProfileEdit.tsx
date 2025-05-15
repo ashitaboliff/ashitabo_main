@@ -75,7 +75,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	useEffect(() => {
 		router.refresh()
 		// eslint-disable-next-line react-hooks/rules-of-hooks
-	}, [])
+	}, [router])
 
 	const {
 		register,
