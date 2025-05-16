@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react' // useEffect を追加
+import { useRef, useState, useEffect } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { YoutubeSearchQuery } from '@/features/video/types'
 import ShareButton from '@/components/ui/atoms/ShareButton'
@@ -34,7 +34,6 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 			'or',
 	)
 
-	// searchParamsから現在のクエリを取得
 	const getCurrentQuery = (): YoutubeSearchQuery => {
 		const params = new URLSearchParams(searchParams.toString())
 		return {
@@ -77,7 +76,6 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 		onSearch(defaultQuery)
 	}
 
-	// currentQuery.tag が変更されたら内部のタグステートも更新
 	useEffect(() => {
 		const tagsFromParams = searchParams.getAll('tag')
 		const modeFromParams = searchParams.get('tagSearchMode') as 'and' | 'or'
@@ -184,12 +182,12 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 					<TagInputField
 						label="タグ"
 						infoDropdown="みんなのつけたタグによる検索です"
-						name="tag"
+						name="tag" // nameは引き続き必要（HTMLのname属性として、または将来的なRHF化のため）
 						placeholder="タグを入力しEnterかカンマで追加"
 						defaultValue={currentTags}
-						onChange={handleTagsChange}
+						onChange={handleTagsChange} // このonChangeでcurrentTagsを更新
 					/>
-					<div className="form-control mt-1">
+					<div className="form-control mt-1 flex-row gap-x-2">
 						<label className="label cursor-pointer justify-start gap-2">
 							<span className="label-text text-xs">タグ検索モード:</span>
 							<input
@@ -203,7 +201,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 							<span className="label-text text-xs">いずれかを含む (OR)</span>
 						</label>
 						<label className="label cursor-pointer justify-start gap-2">
-							<span className="label-text text-xs"></span> {/* 位置調整用 */}
+							<span className="label-text text-xs"></span> 
 							<input
 								type="radio"
 								name="tagSearchMode"

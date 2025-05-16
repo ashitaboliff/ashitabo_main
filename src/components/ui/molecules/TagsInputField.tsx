@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactNode, useState, useEffect, KeyboardEvent } from 'react'
 import { UseFormSetValue, Control, Controller } from 'react-hook-form'
 import LabelInputField from '@/components/ui/atoms/LabelInputField'
@@ -11,7 +13,7 @@ type TagInputFieldProps = {
 	control?: Control<any>
 	defaultValue?: string[]
 	setValue?: UseFormSetValue<any>
-	onChange?: (tags: string[]) => void // 外部でタグの変更をハンドリングする場合
+	onChange?: (tags: string[]) => void
 }
 
 const TagInputField = ({
@@ -21,103 +23,146 @@ const TagInputField = ({
 	placeholder = 'タグを入力しEnterかカンマで追加',
 	control,
 	defaultValue = [],
-	setValue,
 	onChange,
 }: TagInputFieldProps) => {
-	const [tags, setTags] = useState<string[]>(defaultValue)
+	const [tags, setTags] = useState<string[]>(defaultValue || [])
 	const [inputValue, setInputValue] = useState<string>('')
+
+	useEffect(() => {
+		if (JSON.stringify(defaultValue) !== JSON.stringify(tags)) {
+			setTags(defaultValue || [])
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [defaultValue])
+
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInputValue(e.target.value)
 	}
 
-	const addTag = (tagValue: string) => {
+	const addTagInternal = (tagValue: string, fieldOnChange?: (value: string[]) => void) => {
 		const newTag = tagValue.trim()
 		if (newTag && !tags.includes(newTag)) {
-			const newTags = [...tags, newTag];
-			setTags(newTags)
-			if (setValue) {
-				setValue(name, newTags)
-			}
-			if (onChange) {
-				onChange(newTags)
+			const newTagsArray = [...tags, newTag]
+			setTags(newTagsArray)
+			if (fieldOnChange) {
+				fieldOnChange(newTagsArray)
+			} else if (onChange) {
+				onChange(newTagsArray)
 			}
 		}
 		setInputValue('')
 	}
 
-	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter' || e.key === ',') {
-			e.preventDefault()
-			addTag(inputValue)
+	const removeTagInternal = (tagToRemove: string, fieldOnChange?: (value: string[]) => void) => {
+		const newTagsArray = tags.filter((tag) => tag !== tagToRemove)
+		setTags(newTagsArray)
+		if (fieldOnChange) {
+			fieldOnChange(newTagsArray)
+		} else if (onChange) {
+			onChange(newTagsArray)
 		}
 	}
 
-	const removeTag = (tagToRemove: string) => {
-		const newTags = tags.filter((tag) => tag !== tagToRemove);
-		setTags(newTags)
-		if (setValue) {
-			setValue(name, newTags)
-		}
-		if (onChange) {
-			onChange(newTags)
-		}
-	}
-
-	const renderInput = (field?: any) => (
-		<input
-			type="text"
-			value={inputValue}
-			onChange={(e) => {
-				handleInputChange(e)
-				if (field) field.onChange(e) // react-hook-form の Controller を使う場合
-			}}
-			onKeyDown={handleKeyDown}
-			placeholder={placeholder}
-			className="input input-bordered w-full bg-white text-sm sm:text-base"
-		/>
-	)
 
 	return (
 		<div>
 			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
-			<div className="flex flex-wrap gap-2 py-2 rounded-md items-center">
-				{tags.map((tag) => (
-					<div
-						key={tag}
-						className="badge badge-accent badge-outline gap-1 text-xs sm:text-sm"
-					>
-						<span>{tag}</span>
-						<button
-							type="button"
-							onClick={() => removeTag(tag)}
-							className="hover:text-red-500"
-							aria-label={`タグ ${tag} を削除`}
-						>
-							<HiMiniXMark />
-						</button>
-					</div>
-				))}
-				{control ? (
-					<Controller
-						name={name} // react-hook-form が配列としてタグを管理
-						control={control}
-						defaultValue={tags} // 初期値を設定
-						render={({ field }) => renderInput({
-							...field,
-							onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-								field.onChange(e);
-								// フィールド値の同期は親コンポーネントで処理
-								if (field.value && JSON.stringify(field.value) !== JSON.stringify(tags)) {
-									setTags(field.value || []);
-								}
+			{control ? (
+				<Controller
+					name={name}
+					control={control}
+					defaultValue={defaultValue || []}
+					render={({ field }) => {
+						useEffect(() => {
+							if (Array.isArray(field.value) && JSON.stringify(field.value) !== JSON.stringify(tags)) {
+								setTags(field.value)
 							}
-						})}
+						}, [field.value, tags])
+
+						const handleKeyDownController = (e: KeyboardEvent<HTMLInputElement>) => {
+							if (e.key === 'Enter' || e.key === ',') {
+								e.preventDefault()
+								addTagInternal(inputValue, field.onChange)
+							}
+						}
+
+						return (
+							<div className="flex flex-wrap gap-2 py-2 rounded-md items-center">
+								<div className="flex flex-wrap gap-2">
+								{tags.map((tag) => (
+									<div
+										key={tag}
+										className="badge badge-accent badge-outline gap-1 text-xs sm:text-sm"
+									>
+										<span>{tag}</span>
+										<button
+											type="button"
+											onClick={() => removeTagInternal(tag, field.onChange)}
+											className="text-error"
+											aria-label={`タグ ${tag} を削除`}
+										>
+											<HiMiniXMark />
+										</button>
+									</div>
+								))}
+								</div>
+								<input
+									type="text"
+									value={inputValue}
+									onChange={handleInputChange}
+									onKeyDown={handleKeyDownController}
+									placeholder={placeholder}
+									className="input input-bordered flex-grow bg-white text-sm sm:text-base min-w-[150px]"
+									onBlur={() => {
+										if (inputValue.trim()) {
+											addTagInternal(inputValue, field.onChange)
+										}
+									}}
+								/>
+							</div>
+						)
+					}}
+				/>
+			) : (
+				// controlがない場合の直接レンダリング
+				<div className="flex flex-wrap gap-2 py-2 rounded-md items-center">
+					{tags.map((tag) => (
+						<div
+							key={tag}
+							className="badge badge-accent badge-outline gap-1 text-xs sm:text-sm"
+						>
+							<span>{tag}</span>
+							<button
+								type="button"
+								onClick={() => removeTagInternal(tag, onChange)} // field.onChangeの代わりに直接onChangeを渡す
+								className="text-error"
+								aria-label={`タグ ${tag} を削除`}
+							>
+								<HiMiniXMark />
+							</button>
+						</div>
+					))}
+					<input
+						type="text"
+						value={inputValue}
+						onChange={handleInputChange}
+						onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { // handleKeyDownControllerの代わりに直接定義
+							if (e.key === 'Enter' || e.key === ',') {
+								e.preventDefault()
+								addTagInternal(inputValue, onChange) // field.onChangeの代わりに直接onChangeを渡す
+							}
+						}}
+						placeholder={placeholder}
+						className="input input-bordered flex-grow bg-white text-sm sm:text-base min-w-[150px]"
+						onBlur={() => {
+							if (inputValue.trim()) {
+								addTagInternal(inputValue, onChange) // field.onChangeの代わりに直接onChangeを渡す
+							}
+						}}
 					/>
-				) : (
-					renderInput()
-				)}
-			</div>
+				</div>
+			)}
 		</div>
 	)
 }

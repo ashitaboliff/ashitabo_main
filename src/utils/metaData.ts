@@ -2,7 +2,7 @@ const baseUrl = process.env.AUTH_URL || 'https://www.ashitabo.net'
 
 export const createMetaData = ({
 	title,
-	url,
+	url: initialUrl,
 	image = '/meta/logo.png',
 	description = '信州大学工学部軽音サークルあしたぼの公式ホームページです',
 	keywords = [
@@ -19,15 +19,20 @@ export const createMetaData = ({
 		'信大',
 		'コマ表',
 	],
+	pathname, // Changed from params to pathname for clarity and flexibility
 }: {
 	title: string
-	url: string
+	url?: string // Keep for static pages or as a base
 	description?: string
 	image?: string
 	keywords?: string[]
+	pathname?: string // To construct the full URL for dynamic pages
 }) => {
 	title = `${title} | あしたぼホームページ`
-	url = `${baseUrl}${url}`
+	// Construct URL: if pathname is provided, use it directly. Otherwise, use initialUrl.
+	const finalPath = pathname || initialUrl || ''
+	const url = `${baseUrl}${finalPath.startsWith('/') ? '' : '/'}${finalPath}` // Ensure leading slash
+
 	return {
 		title,
 		metadataBase: new URL(baseUrl),

@@ -7,7 +7,7 @@ import { searchYoutubeDetailsAction } from '@/features/video/components/actions'
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ErrorType } from '@/utils/types/responseTypes'
 
-const parseVideoPageSearchParams = (params: URLSearchParams): YoutubeSearchQuery => {
+const parseVideoPageSearchParams = async (params: URLSearchParams): Promise<YoutubeSearchQuery> => {
   const defaultQuery: YoutubeSearchQuery = {
     liveOrBand: 'band',
     bandName: '',
@@ -52,7 +52,8 @@ const Page = async ({ searchParams }: VideoPageProps) => {
     }
   }
 
-  const currentQuery = parseVideoPageSearchParams(queryParams);
+  const currentQuery = await parseVideoPageSearchParams(queryParams);
+  const searchParamsString = queryParams.toString(); // keyとして使用する文字列
 
   let initialYoutubeDetails: YoutubeDetail[] = [];
   let initialPageMax = 1;
@@ -75,11 +76,12 @@ const Page = async ({ searchParams }: VideoPageProps) => {
 	return (
 		<Suspense fallback={<Loading />}>
 			<VideoListPage
-        initialYoutubeDetails={initialYoutubeDetails}
-        initialPageMax={initialPageMax}
-        initialIsLoading={initialIsLoading}
-        initialError={initialError}
-      />
+            key={searchParamsString}
+            initialYoutubeDetails={initialYoutubeDetails}
+            initialPageMax={initialPageMax}
+            initialIsLoading={initialIsLoading}
+            initialError={initialError}
+          />
 		</Suspense>
 	)
 }

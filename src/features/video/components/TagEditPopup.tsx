@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react' // useEffect を追加
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { liveOrBand } from '@/features/video/types'
@@ -14,11 +14,12 @@ import { TbEdit } from 'react-icons/tb'
 type Props = {
 	session: Session | null
 	id: string // playlistId or videoId
-	currentTags: string[]
+	currentTags: string[] | undefined
 	liveOrBand: liveOrBand
+	isFullButton?: boolean
 }
 
-const TagEditPopup = ({ session, id, currentTags, liveOrBand }: Props) => {
+const TagEditPopup = ({ session, id, currentTags, liveOrBand, isFullButton }: Props) => {
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isSessionPopupOpen, setIsSessionPopupOpen] = useState(false)
@@ -30,11 +31,10 @@ const TagEditPopup = ({ session, id, currentTags, liveOrBand }: Props) => {
 		tags: string[]
 	}>({
 		defaultValues: {
-			tags: currentTags || [], // currentTags が undefined の場合を考慮
+			tags: currentTags || [],
 		},
 	})
 
-	// currentTags が変更されたときにフォームの値を更新
 	useEffect(() => {
 		reset({ tags: currentTags || [] })
 	}, [currentTags, reset])
@@ -61,10 +61,11 @@ const TagEditPopup = ({ session, id, currentTags, liveOrBand }: Props) => {
 	return (
 		<>
 			<button
-				className="btn btn-outline btn-primary btn-sm"
+				className="btn btn-outline btn-primary btn-sm text-xs xl:text-sm"
 				onClick={handleOpenEditPopup}
 			>
 				<TbEdit size={15} />
+				{isFullButton ? ' タグを編集' : ''}
 			</button>
 			<Popup
 				ref={popupRef}
@@ -81,8 +82,7 @@ const TagEditPopup = ({ session, id, currentTags, liveOrBand }: Props) => {
 						control={control}
 						label="タグ"
 						placeholder="タグを追加"
-						defaultValue={currentTags || []} // defaultValue は react-hook-form の useForm で設定されているため、ここでは必須ではないかもしれないが、明示的に渡しておく
-						// setValue={setValue} // control を渡しているので不要なはず
+						defaultValue={currentTags || []}
 					/>
 					<div className="flex flex-row justify-center gap-x-2 mt-2">
 						<button type="submit" className="btn btn-primary">

@@ -9,7 +9,7 @@ import 'lite-youtube-embed/src/lite-yt-embed.css'
 import { liveOrBand, Playlist, Video } from '@/features/video/types'
 import { Session } from 'next-auth'
 import Tags from '@/components/ui/atoms/Tags'
-import TagEditPopup from './TagEditPopup' // TagEditPopup をインポート
+import TagEditPopup from './TagEditPopup'
 
 import { HiOutlineExternalLink } from 'react-icons/hi'
 
@@ -24,19 +24,18 @@ type Props = {
 	session: Session | null
 	liveOrBand: liveOrBand
 } & (
-	| { liveOrBand: 'live'; playlist?: Playlist; detail: Playlist } // playlistはオプショナルに変更
+	| { liveOrBand: 'live'; playlist?: Playlist; detail: Playlist }
 	| { liveOrBand: 'band'; playlist: Playlist; detail: Video }
 )
 
 const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 	const router = useRouter()
 
-	// liveOrBand === 'band' の場合の playlist を Props から取得、存在しない場合は detail.playlist を使用
 	const currentPlaylist =
 		liveOrBand === 'band'
 			? playlist
 			: liveOrBand === 'live'
-				? detail // live の場合は detail が Playlist 型
+				? detail
 				: undefined
 
 	const videoId =
@@ -53,12 +52,12 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 					>
 						動画詳細
 					</div>
-					<div className="w-full max-w-xl md:max-w-2xl lg:max-w-3xl my-2">
+					<div className="w-full max-w-xl md:max-w-2xl my-2">
 						{videoId && (
-							<div className="aspect-video">
-								<YouTubeEmbed
+							<div className="aspect-video lg:aspect-auto">
+								<lite-youtube
 									videoid={videoId}
-									params="controls=1&showinfo=0&rel=0"
+									className='mx-auto w-full'
 								/>
 							</div>
 						)}
@@ -78,7 +77,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								{currentTags.length > 0 && (
 									<Tags
 										tags={currentTags}
-										size="text-xs" // 修正: 固定値に変更
+										size="text-xs"
 										isLink
 										liveOrBand={liveOrBand}
 									/>
@@ -89,6 +88,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								id={entityId}
 								currentTags={currentTags}
 								liveOrBand={liveOrBand}
+								isFullButton={true}
 							/>
 						</div>
 						<button
@@ -106,7 +106,6 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							YouTubeで見る <HiOutlineExternalLink size={20} className="ml-1" />
 						</button>
 					</div>
-					{/* 関連プレイリスト */}
 					<div
 						className="flex flex-col items-center gap-y-2 mt-6 p-3 border rounded-lg shadow-sm w-full max-w-xl md:max-w-2xl lg:max-w-3xl cursor-pointer hover:bg-base-200 transition"
 						onClick={() => {
@@ -125,7 +124,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						<div className="flex flex-col sm:flex-row w-full justify-start items-center gap-2 sm:gap-3">
 							{currentPlaylist.videos?.[0]?.videoId && (
 								<div className="w-full sm:w-1/3 lg:w-1/4 flex-shrink-0">
-									<div className="aspect-video rounded overflow-hidden">
+									<div className="aspect-video lg:aspect-auto rounded overflow-hidden">
 										<lite-youtube
 											videoid={currentPlaylist.videos[0].videoId}
 											playlistid={currentPlaylist.playlistId}
@@ -160,7 +159,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 					>
 						プレイリスト詳細
 					</div>
-					<div className="w-full max-w-xl md:max-w-2xl lg:max-w-3xl my-2">
+					<div className="w-full max-w-xl md:max-w-2xl my-2">
 						{detail.videos?.[0]?.videoId && (
 							<div className="aspect-video">
 								<lite-youtube
@@ -193,6 +192,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								id={entityId}
 								currentTags={currentTags}
 								liveOrBand={liveOrBand}
+								isFullButton={true}
 							/>
 						</div>
 						<button

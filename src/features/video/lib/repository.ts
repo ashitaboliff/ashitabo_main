@@ -80,7 +80,6 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 		});
 		const existingVideoIds = new Set(existingVideos.map(v => v.videoId));
 
-		// 新規プレイリストデータと新規ビデオデータを準備
 		const newPlaylistsToCreate = playlists
 			.filter(p => !existingPlaylistIds.has(p.playlistId))
 			.map(p => ({
@@ -88,8 +87,7 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 				title: p.title,
 				link: p.link,
 				liveDate: p.liveDate,
-				// tags: p.tags, // createManyではリレーションや配列のデフォルト以外の初期化が複雑な場合があるため、別途検討
-			}));
+			}))
 
 		const newVideosToCreate = playlists.flatMap(p =>
 			p.videos
@@ -102,7 +100,7 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 					playlistId: p.playlistId,
 					// tags: v.tags,
 				}))
-		);
+		)
 
 		// トランザクション内で新規データのみを一括作成
 		// createMany はリレーションシップのネストした作成をサポートしていないため、
@@ -116,7 +114,7 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 			await prisma.playlist.createMany({
 				data: newPlaylistsToCreate,
 				skipDuplicates: true, // 念のため重複をスキップ
-			});
+			})
 		}
 
 		if (newVideosToCreate.length > 0) {
@@ -128,7 +126,7 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 			await prisma.video.createMany({
 				data: newVideosToCreate,
 				skipDuplicates: true, // 念のため重複をスキップ
-			});
+			})
 		}
 
 		// 注意: この方法では既存データの更新は行われません。
@@ -137,8 +135,8 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 		// 今回はユーザーの「新規のデータのみをinsert」という要望を優先します。
 
 	} catch (error) {
-		console.error("Error in createPlaylistBatch:", error);
-		throw error; // エラーを呼び出し元にスローして処理させる
+		console.error("Error in createPlaylistBatch:", error)
+		throw error
 	}
 }
 
@@ -187,165 +185,175 @@ export const getVideoById = async (id: string) => {
 export async function searchYoutubeDetails(
 	query: YoutubeSearchQuery,
 ): Promise<{ results: YoutubeDetail[]; totalCount: number }> {
-	try {
-		const {
-			liveOrBand,
-			bandName,
-			liveName,
-			tag,
-			tagSearchMode = 'or',
-			sort,
-			page,
-			videoPerPage,
-		} = query
-
-		const pageNumber = Number(page) || 1
-		const videoPerPageNumber = Number(videoPerPage) || 10
-
-		let results: YoutubeDetail[] = []
-		let totalCount = 0
-
-		if (liveOrBand === 'live') {
-			const [playlists, count] = await Promise.all([
-				prisma.playlist.findMany({
-					where: {
-						AND: [
-							liveName && liveName !== ''
-								? { title: { contains: liveName } }
-								: {},
-							bandName && bandName !== ''
-								? {
-										videos: {
-											some: {
-												title: { contains: bandName },
+	async function fetchYoutubeDetails() {
+		try {
+			const {
+				liveOrBand,
+				bandName,
+				liveName,
+				tag,
+				tagSearchMode = 'or',
+				sort,
+				page,
+				videoPerPage,
+			} = query
+	
+			const pageNumber = Number(page) || 1
+			const videoPerPageNumber = Number(videoPerPage) || 10
+	
+			let results: YoutubeDetail[] = []
+			let totalCount = 0
+	
+			if (liveOrBand === 'live') {
+				const [playlists, count] = await Promise.all([
+					prisma.playlist.findMany({
+						where: {
+							AND: [
+								liveName && liveName !== ''
+									? { title: { contains: liveName } }
+									: {},
+								bandName && bandName !== ''
+									? {
+											videos: {
+												some: {
+													title: { contains: bandName },
+												},
 											},
-										},
-									}
-								: {},
-							tag && tag.length > 0
-								? tagSearchMode === 'and'
-									? { tags: { hasEvery: tag } }
-									: { tags: { hasSome: tag } }
-								: {},
-						],
-					},
-					include: {
-						videos: true,
-					},
-					orderBy: {
-						liveDate: sort === 'new' ? 'desc' : 'asc',
-					},
-					skip: (pageNumber - 1) * videoPerPageNumber,
-					take: videoPerPageNumber,
-				}),
-				prisma.playlist.count({
-					where: {
-						AND: [
-							liveName && liveName !== ''
-								? { title: { contains: liveName } }
-								: {},
-							bandName && bandName !== ''
-								? {
-										videos: {
-											some: {
-												title: { contains: bandName },
+										}
+									: {},
+								tag && tag.length > 0
+									? tagSearchMode === 'and'
+										? { tags: { hasEvery: tag } }
+										: { tags: { hasSome: tag } }
+									: {},
+							],
+						},
+						include: {
+							videos: true,
+						},
+						orderBy: {
+							liveDate: sort === 'new' ? 'desc' : 'asc',
+						},
+						skip: (pageNumber - 1) * videoPerPageNumber,
+						take: videoPerPageNumber,
+					}),
+					prisma.playlist.count({
+						where: {
+							AND: [
+								liveName && liveName !== ''
+									? { title: { contains: liveName } }
+									: {},
+								bandName && bandName !== ''
+									? {
+											videos: {
+												some: {
+													title: { contains: bandName },
+												},
 											},
-										},
-									}
-								: {},
-							tag && tag.length > 0
-								? tagSearchMode === 'and'
-									? { tags: { hasEvery: tag } }
-									: { tags: { hasSome: tag } }
-								: {},
-						],
-					},
-				}),
-			])
-
-			results = playlists.map((playlist) => ({
-				id: playlist.playlistId,
-				title: playlist.title,
-				link: playlist.link,
-				tags: playlist.tags,
-				liveDate: playlist.liveDate,
-				liveOrBand: 'live',
-				playlistId: undefined,
-				playlistTitle: undefined,
-				videoId: playlist.videos[0].videoId,
-			}))
-			totalCount = count
-		} else if (liveOrBand === 'band') {
-			const [videos, count] = await Promise.all([
-				prisma.video.findMany({
-					where: {
-						AND: [
-							bandName && bandName !== ''
-								? { title: { contains: bandName } }
-								: {},
-							liveName && liveName !== ''
-								? {
-										playlist: {
-											title: { contains: liveName },
-										},
-									}
-								: {},
-							tag && tag.length > 0
-								? tagSearchMode === 'and'
-									? { tags: { hasEvery: tag } }
-									: { tags: { hasSome: tag } }
-								: {},
-						],
-					},
-					include: {
-						playlist: true,
-					},
-					orderBy: {
-						liveDate: sort === 'new' ? 'desc' : 'asc',
-					},
-					skip: (pageNumber - 1) * videoPerPageNumber,
-					take: videoPerPageNumber,
-				}),
-				prisma.video.count({
-					where: {
-						AND: [
-							bandName && bandName !== ''
-								? { title: { contains: bandName } }
-								: {},
-							liveName && liveName !== ''
-								? {
-										playlist: {
-											title: { contains: liveName },
-										},
-									}
-								: {},
-							tag && tag.length > 0
-								? tagSearchMode === 'and'
-									? { tags: { hasEvery: tag } }
-									: { tags: { hasSome: tag } }
-								: {},
-						],
-					},
-				}),
-			])
-
-			results = videos.map((video) => ({
-				id: video.videoId,
-				title: video.title,
-				link: video.link,
-				tags: video.tags,
-				liveDate: video.liveDate,
-				liveOrBand: 'band',
-				playlistId: video.playlistId,
-				playlistTitle: video.playlist.title,
-			}))
-			totalCount = count
+										}
+									: {},
+								tag && tag.length > 0
+									? tagSearchMode === 'and'
+										? { tags: { hasEvery: tag } }
+										: { tags: { hasSome: tag } }
+									: {},
+							],
+						},
+					}),
+				])
+	
+				results = playlists.map((playlist) => ({
+					id: playlist.playlistId,
+					title: playlist.title,
+					link: playlist.link,
+					tags: playlist.tags,
+					liveDate: playlist.liveDate,
+					liveOrBand: 'live',
+					playlistId: undefined,
+					playlistTitle: undefined,
+					videoId: playlist.videos[0].videoId,
+				}))
+				totalCount = count
+			} else if (liveOrBand === 'band') {
+				const [videos, count] = await Promise.all([
+					prisma.video.findMany({
+						where: {
+							AND: [
+								bandName && bandName !== ''
+									? { title: { contains: bandName } }
+									: {},
+								liveName && liveName !== ''
+									? {
+											playlist: {
+												title: { contains: liveName },
+											},
+										}
+									: {},
+								tag && tag.length > 0
+									? tagSearchMode === 'and'
+										? { tags: { hasEvery: tag } }
+										: { tags: { hasSome: tag } }
+									: {},
+							],
+						},
+						include: {
+							playlist: true,
+						},
+						orderBy: {
+							liveDate: sort === 'new' ? 'desc' : 'asc',
+						},
+						skip: (pageNumber - 1) * videoPerPageNumber,
+						take: videoPerPageNumber,
+					}),
+					prisma.video.count({
+						where: {
+							AND: [
+								bandName && bandName !== ''
+									? { title: { contains: bandName } }
+									: {},
+								liveName && liveName !== ''
+									? {
+											playlist: {
+												title: { contains: liveName },
+											},
+										}
+									: {},
+								tag && tag.length > 0
+									? tagSearchMode === 'and'
+										? { tags: { hasEvery: tag } }
+										: { tags: { hasSome: tag } }
+									: {},
+							],
+						},
+					}),
+				])
+	
+				results = videos.map((video) => ({
+					id: video.videoId,
+					title: video.title,
+					link: video.link,
+					tags: video.tags,
+					liveDate: video.liveDate,
+					liveOrBand: 'band',
+					playlistId: video.playlistId,
+					playlistTitle: video.playlist.title,
+				}))
+				totalCount = count
+			}
+	
+			return { results, totalCount }
+		} catch (error) {
+			throw error
 		}
-
-		return { results, totalCount }
-	} catch (error) {
-		throw error
 	}
+
+	const cacheKey = JSON.stringify(query);
+	
+	const cachedResult = unstable_cache(fetchYoutubeDetails, [cacheKey], {
+		tags: ['youtube'],
+	});
+	
+	return cachedResult();
 }
 
 export const getPlaylist = async () => {
@@ -373,8 +381,8 @@ export const updateTags = async ({
 	tags,
 	liveOrBand,
 }: {
-	id: string // playlistId or videoId
-	tags: string[] // 既存のtagを含めて全てのtagを更新する、新規のtagは配列の最後に追加する
+	id: string
+	tags: string[]
 	liveOrBand: liveOrBand
 }): Promise<void> => {
 	try {

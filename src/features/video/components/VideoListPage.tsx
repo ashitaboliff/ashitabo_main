@@ -1,8 +1,9 @@
 'use client'
 
 import LocalFont from 'next/font/local'
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react' // useEffect をインポート
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
+import { useSession } from 'next-auth/react' // useSession をインポート
 import { YoutubeDetail, YoutubeSearchQuery } from '@/features/video/types'
 import { ErrorType } from '@/utils/types/responseTypes'
 import SelectFieldNumber from '@/components/ui/atoms/SelectFieldNumber'
@@ -64,13 +65,34 @@ const VideoListPage = ({
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const router = useRouter()
+	const { data: session } = useSession() // session を取得
 	const [pageMax, setPageMax] = useState<number>(initialPageMax)
 	const [youtubeDetails, setYoutubeDetails] = useState<YoutubeDetail[]>(initialYoutubeDetails)
-	const [isLoading, setIsLoading] = useState<boolean>(initialIsLoading) // Use prop for initial loading state
-	const [error, setError] = useState<ErrorType | undefined>(initialError) // Use prop for initial error state
+	const [isLoading, setIsLoading] = useState<boolean>(initialIsLoading)
+	const [error, setError] = useState<ErrorType | undefined>(initialError)
 	const [isPending, startTransition] = useTransition()
+	// const [isTagModalOpen, setIsTagModalOpen] = useState(false) // TagEditPopup側で管理するため不要
+	const [selectedVideoForTagEdit, setSelectedVideoForTagEdit] =
+		useState<YoutubeDetail | null>(null)
 
-	const currentQuery = parseSearchParams(searchParams) 
+	// Propsの変更を検知してステートを更新
+	useEffect(() => {
+		setYoutubeDetails(initialYoutubeDetails)
+	}, [initialYoutubeDetails])
+
+	useEffect(() => {
+		setPageMax(initialPageMax)
+	}, [initialPageMax])
+
+	useEffect(() => {
+		setIsLoading(initialIsLoading)
+	}, [initialIsLoading])
+
+	useEffect(() => {
+		setError(initialError)
+	}, [initialError])
+
+	const currentQuery = parseSearchParams(searchParams)
 	const isSearching = searchParams.toString() !== ''
 
 	const updateQueryAndNavigate = (
@@ -109,6 +131,7 @@ const VideoListPage = ({
 			}
 		})
 		router.replace(`${pathname}?${newParams.toString()}`)
+		router.refresh()
 	}
 
 	const handleSearch = (searchQuery: Partial<YoutubeSearchQuery>) => {
@@ -192,6 +215,7 @@ const VideoListPage = ({
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
 						{youtubeDetails.map((youtubeDetail) => (
 							<VideoItem
+								session={session}
 								key={youtubeDetail.id}
 								youtubeDetail={youtubeDetail}
 								liveOrBand={currentQuery.liveOrBand}
