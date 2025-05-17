@@ -1,9 +1,10 @@
 'use server'
 
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
-import { createMetaData } from '@/utils/MetaData'
-import ScheduleCreatePage from '@/components/schedule/CreatePage'
+import { getUserIdWithNames } from '@/features/schedule/components/actions' // Import the action
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
+import { createMetaData } from '@/utils/metaData'
+import ScheduleCreatePage from '@/features/schedule/components/CreatePage'
 
 export async function metadata() {
 	return createMetaData({
@@ -14,13 +15,32 @@ export async function metadata() {
 
 const Page = async () => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (isSession !== 'profile' || !session) {
-		await redirectFrom('/auth/signin', '/schedule/new')
-		return <SessionForbidden />
+	// sessionStatusが 'profile' でない場合、または session自体がない場合はリダイレクト
+	if (sessionStatus !== 'profile' || !session?.user?.id) {
+		const redirectPath = `/auth/signin?from=${encodeURIComponent('/schedule/new')}`
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
 	}
-	return <ScheduleCreatePage session={session} />
+	// ここに来る場合は sessionStatus === 'profile' かつ session.user.id が存在する
+
+	const usersRes = await getUserIdWithNames()
+	let initialUsers: Record<string, string> = {}
+	if (usersRes.status === 200) {
+		initialUsers = usersRes.response.reduce(
+			(acc, user) => {
+				acc[user.id ?? ''] = user.name ?? ''
+				return acc
+			},
+			{} as Record<string, string>,
+		)
+	} else {
+		// Handle error case, e.g., log it or show an error message
+		console.error('Failed to fetch mention users:', usersRes.response)
+	}
+
+	return <ScheduleCreatePage session={session} initialUsers={initialUsers} />
 }
 
 export default Page

@@ -1,9 +1,9 @@
 'use server'
 
-import SigninPage from '@/components/auth/SigninPage'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
+import SigninPage from '@/features/auth/components/SigninPage'
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({
@@ -18,16 +18,20 @@ export async function metadata() {
  */
 const Signin = async () => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (isSession === 'profile') {
-		await redirectFrom('/user', '/auth/signin')
-		return <SessionForbidden />
-	} else if (isSession === 'session') {
-		await redirectFrom('/auth/signin/setting', '/auth/signin')
-		return <SessionForbidden />
+	if (sessionStatus === 'profile') {
+		// 既にプロファイル設定済みならユーザーページへ
+		const redirectPath = `/user?from=${encodeURIComponent('/auth/signin')}`
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
+	} else if (sessionStatus === 'session') {
+		// セッションはあるがプロファイル未設定なら設定ページへ
+		const redirectPath = `/auth/signin/setting?from=${encodeURIComponent('/auth/signin')}`
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
 	}
-
+	// 'no-session' の場合、または予期せぬ状態の場合はサインインページを表示
 	return <SigninPage />
 }
 

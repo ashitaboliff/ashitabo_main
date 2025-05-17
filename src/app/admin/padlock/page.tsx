@@ -1,13 +1,13 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import PadLockEdit from '@/components/admin/PadLockEdit'
+import PadLockEdit from '@/features/admin/components/PadLockEdit'
 import {
 	getUserRoleAction,
 	getAllPadLocksAction,
-} from '@/components/admin/action'
+} from '@/features/admin/components/action'
 import { getSession } from '@/app/actions'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 
 const Page = async () => {
 	const session = await getSession()

@@ -1,6 +1,6 @@
 import LocalFont from 'next/font/local'
 import HomePageHeader from '@/components/home/HomePageHeader'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 const gkktt = LocalFont({
 	src: '../../lib/fonts/851Gkktt_005.woff',

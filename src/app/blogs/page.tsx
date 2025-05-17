@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 import HomePageHeader from '@/components/home/HomePageHeader'
 
 const inter = Inter({ subsets: ['latin'] })

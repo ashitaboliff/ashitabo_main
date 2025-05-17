@@ -3,7 +3,7 @@
 import blogs from '@/app/blogs/20250130/blogsJson'
 import { LuCalendarSync, LuCalendar } from 'react-icons/lu'
 import parse from 'html-react-parser'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({
@@ -16,7 +16,7 @@ export async function metadata() {
 
 const Page = async () => {
 	return (
-		<div className="container mx-auto bg-bg-white p-4 pb-8 rounded-lg">
+		<div className="container mx-auto bg-white p-4 pb-8 rounded-lg">
 			<h1 className="text-3xl font-bold text-center mt-4">
 				アップデートのお知らせ
 			</h1>
