@@ -13,21 +13,21 @@ import AddCalendarPopup from '@/components/ui/molecules/AddCalendarPopup'
 import { getBookingByUserIdAction } from '@/features/booking/components/actions' // This action will be called by the parent Server Component
 
 interface UserBookingLogsProps {
-  session: Session; // Or just userId: string if that's all that's needed from session by parent for fetching
-  initialBookings: Booking[];
-  initialPageMax: number;
-  initialCurrentPage: number;
-  initialLogsPerPage: number;
-  initialSort: 'new' | 'old';
+	session: Session // Or just userId: string if that's all that's needed from session by parent for fetching
+	initialBookings: Booking[]
+	initialPageMax: number
+	initialCurrentPage: number
+	initialLogsPerPage: number
+	initialSort: 'new' | 'old'
 }
 
 const UserBookingLogs = ({
-  session,
-  initialBookings,
-  initialPageMax,
-  initialCurrentPage,
-  initialLogsPerPage,
-  initialSort,
+	session,
+	initialBookings,
+	initialPageMax,
+	initialCurrentPage,
+	initialLogsPerPage,
+	initialSort,
 }: UserBookingLogsProps) => {
 	const router = useRouter()
 	const [currentPage, setCurrentPage] = useState<number>(initialCurrentPage)
@@ -41,26 +41,32 @@ const UserBookingLogs = ({
 	const addCalendarPopupRef = useRef<PopupRef>(undefined)
 
 	// bookings and pageMax are now derived from props
-	const bookings = initialBookings;
-	const pageMax = initialPageMax;
+	const bookings = initialBookings
+	const pageMax = initialPageMax
 
 	const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    router.push(`?page=${page}&limit=${logsPerPage}&sort=${sort}`, { scroll: false });
-  };
+		setCurrentPage(page)
+		router.push(`?page=${page}&limit=${logsPerPage}&sort=${sort}`, {
+			scroll: false,
+		})
+	}
 
-  const handleLogsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLogsPerPage = parseInt(e.target.value);
-    setLogsPerPage(newLogsPerPage);
-    setCurrentPage(1); // Reset to first page when logs per page changes
-    router.push(`?page=1&limit=${newLogsPerPage}&sort=${sort}`, { scroll: false });
-  };
+	const handleLogsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const newLogsPerPage = parseInt(e.target.value)
+		setLogsPerPage(newLogsPerPage)
+		setCurrentPage(1) // Reset to first page when logs per page changes
+		router.push(`?page=1&limit=${newLogsPerPage}&sort=${sort}`, {
+			scroll: false,
+		})
+	}
 
-  const handleSortChange = (newSort: 'new' | 'old') => {
-    setSort(newSort);
-    setCurrentPage(1); // Reset to first page when sort changes
-    router.push(`?page=1&limit=${logsPerPage}&sort=${newSort}`, { scroll: false });
-  };
+	const handleSortChange = (newSort: 'new' | 'old') => {
+		setSort(newSort)
+		setCurrentPage(1) // Reset to first page when sort changes
+		router.push(`?page=1&limit=${logsPerPage}&sort=${newSort}`, {
+			scroll: false,
+		})
+	}
 
 	return (
 		<div className="flex flex-col justify-center">
@@ -94,7 +100,7 @@ const UserBookingLogs = ({
 						onChange={() => handleSortChange('old')}
 					/>
 				</div>
-				<table className="table table-zebra table-sm w-full max-w-36 justify-center my-2">
+				<table className="table table-zebra table-sm w-full justify-center my-2">
 					<thead>
 						<tr>
 							<th className="font-bold">予約日</th>
@@ -133,6 +139,7 @@ const UserBookingLogs = ({
 			{popupData && (
 				<>
 					<Popup
+						id={`logs-popup-${popupData.id}`}
 						open={isPopupOpen}
 						onClose={() => setIsPopupOpen(false)}
 						ref={popupRef}

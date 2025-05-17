@@ -183,7 +183,7 @@ const SigninSetting = () => {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center p-4 bg-bg-white shadow-lg rounded-lg">
+		<div className="flex flex-col items-center justify-center p-4 bg-white shadow-lg rounded-lg">
 			<h1 className="text-2xl font-bold">ユーザ設定</h1>
 			<form
 				className="flex flex-col space-y-4 w-full max-w-xs"
@@ -283,6 +283,7 @@ const SigninSetting = () => {
 				</p>
 			)}
 			<Popup
+				id="signin-setting-popup"
 				ref={popupRef}
 				open={popupOpen}
 				title="保存完了"

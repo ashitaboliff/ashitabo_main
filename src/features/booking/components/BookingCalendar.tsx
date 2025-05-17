@@ -23,7 +23,7 @@ const BookingCalendar = memo(
 
 		return (
 			<div className="flex justify-center">
-				<table className="w-auto border border-base-200 table-pin-rows table-pin-cols bg-bg-white">
+				<table className="w-auto border border-base-200 table-pin-rows table-pin-cols bg-white">
 					<thead>
 						<tr>
 							<th className="border border-base-200 w-11 sm:w-16"></th>

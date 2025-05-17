@@ -45,17 +45,17 @@ type ResultType = {
 }
 
 interface EditFormPageProps {
-  bookingDetail: BookingDetailProps;
-  session: Session;
-  initialBookingResponse: BookingResponse | null; // Add prop for calendar data
-  initialViewDay: Date; // Add prop for initial calendar view day
+	bookingDetail: BookingDetailProps
+	session: Session
+	initialBookingResponse: BookingResponse | null // Add prop for calendar data
+	initialViewDay: Date // Add prop for initial calendar view day
 }
 
 const EditFormPage = ({
 	bookingDetail,
 	session,
-  initialBookingResponse,
-  initialViewDay,
+	initialBookingResponse,
+	initialViewDay,
 }: EditFormPageProps) => {
 	const router = useNProgressRouter()
 	const [editState, setEditState] = useState<'edit' | 'select'>('select')
@@ -134,12 +134,13 @@ const EditFormPage = ({
 					bookingDetail={bookingDetail}
 					session={session}
 					setEditState={setEditState}
-          initialBookingResponse={initialBookingResponse} // Pass down the prop
-          initialViewDay={initialViewDay} // Pass down the prop
+					initialBookingResponse={initialBookingResponse} // Pass down the prop
+					initialViewDay={initialViewDay} // Pass down the prop
 				/>
 			)}
 
 			<Popup
+				id="booking-delete-popup"
 				ref={deletePopupRef}
 				title="予約削除"
 				maxWidth="sm"
@@ -170,6 +171,7 @@ const EditFormPage = ({
 			</Popup>
 
 			<Popup
+				id="booking-delete-success-popup"
 				ref={successPopupRef}
 				title="予約削除"
 				maxWidth="sm"
@@ -201,15 +203,15 @@ const MemoBookingEditForm = memo(
 		bookingDetail,
 		session,
 		setEditState,
-    initialBookingResponse, // Add new prop for initial booking data for the calendar view
-    initialViewDay, // Add new prop for the initial view day
+		initialBookingResponse, // Add new prop for initial booking data for the calendar view
+		initialViewDay, // Add new prop for the initial view day
 	}: {
 		BookingTime: string[]
 		bookingDetail: BookingDetailProps
 		session: Session
 		setEditState: (state: 'edit' | 'select') => void
-    initialBookingResponse: BookingResponse | null;
-    initialViewDay: Date;
+		initialBookingResponse: BookingResponse | null
+		initialViewDay: Date
 	}) => {
 		const router = useNProgressRouter() // Use aliased router for navigation
 		const pathname = usePathname() // Get current pathname
@@ -238,16 +240,18 @@ const MemoBookingEditForm = memo(
 		const ableViewDayMax = 27
 		const ableViewDayMin = 1
 		// const [bookingResponse, setBookingResponse] = useState<BookingResponse>() // Data comes from prop
-		const bookingResponse = initialBookingResponse;
+		const bookingResponse = initialBookingResponse
 
 		const [loading, setLoading] = useState<boolean>(false) // For form submission, not for fetching bookingResponse
 
 		const updateViewDayInUrl = (newViewDay: Date) => {
-			const newViewStartDate = DateToDayISOstring(newViewDay).split('T')[0];
-			const currentParams = new URLSearchParams(Array.from(searchParams.entries()));
-			currentParams.set('viewStartDate', newViewStartDate);
-			router.push(`${pathname}?${currentParams.toString()}`, { scroll: false });
-			setViewDay(newViewDay);
+			const newViewStartDate = DateToDayISOstring(newViewDay).split('T')[0]
+			const currentParams = new URLSearchParams(
+				Array.from(searchParams.entries()),
+			)
+			currentParams.set('viewStartDate', newViewStartDate)
+			router.push(`${pathname}?${currentParams.toString()}`, { scroll: false })
+			setViewDay(newViewDay)
 		}
 
 		let nextAble =
@@ -260,13 +264,13 @@ const MemoBookingEditForm = memo(
 				: true
 
 		const nextWeek = () => {
-			const newViewDay = addDays(viewDay, viewDayMax);
-			updateViewDayInUrl(newViewDay);
+			const newViewDay = addDays(viewDay, viewDayMax)
+			updateViewDayInUrl(newViewDay)
 		}
 
 		const prevWeek = () => {
-			const newViewDay = subDays(viewDay, viewDayMax);
-			updateViewDayInUrl(newViewDay);
+			const newViewDay = subDays(viewDay, viewDayMax)
+			updateViewDayInUrl(newViewDay)
 		}
 
 		const {
@@ -420,6 +424,7 @@ const MemoBookingEditForm = memo(
 				</div>
 
 				<Popup
+					id="booking-edit-calendar-popup"
 					ref={calendarRef}
 					title="カレンダー"
 					maxWidth="lg"
@@ -463,7 +468,7 @@ const MemoBookingEditForm = memo(
 								setBookingTime={setBookingTime}
 								setIsPaid={setIsPaid}
 								setCalendarOpen={setCalendarOpen}
-                setValue={setValue} // Pass setValue to EditCalendar
+								setValue={setValue} // Pass setValue to EditCalendar
 							/>
 						) : (
 							<div className="flex justify-center">
@@ -483,6 +488,7 @@ const MemoBookingEditForm = memo(
 				</Popup>
 
 				<Popup
+					id="booking-edit-success-popup"
 					ref={successPopupRef}
 					title={successPopupOpen ? '予約編集' : ''}
 					maxWidth="sm"

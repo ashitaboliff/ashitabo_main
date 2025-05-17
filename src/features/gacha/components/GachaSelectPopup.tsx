@@ -36,14 +36,14 @@ const ImageCarousel = () => {
 	const ref = useRef<GachaPickupPopupRef>(undefined)
 
 	useEffect(() => {
-    // When currentIndex changes, immediately set packViewed to false
-    // then set it to true after a delay to allow for transition/loading effect.
-    setPackViewed(false);
-    const timer = setTimeout(() => {
-      setPackViewed(true);
-    }, 300); // Adjusted delay to 300ms, can be tuned
+		// When currentIndex changes, immediately set packViewed to false
+		// then set it to true after a delay to allow for transition/loading effect.
+		setPackViewed(false)
+		const timer = setTimeout(() => {
+			setPackViewed(true)
+		}, 300) // Adjusted delay to 300ms, can be tuned
 
-    return () => clearTimeout(timer); // Cleanup timer on unmount or if currentIndex changes again
+		return () => clearTimeout(timer) // Cleanup timer on unmount or if currentIndex changes again
 	}, [currentIndex])
 
 	const updateIndex = (direction: 'next' | 'prev') => {
@@ -98,7 +98,7 @@ const ImageCarousel = () => {
 							decoding="auto"
 						/>
 						<div
-							className="pack-text absolute left-0 w-full text-2xl font-bold bg-bg-dark bg-opacity-50 text-white text-center py-1 -translate-y-80 z-30"
+							className="pack-text absolute left-0 w-full text-2xl font-bold bg-base-content/50 text-white text-center py-1 -translate-y-80 z-30"
 							onClick={gachaPickup}
 						>
 							このパックを引く

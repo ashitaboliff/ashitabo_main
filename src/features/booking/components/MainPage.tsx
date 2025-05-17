@@ -33,7 +33,7 @@ const MainPage = ({
 	const ableViewDayMax = 27
 	const ableViewDayMin = 8
 	// bookingData is now directly from props: initialBookingData
-	const bookingData = initialBookingData;
+	const bookingData = initialBookingData
 	const [isLoading, setIsLoading] = useState<boolean>(false) // This might be removed if parent handles loading via Suspense
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const ReadMePopupRef = useRef<PopupRef>(undefined)
@@ -48,11 +48,11 @@ const MainPage = ({
 	const componentBaseDate = initialViewDay
 
 	const updateViewDayInUrl = (newViewDay: Date) => {
-    const newViewStartDate = DateToDayISOstring(newViewDay).split('T')[0];
-    // Assuming the current path is /booking
-    router.push(`/booking?viewStartDate=${newViewStartDate}`, { scroll: false });
-    setViewDay(newViewDay);
-  };
+		const newViewStartDate = DateToDayISOstring(newViewDay).split('T')[0]
+		// Assuming the current path is /booking
+		router.push(`/booking?viewStartDate=${newViewStartDate}`, { scroll: false })
+		setViewDay(newViewDay)
+	}
 
 	let nextAble =
 		addDays(viewDay, viewDayMax) <= addDays(componentBaseDate, ableViewDayMax)
@@ -64,19 +64,20 @@ const MainPage = ({
 			: true
 
 	const nextWeek = () => {
-		const newViewDay = addDays(viewDay, viewDayMax);
-    updateViewDayInUrl(newViewDay);
+		const newViewDay = addDays(viewDay, viewDayMax)
+		updateViewDayInUrl(newViewDay)
 	}
 
 	const prevWeek = () => {
-		const newViewDay = subDays(viewDay, viewDayMax);
-    updateViewDayInUrl(newViewDay);
+		const newViewDay = subDays(viewDay, viewDayMax)
+		updateViewDayInUrl(newViewDay)
 	}
 
 	// getBooking function and its useEffect are removed. Data is fetched by parent.
 
 	useEffect(() => {
-		if (errorStatus && !initialBookingData) { // Check against initialBookingData
+		if (errorStatus && !initialBookingData) {
+			// Check against initialBookingData
 			setError({
 				status: errorStatus,
 				response:
@@ -90,29 +91,33 @@ const MainPage = ({
 		<div>
 			<div className="flex justify-center space-x-2 mx-2">
 				<button
-					className="btn btn-blue"
+					className="btn btn-info text-white"
 					onClick={async () => {
-            // This button now only needs to revalidate, data fetching is via URL change
-            setIsLoading(true); // Show loading for revalidation
-						await bookingRevalidateTagAction({ tag: 'booking' }); // Revalidate booking data
-						await bookingRevalidateTagAction({ tag: 'banBooking' });
-            // Force re-fetch by navigating to the current URL (or a slightly modified one if needed to trigger RSC)
-            // For simplicity, we can rely on parent re-fetching due to revalidation if data sources are shared,
-            // or explicitly trigger a navigation to current path to force RSC refresh.
-            // router.push(router.asPath, { scroll: false }); // This might be needed if revalidation alone isn't enough
-            // For now, let's assume revalidation is sufficient or parent handles refresh.
-            // If direct refresh is needed to reflect revalidated data:
-            const newSearchParams = new URLSearchParams(Array.from(currentSearchParams.entries()));
-            // Optionally add a cache-busting param if needed, though revalidateTag should handle server-side cache
-            // newSearchParams.set('_t', Date.now().toString());
-            router.push(`${pathname}?${newSearchParams.toString()}`, { scroll: false });
-            setIsLoading(false);
+						// This button now only needs to revalidate, data fetching is via URL change
+						setIsLoading(true) // Show loading for revalidation
+						await bookingRevalidateTagAction({ tag: 'booking' }) // Revalidate booking data
+						await bookingRevalidateTagAction({ tag: 'banBooking' })
+						// Force re-fetch by navigating to the current URL (or a slightly modified one if needed to trigger RSC)
+						// For simplicity, we can rely on parent re-fetching due to revalidation if data sources are shared,
+						// or explicitly trigger a navigation to current path to force RSC refresh.
+						// router.push(router.asPath, { scroll: false }); // This might be needed if revalidation alone isn't enough
+						// For now, let's assume revalidation is sufficient or parent handles refresh.
+						// If direct refresh is needed to reflect revalidated data:
+						const newSearchParams = new URLSearchParams(
+							Array.from(currentSearchParams.entries()),
+						)
+						// Optionally add a cache-busting param if needed, though revalidateTag should handle server-side cache
+						// newSearchParams.set('_t', Date.now().toString());
+						router.push(`${pathname}?${newSearchParams.toString()}`, {
+							scroll: false,
+						})
+						setIsLoading(false)
 					}}
 				>
 					コマ表を更新
 				</button>
 				<button
-					className="btn btn-outline btn-tetiary"
+					className="btn btn-outline btn-accent"
 					onClick={() => setIsPopupOpen(true)}
 				>
 					使い方の表示
@@ -149,6 +154,7 @@ const MainPage = ({
 				)}
 			</div>
 			<Popup
+				id="booking-readme-popup" // idプロパティを追加
 				ref={ReadMePopupRef}
 				title="使い方"
 				maxWidth="sm"
@@ -167,6 +173,7 @@ const MainPage = ({
 				</div>
 			</Popup>
 			<Popup
+				id="booking-error-popup" // idプロパティを追加
 				title="エラー"
 				maxWidth="sm"
 				open={errorPopupOpen}

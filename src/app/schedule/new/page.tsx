@@ -37,7 +37,7 @@ const Page = async () => {
 		)
 	} else {
 		// Handle error case, e.g., log it or show an error message
-		console.error("Failed to fetch mention users:", usersRes.response)
+		console.error('Failed to fetch mention users:', usersRes.response)
 	}
 
 	return <ScheduleCreatePage session={session} initialUsers={initialUsers} />

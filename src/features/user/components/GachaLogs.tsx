@@ -15,21 +15,21 @@ import {
 } from '@/features/gacha/components/actions'
 
 interface UserGachaLogsProps {
-  session: Session; // Or just userId: string
-  initialGachas: GachaData[];
-  initialPageMax: number;
-  initialCurrentPage: number;
-  initialLogsPerPage: number;
-  initialSort: GachaSort;
+	session: Session // Or just userId: string
+	initialGachas: GachaData[]
+	initialPageMax: number
+	initialCurrentPage: number
+	initialLogsPerPage: number
+	initialSort: GachaSort
 }
 
 const UserGachaLogs = ({
-  session,
-  initialGachas,
-  initialPageMax,
-  initialCurrentPage,
-  initialLogsPerPage,
-  initialSort,
+	session,
+	initialGachas,
+	initialPageMax,
+	initialCurrentPage,
+	initialLogsPerPage,
+	initialSort,
 }: UserGachaLogsProps) => {
 	const router = useRouter() // Added useRouter
 	// const [isLoading, setIsLoading] = useState<boolean>(false) // isLoading can be removed or handled by Suspense in parent
@@ -45,26 +45,33 @@ const UserGachaLogs = ({
 	const popupRef = useRef<GachaPreviewPopupRef>(undefined)
 
 	// gachas and pageMax are now derived from props
-	const gachas = initialGachas;
-	const pageMax = initialPageMax;
+	const gachas = initialGachas
+	const pageMax = initialPageMax
 
 	const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    router.push(`?gachaPage=${page}&gachaLimit=${logsPerPage}&gachaSort=${sort}`, { scroll: false });
-  };
+		setCurrentPage(page)
+		router.push(
+			`?gachaPage=${page}&gachaLimit=${logsPerPage}&gachaSort=${sort}`,
+			{ scroll: false },
+		)
+	}
 
-  const handleLogsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLogsPerPage = parseInt(e.target.value);
-    setLogsPerPage(newLogsPerPage);
-    setCurrentPage(1); // Reset to first page
-    router.push(`?gachaPage=1&gachaLimit=${newLogsPerPage}&gachaSort=${sort}`, { scroll: false });
-  };
+	const handleLogsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const newLogsPerPage = parseInt(e.target.value)
+		setLogsPerPage(newLogsPerPage)
+		setCurrentPage(1) // Reset to first page
+		router.push(`?gachaPage=1&gachaLimit=${newLogsPerPage}&gachaSort=${sort}`, {
+			scroll: false,
+		})
+	}
 
-  const handleSortChange = (newSort: GachaSort) => {
-    setSort(newSort);
-    setCurrentPage(1); // Reset to first page
-    router.push(`?gachaPage=1&gachaLimit=${logsPerPage}&gachaSort=${newSort}`, { scroll: false });
-  };
+	const handleSortChange = (newSort: GachaSort) => {
+		setSort(newSort)
+		setCurrentPage(1) // Reset to first page
+		router.push(`?gachaPage=1&gachaLimit=${logsPerPage}&gachaSort=${newSort}`, {
+			scroll: false,
+		})
+	}
 
 	const fetchGachaByGachaSrc = async (gachaSrc: string) => {
 		setIsPopupLoading(true)
@@ -138,22 +145,22 @@ const UserGachaLogs = ({
 						))}
 					</div>
 				) : ( */}
-					<div
-						className={`grid ${logsPerPage % 3 === 0 ? 'grid-cols-3' : 'grid-cols-5'} gap-2`}
-					>
-						{gachas.map((gacha) => (
-							<img
-								key={gacha.id}
-								src={gacha.gachaSrc}
-								alt="Gacha Preview"
-								className="w-full h-auto object-cover rounded cursor-pointer"
-								decoding="auto"
-								onClick={() => {
-									fetchGachaByGachaSrc(gacha.gachaSrc)
-								}}
-							/>
-						))}
-					</div>
+				<div
+					className={`grid ${logsPerPage % 3 === 0 ? 'grid-cols-3' : 'grid-cols-5'} gap-2`}
+				>
+					{gachas.map((gacha) => (
+						<img
+							key={gacha.id}
+							src={gacha.gachaSrc}
+							alt="Gacha Preview"
+							className="w-full h-auto object-cover rounded cursor-pointer"
+							decoding="auto"
+							onClick={() => {
+								fetchGachaByGachaSrc(gacha.gachaSrc)
+							}}
+						/>
+					))}
+				</div>
 				{/*)}*/}
 				<Pagination
 					currentPage={currentPage}

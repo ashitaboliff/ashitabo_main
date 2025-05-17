@@ -3,8 +3,8 @@ import React, {
 	forwardRef,
 	useEffect,
 	useRef,
+	ReactNode,
 } from 'react'
-import { ReactNode } from 'react'
 import clsx from 'clsx'
 
 export type PopupRef =
@@ -17,6 +17,7 @@ export type PopupRef =
 const Popup = forwardRef<
 	PopupRef,
 	{
+		id: string // Add id prop for the dialog element
 		title: string
 		children?: ReactNode
 		maxWidth?: string
@@ -24,82 +25,104 @@ const Popup = forwardRef<
 		onClose: () => void
 		className?: string
 	}
->(({ title, children, maxWidth, open, onClose, className }, ref) => {
-	const modalBoxRef = useRef<HTMLDivElement>(null)
+>(({ id, title, children, maxWidth, open, onClose, className }, ref) => {
+	const dialogRef = useRef<HTMLDialogElement>(null)
 
 	useImperativeHandle(ref, () => ({
 		show: () => {
-			// daisyUIのmodalはopen propで制御するため、このshowは実質onCloseの逆の操作を期待するが、
-			// 親コンポーネントでopen stateを管理しているので、ここでは何もしないか、
-			// 親のopen stateを変更するコールバックを別途設ける必要がある。
-			// 現状のPropsではonCloseしかないので、showの実装は難しい。
-			// そのため、親コンポーネントでopen stateをtrueにすることで表示する。
+			dialogRef.current?.showModal()
 		},
-		close: () => onClose(),
+		close: () => {
+			// Calling onClose will trigger the parent to set open to false,
+			// which in turn will call dialogRef.current?.close() in useEffect.
+			onClose()
+		},
 	}))
 
 	useEffect(() => {
+		const dialogElement = dialogRef.current
 		const handleEscKey = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') {
-				onClose()
+				onClose() // Still call onClose to update parent state
 			}
 		}
 
 		if (open) {
+			dialogElement?.showModal()
 			document.addEventListener('keydown', handleEscKey)
-			// ポップアップが開いたときに最初のフォーカス可能な要素にフォーカスを当てる (簡易的な対応)
-			// より完全なフォーカストラップは複雑になるため、ここでは省略
-			const focusableElement = modalBoxRef.current?.querySelector(
+			// Basic focus management, dialog element might handle this better.
+			const focusableElement = dialogElement?.querySelector(
 				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
 			) as HTMLElement | null
 			focusableElement?.focus()
 		} else {
+			dialogElement?.close()
 			document.removeEventListener('keydown', handleEscKey)
 		}
+
+		// Listen for the native 'close' event on the dialog
+		const handleDialogClose = () => {
+			if (open) {
+				// Prevent calling onClose if already closed by parent
+				onClose()
+			}
+		}
+		dialogElement?.addEventListener('close', handleDialogClose)
 
 		return () => {
 			document.removeEventListener('keydown', handleEscKey)
+			dialogElement?.removeEventListener('close', handleDialogClose)
 		}
 	}, [open, onClose])
 
-	if (!open) {
-		return null
-	}
+	// The dialog element should always be in the DOM to be controlled via its methods.
+	// Visibility is controlled by the `open` attribute or showModal/close methods.
 
 	return (
-		<div
+		<dialog
+			id={id}
+			ref={dialogRef}
 			className={clsx(
-				'modal modal-bottom sm:modal-middle',
-				open && 'modal-open',
+				'modal modal-bottom sm:modal-middle', // daisyUI classes for positioning
+				// 'modal-open' is not needed when using <dialog> methods
 			)}
-			onClick={onClose}
-			role="dialog"
-			aria-modal="true"
-			aria-labelledby="popup-title" // タイトル要素にid="popup-title"を付与する
+			// onClick={onClose} // Backdrop click to close is handled by <form method="dialog"> or native dialog behavior
+			aria-labelledby="popup-title" // title element should have id="popup-title"
+			// onClose={onClose} // This is a React prop, native 'close' event is handled in useEffect
 		>
 			<div
-				ref={modalBoxRef}
 				className={clsx(
-					'modal-box bg-base-100 rounded-lg shadow-lg p-6 relative', // relativeを追加して閉じるボタンを配置しやすくする
-					maxWidth ? `max-w-${maxWidth}` : 'max-w-lg', // デフォルトのmax-widthを設定
+					'modal-box bg-base-100 rounded-lg shadow-lg p-6 relative',
+					maxWidth ? `max-w-${maxWidth}` : 'max-w-lg',
 					className,
 				)}
-				onClick={(e) => e.stopPropagation()}
+				// onClick={(e) => e.stopPropagation()} // Not needed if using form method="dialog" for close button
 			>
 				<h2 id="popup-title" className="text-center mb-4 text-xl font-bold">
 					{title}
 				</h2>
-				{/* 閉じるボタンを追加 */}
-				<button
-					onClick={onClose}
-					className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-					aria-label="閉じる"
-				>
-					✕
-				</button>
+				{/* Close button using form method="dialog" */}
+				<form method="dialog" className="absolute right-2 top-2">
+					<button
+						className="btn btn-sm btn-circle btn-ghost"
+						aria-label="閉じる"
+					>
+						✕
+					</button>
+				</form>
 				<div className={`text-left`}>{children}</div>
+				{/* Optional: A main close button at the bottom */}
+				{/* <div className="modal-action">
+					<form method="dialog">
+						<button className="btn">閉じる</button>
+					</form>
+				</div> */}
 			</div>
-		</div>
+			{/* Optional: Clicking on backdrop closes the modal */}
+			{/* <form method="dialog" className="modal-backdrop">
+				<button>close</button>
+			</form> */}
+		</dialog>
 	)
 })
 

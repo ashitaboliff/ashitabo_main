@@ -18,7 +18,7 @@ const HomePageHeader = () => {
 			<div className={`absolute w-full flex justify-center`}>
 				<HomePageBar />
 			</div>
-			<div className="flex flex-col items-center justify-center mt-4 bg-bg-white bg-opacity-60 z-10">
+			<div className="flex flex-col items-center justify-center mt-4 bg-white/60 z-10">
 				<h2 className={`text-xl whitespace-nowrap`}>
 					信州大学工学部・教育学部・長野県立大学
 				</h2>

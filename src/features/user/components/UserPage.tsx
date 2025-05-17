@@ -31,21 +31,21 @@ const gkktt = LocalFont({
 })
 
 interface UserPageProps {
-  profile: Profile;
-  session: Session;
-  userRole: string;
-  gachaStatus: { status: StatusCode; response: string };
-  initialBookings: Booking[];
-  initialPageMax: number;
-  initialCurrentPage: number;
-  initialLogsPerPage: number;
-  initialSort: 'new' | 'old';
-  // Gacha Logs Props
-  initialGachas: GachaData[];
-  initialGachaPageMax: number;
-  initialGachaCurrentPage: number;
-  initialGachaLogsPerPage: number;
-  initialGachaSort: GachaSort;
+	profile: Profile
+	session: Session
+	userRole: string
+	gachaStatus: { status: StatusCode; response: string }
+	initialBookings: Booking[]
+	initialPageMax: number
+	initialCurrentPage: number
+	initialLogsPerPage: number
+	initialSort: 'new' | 'old'
+	// Gacha Logs Props
+	initialGachas: GachaData[]
+	initialGachaPageMax: number
+	initialGachaCurrentPage: number
+	initialGachaLogsPerPage: number
+	initialGachaSort: GachaSort
 }
 
 const UserPage = ({
@@ -53,16 +53,16 @@ const UserPage = ({
 	session,
 	userRole,
 	gachaStatus,
-  initialBookings,
-  initialPageMax,
-  initialCurrentPage,
-  initialLogsPerPage,
-  initialSort,
-  initialGachas,
-  initialGachaPageMax,
-  initialGachaCurrentPage,
-  initialGachaLogsPerPage,
-  initialGachaSort,
+	initialBookings,
+	initialPageMax,
+	initialCurrentPage,
+	initialLogsPerPage,
+	initialSort,
+	initialGachas,
+	initialGachaPageMax,
+	initialGachaCurrentPage,
+	initialGachaLogsPerPage,
+	initialGachaSort,
 }: UserPageProps) => {
 	const router = useRouter()
 
@@ -114,13 +114,13 @@ const UserPage = ({
 				<Tabs>
 					<Tab label={<MdOutlineEditCalendar size={24} />}>
 						<BookingLogs
-              session={session}
-              initialBookings={initialBookings}
-              initialPageMax={initialPageMax}
-              initialCurrentPage={initialCurrentPage}
-              initialLogsPerPage={initialLogsPerPage}
-              initialSort={initialSort}
-            />
+							session={session}
+							initialBookings={initialBookings}
+							initialPageMax={initialPageMax}
+							initialCurrentPage={initialCurrentPage}
+							initialLogsPerPage={initialLogsPerPage}
+							initialSort={initialSort}
+						/>
 					</Tab>
 					<Tab label={<GiCardRandom size={24} />}>
 						<div className="flex flex-col items-center mb-4 gap-y-2">
@@ -149,13 +149,13 @@ const UserPage = ({
 							)}
 						</div>
 						<GachaLogs
-              session={session}
-              initialGachas={initialGachas}
-              initialPageMax={initialGachaPageMax}
-              initialCurrentPage={initialGachaCurrentPage}
-              initialLogsPerPage={initialGachaLogsPerPage}
-              initialSort={initialGachaSort}
-            />
+							session={session}
+							initialGachas={initialGachas}
+							initialPageMax={initialGachaPageMax}
+							initialCurrentPage={initialGachaCurrentPage}
+							initialLogsPerPage={initialGachaLogsPerPage}
+							initialSort={initialGachaSort}
+						/>
 					</Tab>
 				</Tabs>
 			</div>
@@ -176,6 +176,7 @@ const UserPage = ({
 				ref={gachaPopupRef}
 			/>
 			<Popup
+				id="prov-ratio-popup" // idプロパティを追加
 				title="提供割合"
 				ref={provRatioPopupRef}
 				open={isProvRatioPopupOpen}
@@ -183,7 +184,7 @@ const UserPage = ({
 			>
 				<div className="flex flex-col items-center space-y-2 text-sm">
 					<div
-						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className}`}
+						className={`bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className}`}
 					>
 						COMMON
 					</div>
@@ -193,7 +194,7 @@ const UserPage = ({
 							width={72}
 							height={104}
 							alt="COMMON"
-							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+							className="basis-1/4 bg-base-content rounded-sm mr-4"
 						/>
 						<div className="flex flex-col justify-center gap-y-1 basis-2/3">
 							<div>全体確率: 45%</div>
@@ -202,7 +203,7 @@ const UserPage = ({
 						</div>
 					</div>
 					<div
-						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+						className={`bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
 					>
 						RARE
 					</div>
@@ -212,7 +213,7 @@ const UserPage = ({
 							width={72}
 							height={104}
 							alt="RARE"
-							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+							className="basis-1/4 bg-base-content rounded-sm mr-4"
 						/>
 						<div className="flex flex-col justify-center gap-y-1 basis-2/3">
 							<div>全体確率: 30%</div>
@@ -221,7 +222,7 @@ const UserPage = ({
 						</div>
 					</div>
 					<div
-						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+						className={`bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
 					>
 						SURER RARE
 					</div>
@@ -231,7 +232,7 @@ const UserPage = ({
 							width={72}
 							height={104}
 							alt="SURER RARE"
-							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+							className="basis-1/4 bg-base-content rounded-sm mr-4"
 						/>
 						<div className="flex flex-col justify-center gap-y-2 basis-2/3">
 							<div>全体確率: 17%</div>
@@ -240,7 +241,7 @@ const UserPage = ({
 						</div>
 					</div>
 					<div
-						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+						className={`bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
 					>
 						SSR
 					</div>
@@ -250,7 +251,7 @@ const UserPage = ({
 							width={72}
 							height={104}
 							alt="SSR"
-							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+							className="basis-1/4 bg-base-content rounded-sm mr-4"
 						/>
 						<div className="flex flex-col justify-center gap-y-2 basis-2/3">
 							<div>全体確率: 6.5%</div>
@@ -259,7 +260,7 @@ const UserPage = ({
 						</div>
 					</div>
 					<div
-						className={`bg-bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
+						className={`bg-white px-4 rounded-lg shadow-md w-full text-2xl ${gkktt.className} mt-4`}
 					>
 						ULTRA RARE
 					</div>
@@ -269,7 +270,7 @@ const UserPage = ({
 							width={72}
 							height={104}
 							alt="ULTRA RARE"
-							className="basis-1/4 bg-bg-dark rounded-sm mr-4"
+							className="basis-1/4 bg-base-content rounded-sm mr-4"
 						/>
 						<div className="flex flex-col justify-center gap-y-2 basis-2/3">
 							<div>全体確率: 1%</div>

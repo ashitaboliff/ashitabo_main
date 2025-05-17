@@ -14,7 +14,7 @@ export async function metadata() {
 
 const Page = () => {
 	return (
-		<div className="container mx-auto bg-bg-white p-4 pb-8 rounded-lg">
+		<div className="container mx-auto bg-white p-4 pb-8 rounded-lg">
 			<h1 className="text-4xl font-bold text-center mt-4">利用規約</h1>
 			<div className="flex flex-col items-end">
 				<div className="text-center mt-4 flex flex-row items-center gap-x-2">

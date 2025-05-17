@@ -89,7 +89,7 @@ const SelectField = ({
 							: watchValue.map((key) => options[key]).join(', ')}
 					</div>
 					{isOpen && (
-						<div className="dropdown-content bg-bg-white flex flex-col rounded-box z-[20] w-52 p-2 shadow relative">
+						<div className="dropdown-content bg-white flex flex-col rounded-box z-[20] w-52 p-2 shadow relative">
 							<div className="flex flex-col space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4">
 								{Object.entries(options).map(([key, value]) => (
 									<label
@@ -117,7 +117,7 @@ const SelectField = ({
 				</div>
 			) : (
 				<select
-					className="select select-bordered w-full max-w-xs bg-bg-white"
+					className="select select-bordered w-full max-w-xs bg-white"
 					{...register}
 					{...props}
 					{...(props.value ? {} : { defaultValue: '' })}

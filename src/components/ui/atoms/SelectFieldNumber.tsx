@@ -39,7 +39,7 @@ const SelectFieldNumber = ({
 		<div className="form-control w-full max-w-xs">
 			{label && <LabelInputField label={label} infoDropdown={infoDropdown} />}
 			<select
-				className="select select-bordered w-full max-w-xs bg-bg-white"
+				className="select select-bordered w-full max-w-xs bg-white"
 				{...register}
 				{...props}
 				{...(props.value ? {} : { defaultValue: '' })}

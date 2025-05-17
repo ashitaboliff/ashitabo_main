@@ -23,16 +23,16 @@ export async function metadata() {
 }
 
 interface UserPageServerProps {
-  searchParams: Promise<{
-    // Booking logs params
-    page?: string;
-    limit?: string;
-    sort?: 'new' | 'old';
-    // Gacha logs params
-    gachaPage?: string;
-    gachaLimit?: string;
-    gachaSort?: GachaSort;
-  }>;
+	searchParams: Promise<{
+		// Booking logs params
+		page?: string
+		limit?: string
+		sort?: 'new' | 'old'
+		// Gacha logs params
+		gachaPage?: string
+		gachaLimit?: string
+		gachaSort?: GachaSort
+	}>
 }
 
 const userPage = async ({ searchParams }: UserPageServerProps) => {
@@ -77,14 +77,17 @@ const userPage = async ({ searchParams }: UserPageServerProps) => {
 			totalCount = bookingRes.response.totalCount
 		} else {
 			// Handle error case, e.g., log it or show a message
-			console.error("Failed to fetch bookings:", bookingRes.response)
+			console.error('Failed to fetch bookings:', bookingRes.response)
 		}
 
 		const pageMax = Math.ceil(totalCount / logsPerPage) || 1
 
 		// Fetch Gacha logs data
 		const gachaCurrentPage = parseInt((await searchParams).gachaPage || '1', 10)
-		const gachaLogsPerPage = parseInt((await searchParams).gachaLimit || '15', 10) // Default to 15 for gacha
+		const gachaLogsPerPage = parseInt(
+			(await searchParams).gachaLimit || '15',
+			10,
+		) // Default to 15 for gacha
 		const gachaSort = (await searchParams).gachaSort || 'new'
 
 		let gachas: GachaData[] = []
@@ -101,7 +104,7 @@ const userPage = async ({ searchParams }: UserPageServerProps) => {
 			gachas = gachaRes.response.gacha
 			gachaTotalCount = gachaRes.response.totalCount
 		} else {
-			console.error("Failed to fetch gacha logs:", gachaRes.response)
+			console.error('Failed to fetch gacha logs:', gachaRes.response)
 		}
 		const gachaPageMax = Math.ceil(gachaTotalCount / gachaLogsPerPage) || 1
 

@@ -276,6 +276,7 @@ const BanBookingCreate = () => {
 				</p>
 			)}
 			<Popup
+				id="forbidden-booking-create-popup"
 				ref={popupRef}
 				title="予約禁止日追加"
 				open={isPopupOpen}

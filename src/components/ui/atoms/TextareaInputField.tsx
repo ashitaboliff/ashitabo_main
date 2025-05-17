@@ -49,7 +49,7 @@ const TextareaInputField = ({
 			<textarea
 				name={name}
 				placeholder={placeholder}
-				className={`textarea textarea-bordered w-full pr-10 bg-bg-white ${className}`}
+				className={`textarea textarea-bordered w-full pr-10 bg-white ${className}`}
 				disabled={disabled}
 				value={value}
 				defaultValue={defaultValue} // 追加: defaultValue を設定

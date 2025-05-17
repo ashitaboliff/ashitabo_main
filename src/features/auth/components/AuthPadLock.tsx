@@ -109,7 +109,7 @@ const AuthPadLock = () => {
 
 	return (
 		<div className="flex flex-col items-center justify-center space-y-2 h-full">
-			<div className="card bg-bg-white shadow-lg w-96 h-[30rem] my-6">
+			<div className="card bg-white shadow-lg w-96 h-[30rem] my-6">
 				<figure>
 					<Image
 						src="/activity/activity-2.jpg"

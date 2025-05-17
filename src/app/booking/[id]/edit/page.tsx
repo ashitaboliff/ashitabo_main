@@ -1,11 +1,15 @@
 'use server'
 
-import { BookingDetailProps, BookingResponse, BookingTime } from '@/features/booking/types'
+import {
+	BookingDetailProps,
+	BookingResponse,
+	BookingTime,
+} from '@/features/booking/types'
 import {
 	getBookingByIdAction,
 	getBuyBookingByUserId,
 	updateBookingAction,
-  getBookingByDateAction, // Added for calendar data
+	getBookingByDateAction, // Added for calendar data
 } from '@/features/booking/components/actions'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
 import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
@@ -76,10 +80,14 @@ const Page = async ({ params, searchParams }: Props) => {
 	// Fetch calendar data based on viewStartDate
 	const viewDayMax = 7 // Assuming 7 days view
 	const { viewStartDate } = await searchParams
-	const initialViewDayDate = viewStartDate ? parseISO(viewStartDate) : subDays(new Date(), 1)
+	const initialViewDayDate = viewStartDate
+		? parseISO(viewStartDate)
+		: subDays(new Date(), 1)
 
 	const calendarStartDate = DateToDayISOstring(initialViewDayDate).split('T')[0]
-	const calendarEndDate = DateToDayISOstring(addDays(initialViewDayDate, viewDayMax - 1)).split('T')[0]
+	const calendarEndDate = DateToDayISOstring(
+		addDays(initialViewDayDate, viewDayMax - 1),
+	).split('T')[0]
 
 	let initialBookingResponse: BookingResponse | null = null
 	const calendarBookingRes = await getBookingByDateAction({

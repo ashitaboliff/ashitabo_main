@@ -40,6 +40,7 @@ const AddCalendarPopup = ({
 
 	return (
 		<Popup
+			id="add-calendar-popup"
 			ref={calendarAddPopupRef}
 			open={isPopupOpen}
 			onClose={() => setIsPopupOpen(false)}

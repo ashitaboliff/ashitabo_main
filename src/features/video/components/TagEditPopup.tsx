@@ -13,13 +13,19 @@ import { TbEdit } from 'react-icons/tb'
 
 type Props = {
 	session: Session | null
-	id: string // playlistId or videoId
+	id: string
 	currentTags: string[] | undefined
 	liveOrBand: liveOrBand
 	isFullButton?: boolean
 }
 
-const TagEditPopup = ({ session, id, currentTags, liveOrBand, isFullButton }: Props) => {
+const TagEditPopup = ({
+	session,
+	id,
+	currentTags,
+	liveOrBand,
+	isFullButton,
+}: Props) => {
 	const router = useRouter()
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isSessionPopupOpen, setIsSessionPopupOpen] = useState(false)
@@ -68,6 +74,7 @@ const TagEditPopup = ({ session, id, currentTags, liveOrBand, isFullButton }: Pr
 				{isFullButton ? ' タグを編集' : ''}
 			</button>
 			<Popup
+				id={`tag-edit-popup-${id}`}
 				ref={popupRef}
 				title="タグ編集"
 				open={isPopupOpen}
@@ -106,6 +113,7 @@ const TagEditPopup = ({ session, id, currentTags, liveOrBand, isFullButton }: Pr
 				</form>
 			</Popup>
 			<Popup
+				id={`session-popup-${id}`}
 				ref={sessionPopupRef}
 				title="利用登録が必要です"
 				open={isSessionPopupOpen}

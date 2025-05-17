@@ -24,24 +24,26 @@ import SelectField from '@/components/ui/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 
 interface AdminUserPageProps {
-  session: Session;
-  initialUsers: UserDetail[];
-  initialPageMax: number;
-  initialCurrentPage: number;
-  initialUsersPerPage: number;
-  initialSort: 'new' | 'old';
+	session: Session
+	initialUsers: UserDetail[]
+	initialPageMax: number
+	initialCurrentPage: number
+	initialUsersPerPage: number
+	initialSort: 'new' | 'old'
 }
 
 const AdminUserPage = ({
-  session,
-  initialUsers,
-  initialPageMax,
-  initialCurrentPage,
-  initialUsersPerPage,
-  initialSort,
+	session,
+	initialUsers,
+	initialPageMax,
+	initialCurrentPage,
+	initialUsersPerPage,
+	initialSort,
 }: AdminUserPageProps) => {
 	const router = useRouter()
-	const [currentPage, setCurrentPage] = useState<number>(initialCurrentPage || 1)
+	const [currentPage, setCurrentPage] = useState<number>(
+		initialCurrentPage || 1,
+	)
 	const [usersPerPage, setUsersPerPage] = useState(initialUsersPerPage || 10)
 	const [sort, setSort] = useState<'new' | 'old'>(initialSort || 'new')
 	const [isLoading, setIsLoading] = useState<boolean>(false) // For actions like delete/role change, not for fetching list
@@ -56,26 +58,37 @@ const AdminUserPage = ({
 	const successPopupRef = useRef<PopupRef>(undefined)
 
 	// pageMax and users are now from props
-	const users = initialUsers;
-	const pageMax = initialPageMax;
+	const users = initialUsers
+	const pageMax = initialPageMax
 
 	const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    router.push(`?adminUserPage=${page}&adminUserLimit=${usersPerPage}&adminUserSort=${sort}`, { scroll: false });
-  };
+		setCurrentPage(page)
+		router.push(
+			`?adminUserPage=${page}&adminUserLimit=${usersPerPage}&adminUserSort=${sort}`,
+			{ scroll: false },
+		)
+	}
 
-  const handleUsersPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newUsersPerPage = parseInt(e.target.value);
-    setUsersPerPage(newUsersPerPage);
-    setCurrentPage(1); // Reset to first page
-    router.push(`?adminUserPage=1&adminUserLimit=${newUsersPerPage}&adminUserSort=${sort}`, { scroll: false });
-  };
+	const handleUsersPerPageChange = (
+		e: React.ChangeEvent<HTMLSelectElement>,
+	) => {
+		const newUsersPerPage = parseInt(e.target.value)
+		setUsersPerPage(newUsersPerPage)
+		setCurrentPage(1) // Reset to first page
+		router.push(
+			`?adminUserPage=1&adminUserLimit=${newUsersPerPage}&adminUserSort=${sort}`,
+			{ scroll: false },
+		)
+	}
 
-  const handleSortChange = (newSort: 'new' | 'old') => {
-    setSort(newSort);
-    setCurrentPage(1); // Reset to first page
-    router.push(`?adminUserPage=1&adminUserLimit=${usersPerPage}&adminUserSort=${newSort}`, { scroll: false });
-  };
+	const handleSortChange = (newSort: 'new' | 'old') => {
+		setSort(newSort)
+		setCurrentPage(1) // Reset to first page
+		router.push(
+			`?adminUserPage=1&adminUserLimit=${usersPerPage}&adminUserSort=${newSort}`,
+			{ scroll: false },
+		)
+	}
 
 	const onDelete = async (id: string) => {
 		setIsLoading(true) // Keep isLoading for this action
@@ -182,6 +195,7 @@ const AdminUserPage = ({
 				</table>
 			</div>
 			<Popup
+				id={`user-detail-popup-${popupData?.id}`}
 				ref={popupRef}
 				title="ユーザ詳細"
 				open={isPopupOpen}
@@ -288,6 +302,7 @@ const AdminUserPage = ({
 				</button>
 			</div>
 			<Popup
+				id={`delete-user-popup-${popupData?.id}`}
 				ref={deletePopupRef}
 				title="削除確認"
 				open={isdeletePopupOpen}
@@ -321,6 +336,7 @@ const AdminUserPage = ({
 				</div>
 			</Popup>
 			<Popup
+				id={`delete-user-success-popup-${popupData?.id}`}
 				ref={successPopupRef}
 				title="削除完了"
 				open={isSuccessPopupOpen}

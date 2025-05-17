@@ -80,86 +80,99 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	}
 
 	useEffect(() => {
-		if (!cardRef.current || imagesLoaded < 2) return;
+		if (!cardRef.current || imagesLoaded < 2) return
 
-    let timeoutId: NodeJS.Timeout | null = null;
-    const tweens: gsap.core.Tween[] = [];
+		let timeoutId: NodeJS.Timeout | null = null
+		const tweens: gsap.core.Tween[] = []
 
 		if (delay) {
 			timeoutId = setTimeout(() => {
 				if (cardRef.current) {
-					tweens.push(gsap.to(cardRef.current, {
-						opacity: 1,
-						duration: 0.5,
-					}));
+					tweens.push(
+						gsap.to(cardRef.current, {
+							opacity: 1,
+							duration: 0.5,
+						}),
+					)
 				}
-			}, delay);
+			}, delay)
 		} else {
-      // If no delay, ensure opacity is 1 immediately if it's meant to be visible
-      if (cardRef.current) {
-        gsap.set(cardRef.current, { opacity: 1 });
-      }
-    }
+			// If no delay, ensure opacity is 1 immediately if it's meant to be visible
+			if (cardRef.current) {
+				gsap.set(cardRef.current, { opacity: 1 })
+			}
+		}
 
 		// カード本体のアニメーション（レアリティに応じた処理）
-		if (cardRef.current) { // Ensure cardRef.current exists before animating
+		if (cardRef.current) {
+			// Ensure cardRef.current exists before animating
 			if (rarity === 'COMMON') {
-				tweens.push(gsap.to(cardRef.current, {
-					scale: 1.1,
-					duration: 0.2,
-					yoyo: true,
-					repeat: 1,
-					ease: 'none',
-				}));
+				tweens.push(
+					gsap.to(cardRef.current, {
+						scale: 1.1,
+						duration: 0.2,
+						yoyo: true,
+						repeat: 1,
+						ease: 'none',
+					}),
+				)
 			} else if (rarity === 'RARE' || rarity === 'SUPER_RARE') {
-				tweens.push(gsap.to(cardRef.current, {
-					rotationY: 360,
-					duration: 2,
-					ease: 'power1.inOut',
-				}));
+				tweens.push(
+					gsap.to(cardRef.current, {
+						rotationY: 360,
+						duration: 2,
+						ease: 'power1.inOut',
+					}),
+				)
 			} else if (rarity === 'SS_RARE') {
-				tweens.push(gsap.to(cardRef.current, {
-					rotationY: 360,
-					duration: 2,
-					ease: 'expo.inOut',
-				}));
+				tweens.push(
+					gsap.to(cardRef.current, {
+						rotationY: 360,
+						duration: 2,
+						ease: 'expo.inOut',
+					}),
+				)
 			} else if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
-				tweens.push(gsap.to(cardRef.current, {
-					rotationY: 360,
-					duration: 2,
-					ease: 'expo.inOut',
-				}));
-				tweens.push(gsap.to(cardRef.current, {
-					scale: 1.1,
-					duration: 1.1,
-					yoyo: true,
-					repeat: 1,
-					ease: 'back.out',
-				}));
+				tweens.push(
+					gsap.to(cardRef.current, {
+						rotationY: 360,
+						duration: 2,
+						ease: 'expo.inOut',
+					}),
+				)
+				tweens.push(
+					gsap.to(cardRef.current, {
+						scale: 1.1,
+						duration: 1.1,
+						yoyo: true,
+						repeat: 1,
+						ease: 'back.out',
+					}),
+				)
 			}
 		}
 
 		// ※ 星のアニメーション自体は gsap で共通に実施（固定パラメータ）
-    const sparkleTween = gsap.to('.sparkle-star', {
+		const sparkleTween = gsap.to('.sparkle-star', {
 			opacity: 0.5,
 			scale: 1.5,
 			duration: 0.8,
 			yoyo: true,
 			repeat: -1,
 			ease: 'power1.inOut',
-		});
-    tweens.push(sparkleTween);
+		})
+		tweens.push(sparkleTween)
 
-    const currentCardRef = cardRef.current;
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      tweens.forEach(tween => tween.kill());
-      // Ensure to kill tweens on specific elements if they are not covered by the array
-      if (currentCardRef) gsap.killTweensOf(currentCardRef);
-      gsap.killTweensOf('.sparkle-star');
-    }
+		const currentCardRef = cardRef.current
+		return () => {
+			if (timeoutId) {
+				clearTimeout(timeoutId)
+			}
+			tweens.forEach((tween) => tween.kill())
+			// Ensure to kill tweens on specific elements if they are not covered by the array
+			if (currentCardRef) gsap.killTweensOf(currentCardRef)
+			gsap.killTweensOf('.sparkle-star')
+		}
 	}, [rarity, imagesLoaded, delay])
 
 	// レアリティに合わせた基準サイズ設定

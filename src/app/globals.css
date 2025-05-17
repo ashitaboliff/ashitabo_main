@@ -1,7 +1,121 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
+@plugin "daisyui" {
+	themes:
+		light --default,
+		dark --prefersdark;
+	logs: true;
+}
+
+@plugin "daisyui/theme" {
+	name: 'light';
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
+
+	--color-primary: #2e7d32;
+	--color-primary-content: #f9f9f9;
+	--color-secondary: #dd2e44;
+	--color-secondary-content: #232323;
+	--color-accent: #e6b422;
+	--color-accent-content: #232323;
+	--color-neutral: #f9f9f9;
+	--color-neutral-content: #232323;
+	--color-base-100: #f9f9f9;
+	--color-base-200: #dddddd;
+	--color-base-300: #d9d9d9;
+	--color-base-content: #232323;
+
+	--color-info: #3c87e0;
+	--color-info-content: #232323;
+	--color-success: #2e7d32;
+	--color-success-content: #f9f9f9;
+	--color-warning: #e6b422;
+	--color-warning-content: #232323;
+	--color-error: #dd2e44;
+	--color-error-content: #f9f9f9;
+
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 0.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.3125rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
+}
+
+/* ダークテーマの定義 */
+@plugin "daisyui/theme" {
+	name: 'dark';
+	default: false;
+	prefersdark: true;
+	color-scheme: dark;
+
+	--color-primary: #2e7d32;
+	--color-primary-content: #232323;
+	--color-secondary: #dd2e44;
+	--color-secondary-content: #232323;
+	--color-accent: #e6b422;
+	--color-accent-content: #232323;
+	--color-neutral: #232323;
+	--color-neutral-content: #f9f9f9;
+	--color-base-100: #232323;
+	--color-base-200: #f8f8f8;
+	--color-base-300: #4a4a4a;
+	--color-base-content: #f9f9f9;
+
+	--color-info: #3c87e0;
+	--color-info-content: #232323;
+	--color-success: #2e7d32;
+	--color-success-content: #232323;
+	--color-warning: #e6b422;
+	--color-warning-content: #232323;
+	--color-error: #dd2e44;
+	--color-error-content: #232323;
+
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 0.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.3125rem;
+	--border: 1px;
+	--depth: 1;
+	--noise: 0;
+}
+
+/* Tailwind CSSテーマの拡張 */
+@theme {
+	/* カスタムカラー (colorPalette由来でdaisyUIテーマに直接マッピングしなかったもの) */
+	--color-primary-light: #66a54d;
+	--color-primary-dark: #1e5821;
+	--color-secondary-light: #e3646b;
+	--color-secondary-dark: #a22130;
+	--color-tetiary-light: #f0cb51;
+	--color-tetiary-dark: #b39019;
+	--color-accent-purple: #9b59b6;
+	--color-accent-glay: #e6e6e6;
+	--color-other-google: #2180fc;
+	--color-other-outlook: #0072c6;
+	--color-other-yahoo: #720e9e;
+	--color-other-ios: #000000;
+
+	--font-family-nicoMoji: 'nicomoji', 'sans-serif';
+	--font-family-gkktt: '851Gkktt', 'sans-serif';
+
+	/* ブレークポイント (tailwind.config.tsのscreensから) */
+	--breakpoint-sm: 620px;
+	--breakpoint-md: 768px;
+	--breakpoint-lg: 900px;
+	--breakpoint-xl: 1280px;
+	--breakpoint-2xl: 1536px;
+
+	/* フォントサイズ (tailwind.config.tsのextendから) - 必要に応じて定義 */
+	/* --font-size-xxxs: 0.375rem; */
+	/* --line-height-xxxs: normal; */
+}
+
+/* 既存のカスタムスタイル */
 .transform-style-3d {
 	transform-style: preserve-3d;
 }
@@ -32,38 +146,57 @@
 }
 
 @layer components {
-	/* .btn.btn-outline.btn-base {
-		@apply bg-bg-white text-base-content border border-base-200;
+	.btn.btn-outline.btn-base {
+		/* @apply bg-tetiary-light bg-white text-base-content border border-tetiary-light; */
+		background-color: var(
+			--color-white
+		) !important; /* tetiary-light はアクセントなので、ベースは白 */
+		color: var(--color-base-content) !important;
+		border-color: var(--color-tetiary-light) !important;
 	}
 	.btn.btn-outline.btn-base:hover {
-		@apply border-base-300 text-base-300;
-	} */
+		/* @apply border-base-300 text-base-300; */ /* base-300 は背景色に近いので、より濃い色かアクセントカラー */
+		border-color: var(--color-accent) !important;
+		color: var(--color-accent) !important;
+	}
 	input.btn.btn-tetiary:checked {
-		@apply bg-tetiary-light text-bg-white border-tetiary-light;
+		/* @apply bg-tetiary-light text-white border-tetiary-light; */
+		background-color: var(--color-tetiary-light) !important;
+		color: var(--color-white) !important; /* text-white の代わりに */
+		border-color: var(--color-tetiary-light) !important;
 	}
 	input.btn.btn-tetiary:checked:hover {
-		@apply bg-tetiary text-bg-white border-tetiary;
+		/* @apply bg-tetiary text-white border-tetiary; */
+		background-color: var(
+			--color-accent
+		) !important; /* tetiary は accent に割り当て */
+		color: var(--color-white) !important;
+		border-color: var(--color-accent) !important;
 	}
 	.btn.btn-tetiary.btn-outline {
-		@apply text-tetiary bg-bg-white border-tetiary;
+		/* @apply text-tetiary bg-white border-tetiary; */
+		color: var(--color-accent) !important;
+		background-color: var(--color-white) !important;
+		border-color: var(--color-accent) !important;
 	}
 	.btn.btn-tetiary.btn-outline:hover {
-		@apply text-tetiary-light bg-bg-white border-tetiary-light;
+		/* @apply text-tetiary-light bg-white border-tetiary-light; */
+		color: var(--color-tetiary-light) !important;
+		background-color: var(--color-white) !important;
+		border-color: var(--color-tetiary-light) !important;
 	}
 	.btn.btn-secondary-light {
-		@apply bg-secondary text-bg-white border-secondary;
+		background-color: var(--color-secondary-light) !important;
+		color: var(--color-white) !important;
+		border-color: var(--color-secondary-light) !important;
+		background-image: none !important;
+		box-shadow: none !important;
 	}
 	.btn.btn-secondary-light:hover {
-		@apply bg-secondary text-bg-white border-secondary;
-	}
-	.btn.btn-secondary-light {
-		@apply bg-secondary-light text-bg-white border-secondary-light;
-	}
-	.btn.btn-blue {
-		@apply bg-info text-bg-white border-info;
-	}
-	.btn.btn-blue:hover {
-		@apply bg-info text-bg-white border-info;
+		background-color: var(--color-secondary) !important;
+		color: var(--color-white) !important;
+		border-color: var(--color-secondary) !important;
+		background-image: none !important;
 	}
 	.aspect-gacha {
 		aspect-ratio: 3 / 4;
@@ -72,23 +205,38 @@
 		aspect-ratio: 1 / 2;
 	}
 	.btn.btn-offwhite {
-		@apply bg-bg-white text-bg-dark border-none bg-opacity-60;
+		/* @apply bg-white text-light border-none bg-opacity-60; */
+		background-color: color-mix(
+			in srgb,
+			var(--color-bg-white) 60%,
+			transparent
+		) !important;
+		color: var(--color-base-content) !important;
+		border: none !important;
 	}
 	.btn.btn-twitter {
-		@apply bg-bg-dark text-bg-white border-none;
+		/* X (旧Twitter) のブランドカラーに合わせる */
+		/* @apply bg-base-content text-white border-none; */
+		background-color: #1da1f2 !important; /* Twitter Blue */
+		color: var(--color-white) !important;
+		border: none !important;
+		background-image: none !important;
 	}
 	.btn.btn-instagram {
-		@apply text-bg-white border-none;
+		/* @apply text-white border-none; */
+		color: var(--color-white) !important;
+		border: none !important;
 		background: linear-gradient(
 			45deg,
 			#fed475 0%,
 			#e53d5d 50%,
 			#c23186 70%,
 			#9c38bb 100%
-		);
+		) !important;
 	}
 }
 
+/* @font-face は変更なし */
 @font-face {
 	font-family: 'nicomoji';
 	src: url('/fonts/nicomoji-plus_v2-5.woff') format('woff');

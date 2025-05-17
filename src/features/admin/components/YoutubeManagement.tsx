@@ -170,6 +170,7 @@ const YoutubeManagement = ({
 				</button>
 			</div>
 			<Popup
+				id="success-popup"
 				ref={successPopupRef}
 				title="成功"
 				open={isSuccessPopupOpen}
@@ -185,6 +186,7 @@ const YoutubeManagement = ({
 				</div>
 			</Popup>
 			<Popup
+				id={`playlist-detail-popup-${popupData?.playlistId}`}
 				ref={popupRef}
 				title="プレイリスト詳細"
 				open={isPopupOpen}

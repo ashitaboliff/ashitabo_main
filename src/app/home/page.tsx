@@ -7,7 +7,7 @@ const Page = () => {
 	return (
 		<div>
 			<Carousel />
-			<div className="flex flex-col items-center justify-center bg-bg-white bg-opacity-60 z-10">
+			<div className="flex flex-col items-center justify-center bg-white/60 z-10">
 				<div className={`text-2xl whitespace-nowrap`}>
 					信大＆県大のB1～M2が所属する
 				</div>

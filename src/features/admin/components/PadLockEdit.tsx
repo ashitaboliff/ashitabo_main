@@ -150,6 +150,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 				</table>
 			</div>
 			<Popup
+				id="padlock-popup"
 				ref={popupRef}
 				title="パスワード詳細"
 				open={isPopupOpen}
@@ -194,6 +195,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 				</div>
 			</Popup>
 			<Popup
+				id="padlock-delete-popup"
 				ref={deletePopupRef}
 				title="パスワード削除"
 				open={isDeletePopupOpen}
@@ -219,6 +221,7 @@ const PadLockEdit = ({ padLocks }: { padLocks: PadLock[] }) => {
 				)}
 			</Popup>
 			<Popup
+				id="padlock-create-popup"
 				ref={createPopupRef}
 				title="パスワード作成"
 				open={isCreatePopupOpen}

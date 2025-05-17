@@ -48,9 +48,7 @@ const VideoItem = ({
 					{displayTitle}
 				</div>
 				{playlistTitle && (
-					<div className="text-sm">
-						ライブ名: {playlistTitle}
-					</div>
+					<div className="text-sm">ライブ名: {playlistTitle}</div>
 				)}
 				<div className="text-sm">
 					{format(youtubeDetail.liveDate, 'yyyy年MM月dd日', { locale: ja })}

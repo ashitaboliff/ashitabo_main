@@ -49,25 +49,27 @@ const parseSearchParams = (params: URLSearchParams): YoutubeSearchQuery => {
 }
 
 interface VideoListPageProps {
-  initialYoutubeDetails: YoutubeDetail[];
-  initialPageMax: number;
-  initialIsLoading: boolean; // Or handle loading with Suspense in parent
-  initialError?: ErrorType;
-  // currentQuery will be derived from searchParams inside, but initial values might be passed if needed
+	initialYoutubeDetails: YoutubeDetail[]
+	initialPageMax: number
+	initialIsLoading: boolean // Or handle loading with Suspense in parent
+	initialError?: ErrorType
+	// currentQuery will be derived from searchParams inside, but initial values might be passed if needed
 }
 
 const VideoListPage = ({
-  initialYoutubeDetails,
-  initialPageMax,
-  initialIsLoading,
-  initialError,
+	initialYoutubeDetails,
+	initialPageMax,
+	initialIsLoading,
+	initialError,
 }: VideoListPageProps) => {
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const { data: session } = useSession() // session を取得
 	const [pageMax, setPageMax] = useState<number>(initialPageMax)
-	const [youtubeDetails, setYoutubeDetails] = useState<YoutubeDetail[]>(initialYoutubeDetails)
+	const [youtubeDetails, setYoutubeDetails] = useState<YoutubeDetail[]>(
+		initialYoutubeDetails,
+	)
 	const [isLoading, setIsLoading] = useState<boolean>(initialIsLoading)
 	const [error, setError] = useState<ErrorType | undefined>(initialError)
 	const [isPending, startTransition] = useTransition()

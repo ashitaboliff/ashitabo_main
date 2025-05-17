@@ -55,10 +55,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 					<div className="w-full max-w-xl md:max-w-2xl my-2">
 						{videoId && (
 							<div className="aspect-video lg:aspect-auto">
-								<lite-youtube
-									videoid={videoId}
-									className='mx-auto w-full'
-								/>
+								<lite-youtube videoid={videoId} className="mx-auto w-full" />
 							</div>
 						)}
 					</div>
@@ -92,7 +89,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							/>
 						</div>
 						<button
-							className="btn btn-secondary-light w-auto sm:w-44 mt-4 self-start"
+							className="btn btn-secondary w-auto sm:w-44 mt-4 self-start"
 							onClick={() => {
 								if (videoId) {
 									window.open(
@@ -181,7 +178,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								{currentTags.length > 0 && (
 									<Tags
 										tags={currentTags}
-										size="text-xs" // 修正: 固定値に変更
+										size="text-xs"
 										isLink
 										liveOrBand={liveOrBand}
 									/>
@@ -196,7 +193,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 							/>
 						</div>
 						<button
-							className="btn btn-secondary-light w-auto sm:w-44 mt-4 self-start"
+							className="btn btn-secondary w-auto sm:w-44 mt-4 self-start"
 							onClick={() => {
 								window.open(
 									`https://www.youtube.com/playlist?list=${detail.playlistId}`,

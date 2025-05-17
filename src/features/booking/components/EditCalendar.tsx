@@ -27,7 +27,7 @@ const EditCalendar = memo(
 		setBookingTime,
 		setIsPaid,
 		setCalendarOpen,
-    setValue, // Add setValue to props
+		setValue, // Add setValue to props
 	}: {
 		bookingResponse: BookingResponse
 		timeList: string[] // This is BookingTime array from parent
@@ -39,14 +39,14 @@ const EditCalendar = memo(
 		setBookingTime: (bookingTime: number) => void
 		setIsPaid: (isPaid: boolean) => void
 		setCalendarOpen: (calendarOpen: boolean) => void
-    setValue: UseFormSetValue<any>; // Or a more specific form values type
+		setValue: UseFormSetValue<any> // Or a more specific form values type
 	}) => {
 		const dateList = Object.keys(bookingResponse)
 		const bookingAbleMaxDate = addWeeks(new Date(), 2)
 
 		return (
 			<div className="flex justify-center">
-				<table className="w-auto border border-base-200 table-pin-rows table-pin-cols bg-bg-white">
+				<table className="w-auto border border-base-200 table-pin-rows table-pin-cols bg-white">
 					<thead>
 						<tr>
 							<th className="border border-base-200 w-11 sm:w-14 md:w-16"></th>
@@ -86,15 +86,14 @@ const EditCalendar = memo(
 										}
 									} else {
 										if (new Date(day) > bookingAbleMaxDate) {
-											tdClassName =
-												'border border-base-200 p-0 bg-tetiary-light'
+											tdClassName = 'border border-base-200 p-0'
 										} else {
 											tdClassName = 'border border-base-200 p-0'
 										}
 									}
 
 									new Date(day) > bookingAbleMaxDate
-										? 'border border-base-200 p-0 bg-tetiary-light'
+										? 'border border-base-200 p-0'
 										: 'border border-base-200 p-0'
 
 									if (booking?.registName === undefined) {
@@ -105,8 +104,8 @@ const EditCalendar = memo(
 												onClick={() => {
 													setBookingDate(day)
 													setBookingTime(timeIndex)
-                          setValue('bookingDate', day);
-                          setValue('bookingTime', timeList[timeIndex]); // Use timeList which is BookingTime
+													setValue('bookingDate', day)
+													setValue('bookingTime', timeList[timeIndex]) // Use timeList which is BookingTime
 													setCalendarOpen(false)
 													if (new Date(day) > bookingAbleMaxDate) {
 														setIsPaid(true)
@@ -147,8 +146,8 @@ const EditCalendar = memo(
 												onClick={() => {
 													setBookingDate(day)
 													setBookingTime(timeIndex)
-                          setValue('bookingDate', day);
-                          setValue('bookingTime', timeList[timeIndex]); // Use timeList which is BookingTime
+													setValue('bookingDate', day)
+													setValue('bookingTime', timeList[timeIndex]) // Use timeList which is BookingTime
 													setCalendarOpen(false)
 													if (new Date(day) > bookingAbleMaxDate) {
 														setIsPaid(true)

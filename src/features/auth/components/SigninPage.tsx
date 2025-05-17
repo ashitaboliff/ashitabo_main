@@ -16,7 +16,7 @@ const SigninPage = () => {
 
 	return (
 		<div className="flex flex-col items-center justify-center">
-			<div className="flex flex-col items-center justify-center card bg-bg-white shadow-lg w-72 h-96 my-6">
+			<div className="flex flex-col items-center justify-center card bg-white shadow-lg w-72 h-96 my-6">
 				<figure>
 					<Image src="/login.jpg" alt="login" width={300} height={250} />
 				</figure>

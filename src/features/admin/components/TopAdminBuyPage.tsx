@@ -131,6 +131,7 @@ const TopAdminBuyPage = ({ buyBookings }: { buyBookings: BuyBooking[] }) => {
 				</button>
 			</div>
 			<Popup
+				id={`buy-booking-popup-${popupData?.booking?.id}`}
 				ref={popupRef}
 				open={isPopupOpen}
 				onClose={() => {
@@ -211,6 +212,7 @@ const TopAdminBuyPage = ({ buyBookings }: { buyBookings: BuyBooking[] }) => {
 				)}
 			</Popup>
 			<Popup
+				id="buy-booking-success-popup"
 				ref={successPopupRef}
 				open={isSuccessPopupOpen}
 				onClose={() => setIsSuccessPopupOpen(false)}

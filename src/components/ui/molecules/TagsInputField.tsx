@@ -32,15 +32,17 @@ const TagInputField = ({
 		if (JSON.stringify(defaultValue) !== JSON.stringify(tags)) {
 			setTags(defaultValue || [])
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultValue])
-
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInputValue(e.target.value)
 	}
 
-	const addTagInternal = (tagValue: string, fieldOnChange?: (value: string[]) => void) => {
+	const addTagInternal = (
+		tagValue: string,
+		fieldOnChange?: (value: string[]) => void,
+	) => {
 		const newTag = tagValue.trim()
 		if (newTag && !tags.includes(newTag)) {
 			const newTagsArray = [...tags, newTag]
@@ -54,7 +56,10 @@ const TagInputField = ({
 		setInputValue('')
 	}
 
-	const removeTagInternal = (tagToRemove: string, fieldOnChange?: (value: string[]) => void) => {
+	const removeTagInternal = (
+		tagToRemove: string,
+		fieldOnChange?: (value: string[]) => void,
+	) => {
 		const newTagsArray = tags.filter((tag) => tag !== tagToRemove)
 		setTags(newTagsArray)
 		if (fieldOnChange) {
@@ -63,7 +68,6 @@ const TagInputField = ({
 			onChange(newTagsArray)
 		}
 	}
-
 
 	return (
 		<div>
@@ -75,12 +79,17 @@ const TagInputField = ({
 					defaultValue={defaultValue || []}
 					render={({ field }) => {
 						useEffect(() => {
-							if (Array.isArray(field.value) && JSON.stringify(field.value) !== JSON.stringify(tags)) {
+							if (
+								Array.isArray(field.value) &&
+								JSON.stringify(field.value) !== JSON.stringify(tags)
+							) {
 								setTags(field.value)
 							}
 						}, [field.value, tags])
 
-						const handleKeyDownController = (e: KeyboardEvent<HTMLInputElement>) => {
+						const handleKeyDownController = (
+							e: KeyboardEvent<HTMLInputElement>,
+						) => {
 							if (e.key === 'Enter' || e.key === ',') {
 								e.preventDefault()
 								addTagInternal(inputValue, field.onChange)
@@ -90,22 +99,22 @@ const TagInputField = ({
 						return (
 							<div className="flex flex-wrap gap-2 py-2 rounded-md items-center">
 								<div className="flex flex-wrap gap-2">
-								{tags.map((tag) => (
-									<div
-										key={tag}
-										className="badge badge-accent badge-outline gap-1 text-xs sm:text-sm"
-									>
-										<span>{tag}</span>
-										<button
-											type="button"
-											onClick={() => removeTagInternal(tag, field.onChange)}
-											className="text-error"
-											aria-label={`タグ ${tag} を削除`}
+									{tags.map((tag) => (
+										<div
+											key={tag}
+											className="badge badge-accent badge-outline gap-1 text-xs sm:text-sm"
 										>
-											<HiMiniXMark />
-										</button>
-									</div>
-								))}
+											<span>{tag}</span>
+											<button
+												type="button"
+												onClick={() => removeTagInternal(tag, field.onChange)}
+												className="text-error"
+												aria-label={`タグ ${tag} を削除`}
+											>
+												<HiMiniXMark />
+											</button>
+										</div>
+									))}
 								</div>
 								<input
 									type="text"
@@ -147,7 +156,8 @@ const TagInputField = ({
 						type="text"
 						value={inputValue}
 						onChange={handleInputChange}
-						onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => { // handleKeyDownControllerの代わりに直接定義
+						onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+							// handleKeyDownControllerの代わりに直接定義
 							if (e.key === 'Enter' || e.key === ',') {
 								e.preventDefault()
 								addTagInternal(inputValue, onChange) // field.onChangeの代わりに直接onChangeを渡す

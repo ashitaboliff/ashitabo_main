@@ -187,7 +187,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center p-4 bg-bg-white shadow-lg rounded-lg">
+		<div className="flex flex-col items-center justify-center p-4 bg-white shadow-lg rounded-lg">
 			<h1 className="text-2xl font-bold">プロフィール編集</h1>
 			<form
 				className="flex flex-col space-y-4 w-full max-w-xs"
@@ -296,6 +296,7 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 				</p>
 			)}
 			<Popup
+				id={`profile-edit-popup-${profile.id}`}
 				ref={popupRef}
 				open={popupOpen}
 				title="保存完了"

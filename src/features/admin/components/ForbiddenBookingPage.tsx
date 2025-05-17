@@ -134,6 +134,7 @@ const ForbiddenBookingPage = ({ banBooking }: { banBooking: BanBooking[] }) => {
 				/>
 			</div>
 			<Popup
+				id="forbidden-booking-popup"
 				title="予約禁止日詳細"
 				ref={popupRef}
 				open={isPopupOpen}
@@ -197,6 +198,7 @@ const ForbiddenBookingPage = ({ banBooking }: { banBooking: BanBooking[] }) => {
 				)}
 			</Popup>
 			<Popup
+				id="forbidden-booking-delete-popup"
 				title="予約禁止日削除"
 				ref={deletePopupRef}
 				open={isdeletePopupOpen}
@@ -230,6 +232,7 @@ const ForbiddenBookingPage = ({ banBooking }: { banBooking: BanBooking[] }) => {
 				</div>
 			</Popup>
 			<Popup
+				id="forbidden-booking-delete-success-popup"
 				title="削除完了"
 				ref={successPopupRef}
 				open={isSuccessPopupOpen}

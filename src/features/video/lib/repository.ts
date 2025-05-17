@@ -64,42 +64,44 @@ export const upsertAccessToken = async ({
 export const createPlaylistBatch = async (playlists: Playlist[]) => {
 	try {
 		// 処理対象のプレイリストIDとビデオIDを抽出
-		const allPlaylistIds = playlists.map(p => p.playlistId);
-		const allVideoIds = playlists.flatMap(p => p.videos.map(v => v.videoId));
+		const allPlaylistIds = playlists.map((p) => p.playlistId)
+		const allVideoIds = playlists.flatMap((p) => p.videos.map((v) => v.videoId))
 
 		// データベースに既に存在するプレイリストIDとビデオIDを取得
 		const existingPlaylists = await prisma.playlist.findMany({
 			where: { playlistId: { in: allPlaylistIds } },
 			select: { playlistId: true },
-		});
-		const existingPlaylistIds = new Set(existingPlaylists.map(p => p.playlistId));
+		})
+		const existingPlaylistIds = new Set(
+			existingPlaylists.map((p) => p.playlistId),
+		)
 
 		const existingVideos = await prisma.video.findMany({
 			where: { videoId: { in: allVideoIds } },
 			select: { videoId: true },
-		});
-		const existingVideoIds = new Set(existingVideos.map(v => v.videoId));
+		})
+		const existingVideoIds = new Set(existingVideos.map((v) => v.videoId))
 
 		const newPlaylistsToCreate = playlists
-			.filter(p => !existingPlaylistIds.has(p.playlistId))
-			.map(p => ({
+			.filter((p) => !existingPlaylistIds.has(p.playlistId))
+			.map((p) => ({
 				playlistId: p.playlistId,
 				title: p.title,
 				link: p.link,
 				liveDate: p.liveDate,
 			}))
 
-		const newVideosToCreate = playlists.flatMap(p =>
+		const newVideosToCreate = playlists.flatMap((p) =>
 			p.videos
-				.filter(v => !existingVideoIds.has(v.videoId))
-				.map(v => ({
+				.filter((v) => !existingVideoIds.has(v.videoId))
+				.map((v) => ({
 					videoId: v.videoId,
 					title: v.title,
 					link: v.link,
 					liveDate: v.liveDate,
 					playlistId: p.playlistId,
 					// tags: v.tags,
-				}))
+				})),
 		)
 
 		// トランザクション内で新規データのみを一括作成
@@ -133,9 +135,8 @@ export const createPlaylistBatch = async (playlists: Playlist[]) => {
 		// タイトル変更などの更新も行う場合は、別途update処理を追加するか、
 		// やはりupsertを使い、update部分を軽量化するアプローチを検討する必要があります。
 		// 今回はユーザーの「新規のデータのみをinsert」という要望を優先します。
-
 	} catch (error) {
-		console.error("Error in createPlaylistBatch:", error)
+		console.error('Error in createPlaylistBatch:', error)
 		throw error
 	}
 }
@@ -197,13 +198,13 @@ export async function searchYoutubeDetails(
 				page,
 				videoPerPage,
 			} = query
-	
+
 			const pageNumber = Number(page) || 1
 			const videoPerPageNumber = Number(videoPerPage) || 10
-	
+
 			let results: YoutubeDetail[] = []
 			let totalCount = 0
-	
+
 			if (liveOrBand === 'live') {
 				const [playlists, count] = await Promise.all([
 					prisma.playlist.findMany({
@@ -261,7 +262,7 @@ export async function searchYoutubeDetails(
 						},
 					}),
 				])
-	
+
 				results = playlists.map((playlist) => ({
 					id: playlist.playlistId,
 					title: playlist.title,
@@ -327,7 +328,7 @@ export async function searchYoutubeDetails(
 						},
 					}),
 				])
-	
+
 				results = videos.map((video) => ({
 					id: video.videoId,
 					title: video.title,
@@ -340,20 +341,20 @@ export async function searchYoutubeDetails(
 				}))
 				totalCount = count
 			}
-	
+
 			return { results, totalCount }
 		} catch (error) {
 			throw error
 		}
 	}
 
-	const cacheKey = JSON.stringify(query);
-	
+	const cacheKey = JSON.stringify(query)
+
 	const cachedResult = unstable_cache(fetchYoutubeDetails, [cacheKey], {
 		tags: ['youtube'],
-	});
-	
-	return cachedResult();
+	})
+
+	return cachedResult()
 }
 
 export const getPlaylist = async () => {

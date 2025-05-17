@@ -112,7 +112,7 @@ export default function CreatePage({
 	}
 
 	return (
-		<div className="justify-center max-w-md mx-auto p-4 bg-bg-white shadow-md rounded-lg">
+		<div className="justify-center max-w-md mx-auto p-4 bg-white shadow-md rounded-lg">
 			<h2 className="text-2xl font-bold text-center mb-8">新規予約</h2>
 			<div className="max-w-md mx-auto">
 				<form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
@@ -178,6 +178,7 @@ export default function CreatePage({
 				</form>
 			</div>
 			<Popup
+				id={`booking-create-popup-${bookingId}`}
 				ref={noticePopupRef}
 				title="予約完了"
 				open={noticePopupOpen}

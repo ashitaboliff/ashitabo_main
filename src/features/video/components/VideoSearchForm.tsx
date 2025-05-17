@@ -137,6 +137,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				/>
 			</div>
 			<Popup
+				id="video-search-popup"
 				ref={popupRef}
 				title="条件検索"
 				open={isPopupOpen}
@@ -201,7 +202,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 							<span className="label-text text-xs">いずれかを含む (OR)</span>
 						</label>
 						<label className="label cursor-pointer justify-start gap-2">
-							<span className="label-text text-xs"></span> 
+							<span className="label-text text-xs"></span>
 							<input
 								type="radio"
 								name="tagSearchMode"
@@ -235,6 +236,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 				</form>
 			</Popup>
 			<Popup
+				id="video-search-usage-popup"
 				ref={usagePopupRef}
 				title="条件検索の使い方"
 				open={isUsagePopupOpen}

@@ -139,6 +139,7 @@ const LogsPage = ({
 			)}
 
 			<Popup
+				id={`popup-${popupData?.id}`}
 				ref={popupRef}
 				title="予約詳細"
 				maxWidth="lg" // ポップアップは少し広めでも良い

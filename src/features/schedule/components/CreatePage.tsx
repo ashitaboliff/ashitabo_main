@@ -36,11 +36,14 @@ const ScheduleCreateSchema = yup.object().shape({
 })
 
 interface ScheduleCreatePageProps {
-  session: Session;
-  initialUsers: Record<string, string>;
+	session: Session
+	initialUsers: Record<string, string>
 }
 
-const ScheduleCreatePage = ({ session, initialUsers }: ScheduleCreatePageProps) => {
+const ScheduleCreatePage = ({
+	session,
+	initialUsers,
+}: ScheduleCreatePageProps) => {
 	const router = useRouter()
 	const {
 		register,
@@ -94,7 +97,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: ScheduleCreatePageProps) 
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center py-6 bg-bg-white rounded-lg shadow-md">
+		<div className="flex flex-col items-center justify-center py-6 bg-white rounded-lg shadow-md">
 			<h1 className="text-2xl font-bold">日程調整作成</h1>
 			<form className="flex flex-col gap-y-2" onSubmit={handleSubmit(onSubmit)}>
 				<TextInputField
@@ -133,17 +136,17 @@ const ScheduleCreatePage = ({ session, initialUsers }: ScheduleCreatePageProps) 
 				</label>
 				<p className="text-sm">特定の部員とだけの予定を作成できます。</p>
 				{isMentionChecked && (
-						<SelectField
-							name="mention"
-							label="メンション"
-							options={initialUsers} // Use initialUsers from props
-							register={register('mention')}
-							isMultiple={true}
-							setValue={setValue}
-							watchValue={watchMention}
-							errorMessage={errors.mention?.message}
-						/>
-					)}
+					<SelectField
+						name="mention"
+						label="メンション"
+						options={initialUsers} // Use initialUsers from props
+						register={register('mention')}
+						isMultiple={true}
+						setValue={setValue}
+						watchValue={watchMention}
+						errorMessage={errors.mention?.message}
+					/>
+				)}
 				<Controller
 					name="startDate"
 					control={control}
@@ -203,6 +206,7 @@ const ScheduleCreatePage = ({ session, initialUsers }: ScheduleCreatePageProps) 
 				)}
 			</form>
 			<Popup
+				id={`schedule-create-popup-${scheduleId}`}
 				ref={popupRef}
 				title="日程調整作成完了"
 				onClose={() => router.push('/schedule')}
@@ -230,14 +234,14 @@ const ScheduleCreatePage = ({ session, initialUsers }: ScheduleCreatePageProps) 
 								: '未入力'}
 						</p>
 						{watchAll?.isMentionChecked && (
-						<p>
-							メンション:{' '}
-							{watchAll?.mention
-								?.map((mention: string) => initialUsers[mention]) // Use initialUsers here as well
-								.join(', ') || '未入力'}
-						</p>
-					)}
-				</div>
+							<p>
+								メンション:{' '}
+								{watchAll?.mention
+									?.map((mention: string) => initialUsers[mention]) // Use initialUsers here as well
+									.join(', ') || '未入力'}
+							</p>
+						)}
+					</div>
 					<div className="flex flex-row justify-center space-x-2">
 						<ShareButton
 							url={`${window.location.origin}/schedule/${scheduleId}`}

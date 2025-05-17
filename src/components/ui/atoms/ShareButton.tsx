@@ -41,7 +41,7 @@ const ShareButton = ({
 	return isFullButton ? (
 		<button
 			type="button"
-			className={className || 'btn btn-outline w-32'}
+			className={className || 'btn btn-outline w-36'}
 			onClick={handleShare}
 		>
 			<div className="flex items-center justify-center">

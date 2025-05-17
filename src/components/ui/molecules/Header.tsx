@@ -47,7 +47,7 @@ const Layout = ({ className }: { className: string }) => {
 	return (
 		<div>
 			<div
-				className={`navbar bg-bg-white mb-5 border-b-2 border-border-light ${className}`}
+				className={`navbar bg-white mb-5 border-b-2 border-base-300 ${className}`}
 			>
 				<div className="navbar-start">
 					<button
@@ -94,13 +94,13 @@ const Layout = ({ className }: { className: string }) => {
 				checked={isOpen}
 				readOnly
 			/>
-			<div className="drawer-side border-r-2 border-border-light z-50">
+			<div className="drawer-side border-r-2 border-base-100 z-50">
 				<label
 					htmlFor="menu-drawer"
 					className="drawer-overlay"
 					onClick={handleMenuClose}
 				></label>
-				<ul className="menu p-4 w-5/12 bg-bg-light text-text-light h-full">
+				<ul className="menu p-4 w-5/12 bg-base-100 text-base-content h-full">
 					<li className="menu-title text-lg">
 						<span>メニュー</span>
 					</li>

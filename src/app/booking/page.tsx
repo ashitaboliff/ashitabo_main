@@ -6,17 +6,19 @@ import { addDays, subDays, parseISO } from 'date-fns' // Added parseISO
 import { BookingResponse } from '@/features/booking/types'
 
 interface BookingPageProps {
-  searchParams?: Promise<{
-    viewStartDate?: string;
-  }>;
+	searchParams?: Promise<{
+		viewStartDate?: string
+	}>
 }
 
 const Page = async ({ searchParams }: BookingPageProps) => {
 	const viewDayMax = 7
 	// Use viewStartDate from searchParams if available, otherwise default to yesterday
-	const params = await searchParams;
-	const viewStartDate = params?.viewStartDate;
-	const initialViewDay = viewStartDate ? parseISO(viewStartDate) : subDays(new Date(), 1);
+	const params = await searchParams
+	const viewStartDate = params?.viewStartDate
+	const initialViewDay = viewStartDate
+		? parseISO(viewStartDate)
+		: subDays(new Date(), 1)
 
 	const startDate = DateToDayISOstring(initialViewDay).split('T')[0]
 	const endDate = DateToDayISOstring(

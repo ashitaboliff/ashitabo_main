@@ -40,7 +40,7 @@ const CustomDatePicker = ({
 				minDate={minDate}
 				dateFormat="yyyy/MM/dd"
 				className="border border-base-300 rounded-md p-2 w-full"
-				calendarClassName="bg-bg-white"
+				calendarClassName="bg-white"
 			/>
 			{errorMessage && (
 				<div className="label">

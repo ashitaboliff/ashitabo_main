@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react' 
+import { useState } from 'react'
 import AuthPadLock from '@/features/auth/components/AuthPadLock'
-import AuthErrorPage from '@/features/auth/components/AuthErrorPage' 
+import AuthErrorPage from '@/features/auth/components/AuthErrorPage'
 
 const PadLockMain = () => {
 	const [error, setError] = useState<string>()

@@ -21,7 +21,7 @@ const Page = async () => {
 		<div className="flex flex-col gap-y-4 mt-6">
 			<h1 className="text-4xl text-center">あしたぼの活動内容</h1>
 			<div
-				className={`flex flex-col justify-start px-6 pb-4 ${inter.className} bg-bg-white rounded-lg shadow`}
+				className={`flex flex-col justify-start px-6 pb-4 ${inter.className} bg-white rounded-lg shadow`}
 			>
 				<h2 className="text-xl font-bold my-4">1.サークルの概要</h2>
 				<div className="text-base">
@@ -158,7 +158,7 @@ const Page = async () => {
 						<a
 							href="/video"
 							rel="noopener noreferrer"
-							className="btn btn-secondary-light text-sm"
+							className="btn btn-secondary text-sm"
 						>
 							<FaYoutube size={15} />
 							YouTube

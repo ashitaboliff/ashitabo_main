@@ -83,15 +83,15 @@ const Page = () => {
 		})
 
 		// Cleanup function
-		const currentContainerRef = containerRef.current;
-		const currentCenterImgRef = centerImgRef.current;
-		const currentTextRef = textRef.current;
+		const currentContainerRef = containerRef.current
+		const currentCenterImgRef = centerImgRef.current
+		const currentTextRef = textRef.current
 		return () => {
-			if (currentContainerRef) gsap.killTweensOf(currentContainerRef);
-			if (currentCenterImgRef) gsap.killTweensOf(currentCenterImgRef);
-			if (currentTextRef) gsap.killTweensOf(currentTextRef);
-			gsap.killTweensOf('.corner-image');
-			petalAnimations.forEach(anim => anim.kill());
+			if (currentContainerRef) gsap.killTweensOf(currentContainerRef)
+			if (currentCenterImgRef) gsap.killTweensOf(currentCenterImgRef)
+			if (currentTextRef) gsap.killTweensOf(currentTextRef)
+			gsap.killTweensOf('.corner-image')
+			petalAnimations.forEach((anim) => anim.kill())
 		}
 	}, [])
 
