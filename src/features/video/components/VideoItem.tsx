@@ -55,12 +55,12 @@ const VideoItem = ({
 				</div>
 				{youtubeDetail.tags && youtubeDetail.tags.length > 0 && (
 					<div className="mt-1 flex flex-wrap gap-1">
-						<Tags tags={youtubeDetail.tags} size="text-xs" />
+						<Tags tags={youtubeDetail.tags} size="text-xs-custom" />
 					</div>
 				)}
 				<div className="flex flex-wrap gap-2 mt-2">
 					<button
-						className="btn btn-outline btn-sm text-xs xl:text-sm whitespace-nowrap"
+						className="btn btn-outline btn-sm text-xs-custom xl:text-sm whitespace-nowrap"
 						onClick={() => router.push(`/video/${youtubeDetail.id}`)}
 					>
 						詳細を見る

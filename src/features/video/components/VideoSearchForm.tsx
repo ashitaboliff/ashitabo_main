@@ -190,7 +190,7 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 					/>
 					<div className="form-control mt-1 flex-row gap-x-2">
 						<label className="label cursor-pointer justify-start gap-2">
-							<span className="label-text text-xs">タグ検索モード:</span>
+							<span className="label-text text-xs-custom">タグ検索モード:</span>
 							<input
 								type="radio"
 								name="tagSearchMode"
@@ -199,10 +199,12 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 								checked={tagSearchMode === 'or'}
 								onChange={handleTagModeChange}
 							/>
-							<span className="label-text text-xs">いずれかを含む (OR)</span>
+							<span className="label-text text-xs-custom">
+								いずれかを含む (OR)
+							</span>
 						</label>
 						<label className="label cursor-pointer justify-start gap-2">
-							<span className="label-text text-xs"></span>
+							<span className="label-text text-xs-custom"></span>
 							<input
 								type="radio"
 								name="tagSearchMode"
@@ -211,7 +213,9 @@ const VideoSearchForm = ({ defaultQuery, isSearching, onSearch }: Props) => {
 								checked={tagSearchMode === 'and'}
 								onChange={handleTagModeChange}
 							/>
-							<span className="label-text text-xs">すべてを含む (AND)</span>
+							<span className="label-text text-xs-custom">
+								すべてを含む (AND)
+							</span>
 						</label>
 					</div>
 					<button type="submit" className="btn btn-primary mt-2">

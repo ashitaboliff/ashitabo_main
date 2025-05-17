@@ -164,17 +164,17 @@ const BanBookingCreate = () => {
 					))}
 				</div>
 				{type === 'period' && (
-					<p className="text-xs">
+					<p className="text-xs-custom">
 						期間禁止:ある日のある時間からある時間までの予約を禁止したいときに利用します。
 					</p>
 				)}
 				{type === 'regular' && (
-					<p className="text-xs">
+					<p className="text-xs-custom">
 						定期禁止:ある日付からある日付までの特定の曜日に対して、この時間からこの時間までは利用できない場合に利用します。
 					</p>
 				)}
 				{type === 'single' && (
-					<p className="text-xs">
+					<p className="text-xs-custom">
 						単発禁止:この日のこの時間のみを禁止したいときに利用します。
 					</p>
 				)}

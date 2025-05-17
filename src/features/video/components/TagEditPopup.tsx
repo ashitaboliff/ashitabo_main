@@ -67,7 +67,7 @@ const TagEditPopup = ({
 	return (
 		<>
 			<button
-				className="btn btn-outline btn-primary btn-sm text-xs xl:text-sm"
+				className="btn btn-outline btn-primary btn-sm text-xs-custom xl:text-sm"
 				onClick={handleOpenEditPopup}
 			>
 				<TbEdit size={15} />

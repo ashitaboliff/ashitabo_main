@@ -2,10 +2,8 @@
 
 @plugin "daisyui" {
 	themes:
-		light --default,
-		dark --prefersdark;
-	logs: true;
-}
+		light --default /* , dark --prefersdark */ /* ダークテーマは後で有効化するか、カスタムダークテーマを定義 */
+};
 
 @plugin "daisyui/theme" {
 	name: 'light';
@@ -43,56 +41,58 @@
 	--border: 1px;
 	--depth: 1;
 	--noise: 0;
-}
+};
 
-/* ダークテーマの定義 */
+/* ダークテーマの定義 (例として残すが、一旦上記 themes でコメントアウト)
 @plugin "daisyui/theme" {
-	name: 'dark';
-	default: false;
-	prefersdark: true;
-	color-scheme: dark;
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
 
-	--color-primary: #2e7d32;
-	--color-primary-content: #232323;
-	--color-secondary: #dd2e44;
-	--color-secondary-content: #232323;
-	--color-accent: #e6b422;
-	--color-accent-content: #232323;
-	--color-neutral: #232323;
-	--color-neutral-content: #f9f9f9;
-	--color-base-100: #232323;
-	--color-base-200: #f8f8f8;
-	--color-base-300: #4a4a4a;
-	--color-base-content: #f9f9f9;
+  --color-primary: #2E7D32;
+  --color-primary-content: #232323;
+  --color-secondary: #DD2E44;
+  --color-secondary-content: #232323;
+  --color-accent: #E6B422;
+  --color-accent-content: #232323;
+  --color-neutral: #232323;
+  --color-neutral-content: #F9F9F9;
+  --color-base-100: #232323;
+  --color-base-200: #F8F8F8;
+  --color-base-300: #4A4A4A;
+  --color-base-content: #F9F9F9;
 
-	--color-info: #3c87e0;
-	--color-info-content: #232323;
-	--color-success: #2e7d32;
-	--color-success-content: #232323;
-	--color-warning: #e6b422;
-	--color-warning-content: #232323;
-	--color-error: #dd2e44;
-	--color-error-content: #232323;
+  --color-info: #3C87E0;
+  --color-info-content: #232323;
+  --color-success: #2E7D32;
+  --color-success-content: #232323;
+  --color-warning: #E6B422;
+  --color-warning-content: #232323;
+  --color-error: #DD2E44;
+  --color-error-content: #232323;
 
-	--radius-selector: 0.5rem;
-	--radius-field: 0.5rem;
-	--radius-box: 0.5rem;
-	--size-selector: 0.25rem;
-	--size-field: 0.3125rem;
-	--border: 1px;
-	--depth: 1;
-	--noise: 0;
-}
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.3125rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+};
+*/
 
 /* Tailwind CSSテーマの拡張 */
 @theme {
-	/* カスタムカラー (colorPalette由来でdaisyUIテーマに直接マッピングしなかったもの) */
+	/* カスタムカラー */
 	--color-primary-light: #66a54d;
 	--color-primary-dark: #1e5821;
 	--color-secondary-light: #e3646b;
 	--color-secondary-dark: #a22130;
 	--color-tetiary-light: #f0cb51;
 	--color-tetiary-dark: #b39019;
+  --color-bg-white: #FFFFFF;
 	--color-accent-purple: #9b59b6;
 	--color-accent-glay: #e6e6e6;
 	--color-other-google: #2180fc;
@@ -100,101 +100,118 @@
 	--color-other-yahoo: #720e9e;
 	--color-other-ios: #000000;
 
+	/* カスタムフォントファミリー */
 	--font-family-nicoMoji: 'nicomoji', 'sans-serif';
 	--font-family-gkktt: '851Gkktt', 'sans-serif';
+  /* Noto Sans JP は next/font でグローバルに適用されている想定 */
 
-	/* ブレークポイント (tailwind.config.tsのscreensから) */
+	/* カスタムブレークポイント */
 	--breakpoint-sm: 620px;
 	--breakpoint-md: 768px;
 	--breakpoint-lg: 900px;
 	--breakpoint-xl: 1280px;
 	--breakpoint-2xl: 1536px;
 
-	/* フォントサイズ (tailwind.config.tsのextendから) - 必要に応じて定義 */
-	/* --font-size-xxxs: 0.375rem; */
-	/* --line-height-xxxs: normal; */
-}
+	/* カスタムフォントサイズ (tailwind.config.tsの元の定義に基づく) */
+	--font-size-xxxs: 0.375rem; /* 6px */
+	--line-height-xxxs: normal;
+	--font-size-xxs: 0.563rem;  /* 9px */
+	--line-height-xxs: 1rem;
+	--font-size-xs-custom: 0.625rem; /* 10px (Tailwindのデフォルトxsをこの値で上書き) */
+	--line-height-xs-custom: 1rem;
+  /* sm以上のサイズはTailwindのデフォルト値と同じであれば、ここで上書き定義する必要はない */
+  /* もしtailwind.config.tsのsm以降の値がTailwindのデフォルトと異なる意図であれば、ここで定義する */
+  /* 例: --font-size-sm: 0.875rem; (これはTailwindのデフォルトと同じ) */
+  /* 例: --line-height-sm: 1.25rem; (これもTailwindのデフォルトと同じ) */
+};
 
 /* 既存のカスタムスタイル */
 .transform-style-3d {
 	transform-style: preserve-3d;
-}
+};
 
 .backface-hidden {
 	backface-visibility: hidden;
-}
+};
 
-/* 裏面用の回転 */
 .rotateY-180 {
 	transform: rotateY(180deg);
-}
+};
 
-/* sparkles エフェクト（gold系：superRare, ssRare, ultraRareの場合） */
 .sparkle-gold {
 	background: radial-gradient(
 		circle,
 		rgba(255, 215, 0, 0.5) 0%,
 		transparent 70%
 	);
-	opacity: 0; /* GSAPでフェードインアニメーション */
-}
+	opacity: 0;
+};
 
-/* sparkles エフェクト（black系：secretRareの場合） */
 .sparkle-black {
 	background: radial-gradient(circle, rgba(0, 0, 0, 0.5) 0%, transparent 70%);
 	opacity: 0;
+};
+
+@utility text-xxxs {
+  font-size: var(--font-size-xxxs);
+  line-height: var(--line-height-xxxs);
+};
+@utility text-xxs {
+  font-size: var(--font-size-xxs);
+  line-height: var(--line-height-xxs);
+};
+@utility text-xs-custom {
+  font-size: var(--font-size-xs-custom);
+  line-height: var(--line-height-xs-custom);
+};
+/* Tailwindのデフォルトユーティリティと異なるカスタムsm以降のサイズが必要な場合はここに追加 */
+/* 例:
+@utility text-sm-custom {
+  font-size: var(--font-size-sm-custom);
+  line-height: var(--line-height-sm-custom);
 }
+*/
 
 @layer components {
 	.btn.btn-outline.btn-base {
-		/* @apply bg-tetiary-light bg-white text-base-content border border-tetiary-light; */
-		background-color: var(
-			--color-white
-		) !important; /* tetiary-light はアクセントなので、ベースは白 */
+		background-color: var(--color-bg-white) !important;
 		color: var(--color-base-content) !important;
 		border-color: var(--color-tetiary-light) !important;
 	}
 	.btn.btn-outline.btn-base:hover {
-		/* @apply border-base-300 text-base-300; */ /* base-300 は背景色に近いので、より濃い色かアクセントカラー */
 		border-color: var(--color-accent) !important;
 		color: var(--color-accent) !important;
 	}
 	input.btn.btn-tetiary:checked {
-		/* @apply bg-tetiary-light text-white border-tetiary-light; */
 		background-color: var(--color-tetiary-light) !important;
-		color: var(--color-white) !important; /* text-white の代わりに */
+		color: var(--color-bg-white) !important;
 		border-color: var(--color-tetiary-light) !important;
 	}
 	input.btn.btn-tetiary:checked:hover {
-		/* @apply bg-tetiary text-white border-tetiary; */
-		background-color: var(
-			--color-accent
-		) !important; /* tetiary は accent に割り当て */
-		color: var(--color-white) !important;
+		background-color: var(--color-accent) !important;
+		color: var(--color-bg-white) !important;
 		border-color: var(--color-accent) !important;
 	}
 	.btn.btn-tetiary.btn-outline {
-		/* @apply text-tetiary bg-white border-tetiary; */
 		color: var(--color-accent) !important;
-		background-color: var(--color-white) !important;
+		background-color: var(--color-bg-white) !important;
 		border-color: var(--color-accent) !important;
 	}
 	.btn.btn-tetiary.btn-outline:hover {
-		/* @apply text-tetiary-light bg-white border-tetiary-light; */
 		color: var(--color-tetiary-light) !important;
-		background-color: var(--color-white) !important;
+		background-color: var(--color-bg-white) !important;
 		border-color: var(--color-tetiary-light) !important;
 	}
 	.btn.btn-secondary-light {
 		background-color: var(--color-secondary-light) !important;
-		color: var(--color-white) !important;
+		color: var(--color-bg-white) !important;
 		border-color: var(--color-secondary-light) !important;
 		background-image: none !important;
 		box-shadow: none !important;
 	}
 	.btn.btn-secondary-light:hover {
 		background-color: var(--color-secondary) !important;
-		color: var(--color-white) !important;
+		color: var(--color-bg-white) !important;
 		border-color: var(--color-secondary) !important;
 		background-image: none !important;
 	}
@@ -205,7 +222,6 @@
 		aspect-ratio: 1 / 2;
 	}
 	.btn.btn-offwhite {
-		/* @apply bg-white text-light border-none bg-opacity-60; */
 		background-color: color-mix(
 			in srgb,
 			var(--color-bg-white) 60%,
@@ -215,16 +231,13 @@
 		border: none !important;
 	}
 	.btn.btn-twitter {
-		/* X (旧Twitter) のブランドカラーに合わせる */
-		/* @apply bg-base-content text-white border-none; */
 		background-color: #1da1f2 !important; /* Twitter Blue */
-		color: var(--color-white) !important;
+		color: var(--color-bg-white) !important;
 		border: none !important;
 		background-image: none !important;
 	}
 	.btn.btn-instagram {
-		/* @apply text-white border-none; */
-		color: var(--color-white) !important;
+		color: var(--color-bg-white) !important;
 		border: none !important;
 		background: linear-gradient(
 			45deg,

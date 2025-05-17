@@ -32,7 +32,7 @@ const Footer = () => {
 				</ul>
 			</nav>
 
-			<span className="py-6 block text-center text-xs">
+			<span className="py-6 block text-center text-xs-custom">
 				Copyright © {new Date().getFullYear()}{' '}
 				<a href="/" className="hover:underline">
 					あしたぼ

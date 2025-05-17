@@ -63,7 +63,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						<div className="text-xl sm:text-2xl font-bold mt-2">
 							{detail.title.split('(')[0]}
 						</div>
-						<div className="flex flex-col sm:flex-row sm:items-center justify-start gap-x-2 text-xs sm:text-sm text-gray-600 mt-1">
+						<div className="flex flex-col sm:flex-row sm:items-center justify-start gap-x-2 text-xs-custom sm:text-sm text-gray-600 mt-1">
 							<div>ライブ: {currentPlaylist.title.split('(')[0]}</div>
 							<div>
 								{format(detail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
@@ -74,7 +74,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								{currentTags.length > 0 && (
 									<Tags
 										tags={currentTags}
-										size="text-xs"
+										size="text-xs-custom"
 										isLink
 										liveOrBand={liveOrBand}
 									/>
@@ -133,7 +133,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								<div className="text-sm sm:text-base font-bold">
 									{currentPlaylist.title.split('(')[0]}
 								</div>
-								<div className="text-xs sm:text-sm text-gray-600">
+								<div className="text-xs-custom sm:text-sm text-gray-600">
 									{format(currentPlaylist.liveDate, 'yyyy年MM月dd日', {
 										locale: ja,
 									})}
@@ -170,7 +170,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 						<div className="text-xl sm:text-2xl font-bold mt-2">
 							{detail.title.split('(')[0]}
 						</div>
-						<div className="text-xs sm:text-sm text-gray-600 mt-1">
+						<div className="text-xs-custom sm:text-sm text-gray-600 mt-1">
 							{format(detail.liveDate, 'yyyy年MM月dd日', { locale: ja })}
 						</div>
 						<div className="flex flex-row justify-between w-full mt-3 items-center">
@@ -178,7 +178,7 @@ const VideoDetailPage = ({ session, detail, liveOrBand, playlist }: Props) => {
 								{currentTags.length > 0 && (
 									<Tags
 										tags={currentTags}
-										size="text-xs"
+										size="text-xs-custom"
 										isLink
 										liveOrBand={liveOrBand}
 									/>

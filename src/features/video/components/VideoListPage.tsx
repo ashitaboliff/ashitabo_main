@@ -155,7 +155,9 @@ const VideoListPage = ({
 			<div className="flex flex-col items-center justify-center gap-y-4">
 				<div className="flex flex-row items-center justify-end w-full gap-2 sm:gap-4 mb-2 px-1">
 					<div className="flex items-center space-x-2">
-						<p className="text-xs sm:text-sm whitespace-nowrap">表示件数:</p>
+						<p className="text-xs-custom sm:text-sm whitespace-nowrap">
+							表示件数:
+						</p>
 						<SelectFieldNumber
 							value={currentQuery.videoPerPage}
 							onChange={(e) =>
@@ -169,7 +171,9 @@ const VideoListPage = ({
 						/>
 					</div>
 					<div className="flex items-center space-x-2">
-						<p className="text-xs sm:text-sm whitespace-nowrap">並び順:</p>
+						<p className="text-xs-custom sm:text-sm whitespace-nowrap">
+							並び順:
+						</p>
 						<div className="flex flex-row gap-x-1 sm:gap-x-2">
 							<input
 								type="radio"

@@ -33,7 +33,7 @@ const BookingCalendar = memo(
 										key={`th-${index}`}
 										className="border border-base-200 p-1 sm:p-2 w-11 h-9 sm:w-16 sm:h-14"
 									>
-										<p className="text-xs sm:text-sm text-base-content">
+										<p className="text-xs-custom sm:text-sm text-base-content">
 											{format(new Date(day), 'MM/dd', { locale: ja })} <br />{' '}
 											{format(new Date(day), '(E)', { locale: ja })}
 										</p>
@@ -46,7 +46,7 @@ const BookingCalendar = memo(
 						{timeList.map((time, timeIndex) => (
 							<tr key={`tr-${time}`}>
 								<td className="border border-base-200 p-1 sm:p-2 w-11 h-13 sm:w-16 sm:h-16 break-words">
-									<p className="text-xs sm:text-sm text-base-content break-words">
+									<p className="text-xs-custom sm:text-sm text-base-content break-words">
 										{time.split('~')[0]}~ <br /> {time.split('~')[1]}
 									</p>
 								</td>

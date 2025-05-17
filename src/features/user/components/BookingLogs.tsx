@@ -118,14 +118,16 @@ const UserBookingLogs = ({
 									setIsPopupOpen(true)
 								}}
 							>
-								<td className="text-xs">
+								<td className="text-xs-custom">
 									{format(new Date(booking.bookingDate), 'yyyy年MM月dd日', {
 										locale: ja,
 									})}
 								</td>
-								<td className="text-xs">{BookingTime[booking.bookingTime]}</td>
-								<td className="text-xs">{booking.registName}</td>
-								<td className="text-xs">{booking.name}</td>
+								<td className="text-xs-custom">
+									{BookingTime[booking.bookingTime]}
+								</td>
+								<td className="text-xs-custom">{booking.registName}</td>
+								<td className="text-xs-custom">{booking.name}</td>
 							</tr>
 						))}
 					</tbody>

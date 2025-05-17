@@ -7,9 +7,9 @@ const Tags = ({
 	tags: string[]
 	liveOrBand?: 'live' | 'band'
 	isLink?: boolean
-	size?: 'text-xs' | 'text-sm' | 'text-base'
+	size?: 'text-xs-custom' | 'text-sm' | 'text-base'
 }) => {
-	const effectiveSize = size || 'text-xs'
+	const effectiveSize = size || 'text-xs-custom'
 	const isInLink = isLink || false
 	return (
 		<div className="flex flex-row flex-wrap gap-x-1">
@@ -21,7 +21,7 @@ const Tags = ({
 							? `/video?liveOrBand=${liveOrBand}&tag=${encodeURIComponent(tag)}`
 							: undefined
 					}
-					className={`text-accent whitespace-nowrap ${effectiveSize} px-1 ${isLink ? 'hover:underline' : ''}`}
+					className={`text-info whitespace-nowrap ${effectiveSize} px-1 ${isLink ? 'hover:underline' : ''}`}
 				>
 					# {tag}
 				</a>

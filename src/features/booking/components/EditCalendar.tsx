@@ -56,7 +56,7 @@ const EditCalendar = memo(
 										key={`th-${index}`}
 										className="border border-base-200 p-1 sm:p-2 w-11 h-9 sm:w-14 sm:h-12 md:w-16 md:h-14"
 									>
-										<p className="text-xs sm:text-sm text-base-content">
+										<p className="text-xs-custom sm:text-sm text-base-content">
 											{format(new Date(day), 'MM/dd', { locale: ja })} <br />{' '}
 											{format(new Date(day), '(E)', { locale: ja })}
 										</p>
@@ -69,7 +69,7 @@ const EditCalendar = memo(
 						{timeList.map((time, timeIndex) => (
 							<tr key={`tr-${time}`}>
 								<td className="border border-base-200 p-1 sm:p-2 w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 break-words">
-									<p className="text-xs sm:text-sm text-base-content break-words">
+									<p className="text-xs-custom sm:text-sm text-base-content break-words">
 										{time.split('~')[0]}~ <br /> {time.split('~')[1]}
 									</p>
 								</td>
@@ -115,10 +115,10 @@ const EditCalendar = memo(
 												}}
 											>
 												<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
-													<p className="text-xxxs sm:text-xs text-base-content bold">
+													<p className="text-xxxs sm:text-xs-custom text-base-content bold">
 														<CircleIcon color="blue" size={20} />
 													</p>
-													<p className="text-xxxs sm:text-xs text-base-content"></p>
+													<p className="text-xxxs sm:text-xs-custom text-base-content"></p>
 												</div>
 											</td>
 										)
@@ -129,7 +129,7 @@ const EditCalendar = memo(
 												className={tdClassName}
 											>
 												<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
-													<p className="text-xxxs sm:text-xs text-base-content bold">
+													<p className="text-xxxs sm:text-xs-custom text-base-content bold">
 														<ForbiddenIcon color="red" size={20} />
 													</p>
 												</div>
@@ -157,12 +157,12 @@ const EditCalendar = memo(
 												}}
 											>
 												<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
-													<p className="text-xxxs sm:text-xs text-base-content bold">
+													<p className="text-xxxs sm:text-xs-custom text-base-content bold">
 														{booking?.registName.length > 21
 															? booking?.registName.slice(0, 20) + '...'
 															: booking?.registName}
 													</p>
-													<p className="text-xxxs sm:text-xs text-base-content">
+													<p className="text-xxxs sm:text-xs-custom text-base-content">
 														{booking?.name && booking?.name.length > 14
 															? booking?.name.slice(0, 13) + '...'
 															: booking?.name}
@@ -177,7 +177,7 @@ const EditCalendar = memo(
 												className={tdClassName}
 											>
 												<div className="w-11 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 flex flex-col justify-center items-center text-center break-words py-1">
-													<p className="text-xxxs sm:text-xs text-base-content bold">
+													<p className="text-xxxs sm:text-xs-custom text-base-content bold">
 														<ForbiddenIcon color="red" size={20} />
 													</p>
 												</div>

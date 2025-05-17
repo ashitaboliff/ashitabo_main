@@ -1,5 +1,3 @@
-'use server'
-
 const BookingRule = () => {
 	return (
 		<p className="text-sm">

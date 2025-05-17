@@ -69,17 +69,17 @@ const LogsPage = ({
 					<table className="table table-zebra w-full">
 						<thead className="bg-base-200">
 							<tr>
-								<th className="p-3 text-left text-xs sm:text-sm font-semibold tracking-wider w-10 sm:w-12"></th>
-								<th className="p-3 text-left text-xs sm:text-sm font-semibold tracking-wider">
+								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider w-10 sm:w-12"></th>
+								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider">
 									予約日
 								</th>
-								<th className="p-3 text-left text-xs sm:text-sm font-semibold tracking-wider hidden sm:table-cell">
+								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider hidden sm:table-cell">
 									時間
 								</th>
-								<th className="p-3 text-left text-xs sm:text-sm font-semibold tracking-wider">
+								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider">
 									バンド名
 								</th>
-								<th className="p-3 text-left text-xs sm:text-sm font-semibold tracking-wider hidden md:table-cell">
+								<th className="p-3 text-left text-xs-custom sm:text-sm font-semibold tracking-wider hidden md:table-cell">
 									責任者
 								</th>
 							</tr>
@@ -101,16 +101,16 @@ const LogsPage = ({
 											</div>
 										)}
 									</td>
-									<td className="p-3 whitespace-nowrap text-xs sm:text-sm">
+									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm">
 										{format(log.bookingDate, 'yyyy/MM/dd (E)', { locale: ja })}
 									</td>
-									<td className="p-3 whitespace-nowrap text-xs sm:text-sm hidden sm:table-cell">
+									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm hidden sm:table-cell">
 										{BookingTime[log.bookingTime]}
 									</td>
-									<td className="p-3 text-xs sm:text-sm break-words">
+									<td className="p-3 text-xs-custom sm:text-sm break-words">
 										{log.registName}
 									</td>
-									<td className="p-3 whitespace-nowrap text-xs sm:text-sm hidden md:table-cell">
+									<td className="p-3 whitespace-nowrap text-xs-custom sm:text-sm hidden md:table-cell">
 										{log.name}
 									</td>
 								</tr>
