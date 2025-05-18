@@ -61,7 +61,7 @@ export default class Gacha {
 			(catConfig) =>
 				new GachaCategory(
 					catConfig.name,
-					catConfig.probability,
+					catConfig.probability * catConfig.count,
 					this.generateItems(catConfig.prefix, catConfig.count, version),
 				),
 		)
