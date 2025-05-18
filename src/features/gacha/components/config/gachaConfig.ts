@@ -1,4 +1,5 @@
 import { RarityType } from '@/features/gacha/types'
+import { getGitImageUrl } from '@/utils'
 
 export interface GachaCategoryConfig {
 	name: RarityType
@@ -24,7 +25,7 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 			{ name: 'SECRET_RARE', probability: 1, count: 1, prefix: 'SECRET' },
 		],
 		title: 'OBのいる島',
-		packImage: '/gacha/version1/pack.png',
+		packImage: getGitImageUrl('gacha/version1/pack.png'),
 	},
 	// 他のversionの設定もここで定義可能
 	version2: {
@@ -36,6 +37,6 @@ export const gachaConfigs: { [version: string]: GachaVersionConfig } = {
 			{ name: 'ULTRA_RARE', probability: 100, count: 1, prefix: 'UR' },
 		],
 		title: '卒業生の暴獣',
-		packImage: '/gacha/version2/pack.png',
+		packImage: getGitImageUrl('gacha/version2/pack.png'),
 	},
 }

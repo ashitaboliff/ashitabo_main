@@ -1,0 +1,70 @@
+---
+title: アップデートのお知らせ(2025/05/18)
+description: あしたぼホームページ 2025年5月18日までの直近のアップデート内容です。
+createdAt: '2025/05/18'
+updatedAt: '2025/05/18'
+---
+
+直近のアップデート内容です。コミットログを元にほぼAIで記載しています。読まんくていいよ～
+
+ご意見やご不明な点がありましたら、[マシュマロ](https://marshmallow-qa.com/pqvroxa4c7sq57k?t=OuA7tL&utm_medium=url_text&utm_source=promotion)または[お問い合わせ口](https://docs.google.com/forms/d/e/1FAIpQLSfjiJi5HDgaEhsUC5fk79ovoauTthCLIY5mtEuOrzdV6UWZeQ/viewform?usp=header)までお願いします。
+
+## 主な変更点
+
+### 機能改善・追加
+- **大規模リファクタリングと機能追加:**
+  - 様々なコンポーネントの改善、新しい機能の追加、既存コードの整理を行いました。
+  - プロフィール表示コンポーネントの追加とユーザープロファイル処理のリファクタリング。
+  - サーバーサイドレンダリングの利用、不要なコードの削除、UIの一貫性向上。
+  - 予約管理コンポーネントの追加とUI改善。
+- **メタデータ生成機能の追加:** 予約詳細ページと日程調整ページのタイトルと説明を動的に設定する機能を追加しました。
+- **YouTube検索機能のリファクタリングとバリデーション追加:** YouTube検索機能を改善し、入力値の検証を追加しました。
+- **YouTubeタグ付け:** 予約管理用のコンポーネントを追加し、UIを改善しました。
+- **テキストサイズのカスタム化とスタイル統一:** テキストサイズをカスタムサイズに変更し、アプリケーション全体でスタイルを統一しました。
+- **コンポーネントとスタイルのリファクタリング:** アプリケーション全体のコンポーネントとスタイルをリファクタリングしました。予約およびガチャコンポーネントで初期データにpropsを利用するようにし、不要な状態管理を削除しました。
+- **CSSユーティリティクラスの更新とコンポーネントサイズの修正:** 幅や高さの指定をクラス名から直接数値に変更するなど、CSSユーティリティクラスを更新し、コンポーネントのサイズを修正しました。
+- **ガチャ機能の修正:** ガチャの画像を他のGithubリポジトリから取得するように修正しました。これにより、ガチャの画像が正しく表示されるようになりました。
+- **ガチャアニメーション変更:** ガチャの演出がかっこよくなりました！マジ最高
+
+### バグ修正
+- **予約編集でのバグ修正:** 予約編集機能に関するバグを修正しました。
+
+### その他
+- **ルーティングの大幅変更 (a1baed7):** アプリケーションのルーティング構造を大幅に変更しました。
+- **GitHubリポジトリを公開:** なんかデプロイ出来ないから公開しました
+
+## コミット一覧 (新しい順)
+
+- `81339cf` - 未使用画像アセットの削除 (gacha v1/v2, home live, shikishi) (watabegg, 3 hours ago)
+- `704a299` - Merge pull request #66 from ashitaboliff/hotfix/actions_mirror (あしたぼホームページ, 8 hours ago)
+- `38f5562` - feat: actions/checkoutのバージョンをv4に更新 (watabegg, 8 hours ago)
+- `2676a7e` - Merge pull request #65 from ashitaboliff/hotfix/actions_mirror (あしたぼホームページ, 8 hours ago)
+- `f5cc4b9` - feat: ミラーリングのプッシュ方法を変更 (watabegg, 8 hours ago)
+- `6805abc` - Merge pull request #64 from ashitaboliff/develop-main (watabegg, 8 hours ago)
+- `51ac6a0` - Merge pull request #63 from ashitaboliff/feature/mirror-actions (watabegg, 8 hours ago)
+- `e3f6ca0` - feat: 個人リポジトリへのミラーリングワークフローを追加 (watabegg, 8 hours ago)
+- `854f0ea` - Merge pull request #62 from watabegg/develop-main (watabegg, 8 hours ago)
+- `ee442c2` - Merge pull request #61 from watabegg/fix/gacha-cookie (watabegg, 9 hours ago)
+- `e6befc9` - feat: 様々なコンポーネントのリファクタリングと機能追加 (watabegg, 9 hours ago)
+- `a0a5328` - Merge pull request #60 from watabegg/fix/css-name (watabegg, 27 hours ago)
+- `5a20462` - feat: テキストサイズをカスタムサイズに変更し、スタイルを統一 (watabegg, 33 hours ago)
+- `23693d4` - Refactor components and styles across the application (watabegg, 34 hours ago)
+- `2597d5b` - feat: メタデータ生成機能を追加し、予約詳細ページと日程調整ページのタイトルと説明を動的に設定 (watabegg, 2 days ago)
+- `40d12fa` - Refactor booking and gacha components to utilize props for initial data and remove unnecessary state management (watabegg, 3 days ago)
+- `14b7f95` - feat: Refactor YouTube search functionality and add validation (watabegg, 4 days ago)
+- `5a3acee` - feat: 新しい機能を追加し、既存のコードを整理 (watabegg, 5 days ago)
+- `8e3c934` - feat: Add ProfileDisplay component and refactor user profile handling (watabegg, 5 days ago)
+- `5f4f57d` - Refactor components to use server-side rendering, remove unused code, and improve UI consistency (watabegg, 5 days ago)
+- `29884f2` - feat: Add booking management components and improve UI (watabegg, 5 days ago)
+- `e896348` - fix: Gacha関連の型のインポートパスを修正 (watabegg, 5 days ago)
+- `66664cf` - Refactor imports to use feature-specific paths for user, booking, and video types; create new types for booking and user features; update related components and actions accordingly. (watabegg, 5 days ago)
+- `a1baed7` - ルーティングの大幅変更 (watabegg, 5 days ago)
+- `ea10547` - CSSのユーティリティクラスを更新し、コンポーネントのサイズを修正しました。特に、幅や高さの指定をクラス名から直接数値に変更しました。 (watabegg, 10 days ago)
+
+---
+
+引き続き、改善を進めてまいります。頑張るぞ～
+
+## お問い合わせ
+[お問い合わせ口](https://docs.google.com/forms/d/e/1FAIpQLSfjiJi5HDgaEhsUC5fk79ovoauTthCLIY5mtEuOrzdV6UWZeQ/viewform?usp=header)
+[改善要望・ご意見](https://docs.google.com/forms/d/e/1FAIpQLSfGTf-FXq9pihaIQb1fEjUuYsnhSg1rEbAVyapLJi7CiwkilQ/viewform?usp=header)

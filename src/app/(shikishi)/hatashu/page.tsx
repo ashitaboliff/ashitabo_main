@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useState, useRef } from 'react'
 import { gsap } from 'gsap'
+import { getGitImageUrl } from '@/utils'
 
 type Petal = {
 	left: number
@@ -145,7 +146,7 @@ const Page = () => {
 			{/* 画面中央の画像（回転） */}
 			<Image
 				ref={centerImgRef}
-				src="/shikishi/hata1.png"
+				src={getGitImageUrl("/shikishi/hata1.png")}
 				alt="center"
 				width={300}
 				height={300}
@@ -178,7 +179,7 @@ const Page = () => {
 			{/* 画面四隅の画像（各角でx,y,z軸回転） */}
 			<Image
 				className="corner-image"
-				src="/shikishi/hata1.png"
+				src={getGitImageUrl("/shikishi/hata1.png")}
 				alt="corner"
 				style={{ position: 'absolute', top: 0, right: 0 }}
 				width={100}
@@ -186,7 +187,7 @@ const Page = () => {
 			/>
 			<Image
 				className="corner-image"
-				src="/shikishi/hata3.png"
+				src={getGitImageUrl("/shikishi/hata3.png")}
 				alt="corner"
 				style={{ position: 'absolute', bottom: 0, left: 0 }}
 				width={100}

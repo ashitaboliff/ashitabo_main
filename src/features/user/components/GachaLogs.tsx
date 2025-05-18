@@ -11,8 +11,8 @@ import GachaPreviewPopup, {
 } from '@/features/gacha/components/GachaPreviewPopup'
 import {
 	getGachaByGachaSrcAction,
-	// getGachaByUserIdAction, // This will be called by the parent Server Component
 } from '@/features/gacha/components/actions'
+import { getGitImageUrl } from '@/utils'
 
 interface UserGachaLogsProps {
 	session: Session // Or just userId: string
@@ -151,7 +151,7 @@ const UserGachaLogs = ({
 					{gachas.map((gacha) => (
 						<img
 							key={gacha.id}
-							src={gacha.gachaSrc}
+							src={getGitImageUrl(gacha.gachaSrc)}
 							alt="Gacha Preview"
 							className="w-full h-auto object-cover rounded cursor-pointer"
 							decoding="auto"

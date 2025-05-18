@@ -3,6 +3,7 @@
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import { createMetaData } from '@/utils/metaData'
+import { getGitImageUrl } from '@/utils'
 
 import { FaXTwitter, FaInstagram, FaYoutube } from 'react-icons/fa6'
 
@@ -36,14 +37,14 @@ const Page = async () => {
 				</div>
 				<div className="relative w-full h-64">
 					<Image
-						src="/activity/activity-5.jpg"
+						src={getGitImageUrl("home/activity/activity-5.jpg")}
 						alt="あしたぼの活動風景"
 						width={240}
 						height={180}
 						className="rounded-lg mt-2 shadow absolute top-0 left-1/2 -translate-x-20 translate-y-14 object-cover"
 					/>
 					<Image
-						src="/activity/activity-12.jpg"
+						src={getGitImageUrl("home/activity/activity-12.jpg")}
 						alt="あしたぼの活動風景"
 						width={240}
 						height={180}
@@ -73,14 +74,14 @@ const Page = async () => {
 				</div>
 				<div className="relative w-full h-64">
 					<Image
-						src="/activity/activity-11.jpg"
+						src={getGitImageUrl("home/activity/activity-11.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
 						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 transform -translate-x-14 -translate-y-28 rotate-12"
 					/>
 					<Image
-						src="/activity/activity-10.jpg"
+						src={getGitImageUrl("home/activity/activity-10.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
@@ -115,14 +116,14 @@ const Page = async () => {
 				</div>
 				<div className="relative w-full h-64">
 					<Image
-						src="/activity/activity-8.jpg"
+						src={getGitImageUrl("home/activity/activity-8.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
 						className="rounded-lg mt-2 shadow absolute top-0 left-1/2 -translate-x-20 translate-y-14 object-cover"
 					/>
 					<Image
-						src="/activity/activity-7.jpg"
+						src={getGitImageUrl("home/activity/activity-7.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={240}
 						height={180}
@@ -167,35 +168,35 @@ const Page = async () => {
 				</div>
 				<div className="relative w-full h-64">
 					<Image
-						src="/activity/activity-4.jpg"
+						src={getGitImageUrl("home/activity/activity-4.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 -translate-x-1 -translate-y-2 object-cover -rotate-45"
 					/>
 					<Image
-						src="/activity/activity-2.jpg"
+						src={getGitImageUrl("home/activity/activity-2.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 transform -translate-y-28 -rotate-12"
 					/>
 					<Image
-						src="/activity/activity-1.jpg"
+						src={getGitImageUrl("home/activity/activity-1.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 right-1/2 -translate-x-4 object-cover rotate-12"
 					/>
 					<Image
-						src="/activity/activity-9.jpg"
+						src={getGitImageUrl("home/activity/activity-9.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
 						className="rounded-lg mt-2 shadow absolute top-1/2 left-1/2 translate-x-5 -translate-y-28 -rotate-6"
 					/>
 					<Image
-						src="/activity/activity-6.jpg"
+						src={getGitImageUrl("home/activity/activity-6.jpg")}
 						alt="信州大学工学部軽音サークルあしたぼの活動風景"
 						width={120}
 						height={90}
