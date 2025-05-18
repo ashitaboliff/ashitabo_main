@@ -1,16 +1,15 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { signOutUser } from '@/features/user/actions'
 import Image from 'next/image'
 import { Profile } from '@/features/user/types'
 import { Booking } from '@/features/booking/types'
-import { GachaData, GachaSort } from '@/features/gacha/types' // Import Gacha types
-import { StatusCode } from '@/utils/types/responseTypes'
+import { GachaData, GachaSort } from '@/features/gacha/types'
 import { Tabs, Tab } from '@/components/ui/atoms/Tabs'
-import ProfileDisplay from './ProfileDisplay' // 新しいコンポーネントをインポート
+import ProfileDisplay from './ProfileDisplay'
 import LocalFont from 'next/font/local'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import GachaSelectPopup, {
@@ -18,7 +17,6 @@ import GachaSelectPopup, {
 } from '@/features/gacha/components/GachaSelectPopup'
 import BookingLogs from '@/features/user/components/BookingLogs'
 import GachaLogs from '@/features/user/components/GachaLogs'
-// import { checkGachaCookieAction } from '@/features/gacha/components/actions' // 不要なため削除
 
 import { GiCardRandom } from 'react-icons/gi'
 import { MdOutlineEditCalendar } from 'react-icons/md'
@@ -34,7 +32,6 @@ interface UserPageProps {
 	profile: Profile
 	session: Session
 	userRole: string
-	gachaStatus: { status: StatusCode; response: string }
 	initialBookings: Booking[]
 	initialPageMax: number
 	initialCurrentPage: number
@@ -52,7 +49,6 @@ const UserPage = ({
 	profile,
 	session,
 	userRole,
-	gachaStatus,
 	initialBookings,
 	initialPageMax,
 	initialCurrentPage,
@@ -68,14 +64,84 @@ const UserPage = ({
 
 	const [isGachaPopupOpen, setIsGachaPopupOpen] = useState<boolean>(false)
 	const gachaPopupRef = useRef<GachaSelectPopupRef>(undefined)
-	// gachaCount の useState と関連処理を削除
-	// const [gachaCount, setGachaCount] = useState<number>(0)
 
 	const [isProvRatioPopupOpen, setIsProvRatioPopupOpen] =
 		useState<boolean>(false)
 	const provRatioPopupRef = useRef<PopupRef>(undefined)
 
-	const canPlayGacha = gachaStatus.status === StatusCode.OK
+	const [gachaPlayCountToday, setGachaPlayCountToday] = useState<number>(0)
+	const [lastGachaDateString, setLastGachaDateString] = useState<string>('')
+	const [gachaMessage, setGachaMessage] = useState<string>('')
+	const MAX_GACHA_PLAYS_PER_DAY = 3
+
+	useEffect(() => {
+		const today = new Date().toISOString().split('T')[0]
+		const storedDate = localStorage.getItem('gachaLastPlayedDate')
+		const storedCount = parseInt(
+			localStorage.getItem('gachaPlayCountToday') || '0',
+			10,
+		)
+
+		if (storedDate === today) {
+			setGachaPlayCountToday(storedCount)
+		} else {
+			// 日付が変わっていたらリセット
+			localStorage.setItem('gachaPlayCountToday', '0')
+			localStorage.setItem('gachaLastPlayedDate', today)
+			setGachaPlayCountToday(0)
+		}
+		setLastGachaDateString(today)
+	}, [])
+
+	const canPlayGacha = gachaPlayCountToday < MAX_GACHA_PLAYS_PER_DAY
+
+	useEffect(() => {
+		if (!canPlayGacha) {
+			setGachaMessage(
+				`本日は既にガチャを${MAX_GACHA_PLAYS_PER_DAY}回引いているため、これ以上引くことはできません。`,
+			)
+		} else {
+			setGachaMessage('')
+		}
+	}, [canPlayGacha, gachaPlayCountToday])
+
+	const handlePlayGacha = async () => {
+		const today = new Date().toISOString().split('T')[0]
+		let currentCount = gachaPlayCountToday
+		let currentDateString = lastGachaDateString
+
+		// localStorageから最新情報を取得して再チェック (念のため)
+		const storedDate = localStorage.getItem('gachaLastPlayedDate')
+		const storedCount = parseInt(
+			localStorage.getItem('gachaPlayCountToday') || '0',
+			10,
+		)
+
+		if (storedDate === today) {
+			currentCount = storedCount
+		} else {
+			currentCount = 0 // 日付が変わっていたらリセット
+		}
+		currentDateString = today
+
+		if (currentCount < MAX_GACHA_PLAYS_PER_DAY) {
+			setIsGachaPopupOpen(true)
+		} else {
+			setGachaMessage(
+				`本日は既にガチャを${MAX_GACHA_PLAYS_PER_DAY}回引いているため、これ以上引くことはできません。`,
+			)
+		}
+	}
+
+	const onGachaPlayedSuccessfully = () => {
+		const today = new Date().toISOString().split('T')[0]
+		const newCount = gachaPlayCountToday + 1
+		localStorage.setItem('gachaPlayCountToday', newCount.toString())
+		localStorage.setItem('gachaLastPlayedDate', today)
+		setGachaPlayCountToday(newCount)
+		setLastGachaDateString(today)
+		router.refresh() // ガチャログなどを更新するためにリフレッシュ
+	}
 
 	return (
 		<div className="container mx-auto p-4 flex flex-col items-center">
@@ -112,7 +178,7 @@ const UserPage = ({
 			)}
 			<div className="w-full">
 				<Tabs>
-					<Tab label={<MdOutlineEditCalendar size={24} />}>
+					<Tab label={<MdOutlineEditCalendar size={30} />}>
 						<BookingLogs
 							session={session}
 							initialBookings={initialBookings}
@@ -122,18 +188,16 @@ const UserPage = ({
 							initialSort={initialSort}
 						/>
 					</Tab>
-					<Tab label={<GiCardRandom size={24} />}>
+					<Tab label={<GiCardRandom size={30} />}>
 						<div className="flex flex-col items-center mb-4 gap-y-2">
 							<div className="flex flex-col sm:flex-row justify-center gap-2 w-full">
 								<button
 									className="btn btn-primary w-full sm:w-auto"
-									onClick={() => {
-										setIsGachaPopupOpen(true)
-										// router.refresh() // ガチャを引いた後にページをリフレッシュして状態を更新
-									}}
-									disabled={!canPlayGacha} // gachaStatusに基づいてdisabledを制御
+									onClick={handlePlayGacha}
+									disabled={!canPlayGacha}
 								>
-									ガチャを引く
+									ガチャを引く ({MAX_GACHA_PLAYS_PER_DAY - gachaPlayCountToday}
+									回残)
 								</button>
 								<button
 									className="btn btn-outline w-full sm:w-auto"
@@ -142,9 +206,9 @@ const UserPage = ({
 									提供割合
 								</button>
 							</div>
-							{!canPlayGacha && ( // gachaStatusに基づいてメッセージを表示
+							{gachaMessage && (
 								<div className="text-error text-center mt-2">
-									{gachaStatus.response}
+									{gachaMessage}
 								</div>
 							)}
 						</div>
@@ -174,6 +238,8 @@ const UserPage = ({
 				open={isGachaPopupOpen}
 				onClose={() => setIsGachaPopupOpen(false)}
 				ref={gachaPopupRef}
+				onGachaSuccess={onGachaPlayedSuccessfully} // 成功時のコールバックを渡す
+				userId={session?.user?.id} // userIdを渡す
 			/>
 			<Popup
 				id="prov-ratio-popup" // idプロパティを追加

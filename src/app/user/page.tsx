@@ -2,14 +2,13 @@
 
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
-// import { getProfileAction } from '@/app/actions' // 不要になるため削除
 import { getUserRoleAction } from '@/features/admin/components/action'
-import { checkGachaCookieAction } from '@/features/gacha/components/actions'
+// import { checkGachaCookieAction } from '@/features/gacha/components/actions' // Removed as gacha status is handled client-side
 import { getBookingByUserIdAction } from '@/features/booking/components/actions'
-import { getGachaByUserIdAction } from '@/features/gacha/components/actions' // Import Gacha action
+import { getGachaByUserIdAction } from '@/features/gacha/components/actions'
 import type { Profile } from '@/features/user/types'
 import type { Booking } from '@/features/booking/types'
-import type { GachaData, GachaSort } from '@/features/gacha/types' // Import Gacha types
+import type { GachaData, GachaSort } from '@/features/gacha/types'
 import UserPage from '@/features/user/components/UserPage'
 import { notFound } from 'next/navigation'
 import { createMetaData } from '@/utils/metaData'
@@ -24,7 +23,6 @@ export async function metadata() {
 
 interface UserPageServerProps {
 	searchParams: Promise<{
-		// Booking logs params
 		page?: string
 		limit?: string
 		sort?: 'new' | 'old'
@@ -53,8 +51,7 @@ const userPage = async ({ searchParams }: UserPageServerProps) => {
 		if (userRole.status !== 200) {
 			return notFound()
 		}
-		// getProfileAction は不要。session.user.dbProfile を直接使用
-		const gachaStatus = await checkGachaCookieAction()
+		// const gachaStatus = await checkGachaCookieAction() // Removed as gacha status is handled client-side
 		const userProfile = session.user.dbProfile as Profile
 
 		// Fetch booking data
@@ -76,7 +73,6 @@ const userPage = async ({ searchParams }: UserPageServerProps) => {
 			bookings = bookingRes.response.bookings
 			totalCount = bookingRes.response.totalCount
 		} else {
-			// Handle error case, e.g., log it or show a message
 			console.error('Failed to fetch bookings:', bookingRes.response)
 		}
 
@@ -113,7 +109,7 @@ const userPage = async ({ searchParams }: UserPageServerProps) => {
 				profile={userProfile}
 				session={session}
 				userRole={userRole.response}
-				gachaStatus={gachaStatus}
+				// gachaStatus={gachaStatus} // Removed
 				initialBookings={bookings}
 				initialPageMax={pageMax}
 				initialCurrentPage={currentPage}

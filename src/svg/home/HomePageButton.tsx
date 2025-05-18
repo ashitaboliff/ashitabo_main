@@ -1,3 +1,5 @@
+'use server'
+
 const lightBlue = '#3C87E0'
 const lightyellow = '#F0CB51'
 const lightred = '#E3646B'
@@ -8,7 +10,7 @@ const colorList = [
 	{ name: 'lightBlue', color: lightBlue },
 ]
 
-const HomePageButton = ({
+const HomePageButton = async ({
 	color,
 	link,
 	text,

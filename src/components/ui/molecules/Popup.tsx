@@ -75,24 +75,16 @@ const Popup = forwardRef<
 		}
 	}, [open, onClose])
 
-	// The dialog element should always be in the DOM to be controlled via its methods.
-	// Visibility is controlled by the `open` attribute or showModal/close methods.
-
 	return (
 		<dialog
 			id={id}
 			ref={dialogRef}
-			className={clsx(
-				'modal modal-bottom sm:modal-middle', // daisyUI classes for positioning
-				// 'modal-open' is not needed when using <dialog> methods
-			)}
-			// onClick={onClose} // Backdrop click to close is handled by <form method="dialog"> or native dialog behavior
-			aria-labelledby="popup-title" // title element should have id="popup-title"
-			// onClose={onClose} // This is a React prop, native 'close' event is handled in useEffect
+			className="modal modal-bottom sm:modal-middle"
+			aria-labelledby="popup-title"
 		>
 			<div
 				className={clsx(
-					'modal-box bg-base-100 rounded-lg shadow-lg p-6 relative',
+					'modal-box bg-base-100 rounded-lg shadow-lg p-6 relative mx-auto',
 					maxWidth ? `max-w-${maxWidth}` : 'max-w-lg',
 					className,
 				)}
