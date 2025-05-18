@@ -56,11 +56,6 @@ export default function RootLayout({
 					type="font/woff"
 					crossOrigin="anonymous"
 				/>
-				<script
-					async
-					src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6241533281842243"
-					crossOrigin="anonymous"
-				></script>
 			</head>
 			<body className={inter.className}>
 				<script
