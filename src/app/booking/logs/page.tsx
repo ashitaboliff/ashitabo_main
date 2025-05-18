@@ -1,9 +1,9 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import BookingLogs from '@/components/booking/BookingLogs'
-import { getAllBookingAction } from '@/components/booking/actions'
-import { createMetaData } from '@/utils/MetaData'
+import LogsPage from '@/features/booking/components/Logs' // インポート名とパスを変更
+import { getAllBookingAction } from '@/features/booking/components/actions'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({
@@ -16,7 +16,7 @@ const BookingLog = async () => {
 	const bookingLog = await getAllBookingAction()
 	if (bookingLog.status !== 200) return notFound()
 
-	return <BookingLogs bookingLog={bookingLog.response} />
+	return <LogsPage bookingLog={bookingLog.response} />
 }
 
 export default BookingLog

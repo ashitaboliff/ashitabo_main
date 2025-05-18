@@ -1,13 +1,13 @@
 import { Inter } from 'next/font/google'
 import LocalFont from 'next/font/local'
 import './globals.css'
-import ProgressBarProvider from '@/components/atoms/ProgressBarProvider'
-import Header from '@/components/molecules/Header'
-import Footer from '@/components/molecules/Footer'
+import ProgressBarProvider from '@/components/ui/atoms/ProgressBarProvider'
+import Header from '@/components/ui/molecules/Header'
+import Footer from '@/components/ui/molecules/Footer'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { LiffProvider } from '@/lib/liff/LiffOption'
-import NextAuthProvider from '@/lib/auth/AuthProvider'
-import { createMetaData } from '@/utils/MetaData'
+import NextAuthProvider from '@/features/auth/lib/AuthProvider'
+import { createMetaData } from '@/utils/metaData'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -63,12 +63,13 @@ export default function RootLayout({
 				></script>
 			</head>
 			<body className={inter.className}>
-				<div
-					className="flex space-x-4"
+				<script
 					dangerouslySetInnerHTML={{
-						__html:
-							'<!-- 拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ 変態糞学生 -->' +
-							'<!-- てことでソースコードはこちらからhttps://github.com/watabegg/k_on_line -->',
+						__html: `
+						console.log('%c拙い知識で作ったやつなので、可読性めっちゃ低くて申し訳ないけど頑張ってね！！！ watabegg', 'color: #000000; font-size: 20px; padding: 10px; font-weight: bold;');
+						console.log('%cRespect for 変態糞学生', 'color: #ff0000; font-size: 20px; padding: 5px; font-weight: bold; font-style: italic;');
+						console.log('%chttps://www.github.com/ashitaboliff/', 'color: #000000; font-size: 14px; padding: 5px; text-decoration: underline;');
+					`,
 					}}
 				/>
 				<NextAuthProvider>

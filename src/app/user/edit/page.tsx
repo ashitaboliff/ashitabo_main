@@ -2,9 +2,9 @@
 
 import { redirectFrom } from '@/app/actions'
 import { getSession, sessionCheck } from '@/app/actions'
-import { getProfileAction } from '@/app/actions'
-import { Profile } from '@/types/UserTypes'
-import ProfileEdit from '@/components/user/ProfileEdit'
+// import { getProfileAction } from '@/app/actions' // 不要になるため削除
+import type { Profile } from '@/features/user/types' // Profile型はProfileEditコンポーネントの型として必要
+import ProfileEdit from '@/features/user/components/ProfileEdit'
 
 export async function metadata() {
 	return {
@@ -16,18 +16,29 @@ export async function metadata() {
 
 const userPage = async () => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
-	if (isSession === 'no-session' || !session) {
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus に変更
+
+	if (sessionStatus === 'no-session' || !session?.user?.id) {
+		// !session もチェック
 		await redirectFrom('/auth/signin', '/user/edit')
-	} else if (isSession === 'session') {
+		return null // redirect後は何もレンダリングしない
+	} else if (sessionStatus === 'session') {
+		// プロファイルなしセッション
 		await redirectFrom('/auth/signin/setting', '/user/edit')
+		return null // redirect後は何もレンダリングしない
+	} else if (sessionStatus === 'profile' && session.user.dbProfile) {
+		// プロファイルありセッション
+		// getProfileAction は不要。session.user.dbProfile を直接使用
+		const userProfile = session.user.dbProfile as Profile // AuthOptionでnullでないことを保証済みと仮定
+		return <ProfileEdit profile={userProfile} />
 	} else {
-		const profile = await getProfileAction(session.user.id)
-		if (profile.status === 200) {
-			return <ProfileEdit profile={profile.response as Profile} />
-		} else {
-			await redirectFrom('/auth/signin/setting', '/user/edit')
-		}
+		// sessionStatus が 'profile' だが dbProfile がない、または予期せぬ状態
+		// この場合は設定ページへリダイレクトするか、エラーページ表示を検討
+		await redirectFrom(
+			'/auth/signin/setting',
+			'/user/edit?error=profile_not_found',
+		)
+		return null
 	}
 }
 

@@ -1,12 +1,12 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import YoutubeManagement from '@/components/admin/YoutubeManagement'
+import YoutubeManagement from '@/features/admin/components/YoutubeManagement'
 import {
 	getAccessTokenAction,
 	getPlaylistAction,
-} from '@/components/video/actions'
-import { getUserRoleAction } from '@/components/admin/action'
+} from '@/features/video/components/actions'
+import { getUserRoleAction } from '@/features/admin/components/action'
 import { getSession } from '@/app/actions'
 
 const Page = async () => {

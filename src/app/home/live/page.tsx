@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,7 +20,7 @@ const Page = async () => {
 		<div className="flex flex-col gap-y-4 mt-6">
 			<h1 className="text-4xl text-center">ライブ情報</h1>
 			<div
-				className={`flex flex-col justify-start px-6 pb-4 ${inter.className} bg-bg-white rounded-lg shadow`}
+				className={`flex flex-col justify-start px-6 pb-4 ${inter.className} bg-white rounded-lg shadow`}
 			>
 				<h2 className="text-xl font-bold my-4">4月: 新歓ライブ</h2>
 				<div className="text-base">

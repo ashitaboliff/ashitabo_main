@@ -6,7 +6,7 @@ import parse from 'html-react-parser'
 
 const Page = () => {
 	return (
-		<div className="container mx-auto bg-bg-white p-4 pb-8 rounded-lg">
+		<div className="container mx-auto bg-white p-4 pb-8 rounded-lg">
 			<h1 className="text-4xl font-bold text-center mt-4">
 				管理者ページの使い方
 			</h1>

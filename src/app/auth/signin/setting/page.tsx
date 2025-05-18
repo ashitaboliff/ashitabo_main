@@ -1,8 +1,8 @@
 'use server'
 
-import SigninSetting from '@/components/auth/SigninSetting'
+import SigninSetting from '@/features/auth/components/SigninSetting'
 import { getSession, sessionCheck, redirectFrom } from '@/app/actions'
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({
@@ -14,14 +14,20 @@ export async function metadata() {
 
 const Signin = async () => {
 	const session = await getSession()
-	const isSession = await sessionCheck(session)
+	const sessionStatus = await sessionCheck(session) // isSession -> sessionStatus
 
-	if (isSession === 'no-session') {
-		await redirectFrom('/auth/signin', '/auth/signin/setting')
-	} else if (isSession === 'profile') {
-		await redirectFrom('/user', '/auth/signin/setting')
+	if (sessionStatus === 'no-session') {
+		// セッションがなければサインインページへ
+		const redirectPath = `/auth/signin?from=${encodeURIComponent('/auth/signin/setting')}`
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
+	} else if (sessionStatus === 'profile') {
+		// 既にプロファイル設定済みならユーザーページへ
+		const redirectPath = `/user?from=${encodeURIComponent('/auth/signin/setting')}`
+		await redirectFrom(redirectPath, '')
+		return null // redirect後は何もレンダリングしない
 	}
-
+	// 'session' (プロファイル未設定) の場合は設定ページを表示
 	return <SigninSetting />
 }
 

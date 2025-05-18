@@ -1,10 +1,10 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import ForbiddenBookingPage from '@/components/admin/ForbiddenBookingPage'
+import ForbiddenBookingPage from '@/features/admin/components/ForbiddenBookingPage'
 import { getSession } from '@/app/actions'
-import { getAllBanBookingAction } from '@/components/admin/action'
-import SessionForbidden from '@/components/atoms/SessionNotFound'
+import { getAllBanBookingAction } from '@/features/admin/components/action'
+import SessionForbidden from '@/components/ui/atoms/SessionNotFound'
 
 const Page = async () => {
 	const session = await getSession()

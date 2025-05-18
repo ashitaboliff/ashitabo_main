@@ -1,4 +1,4 @@
-import { createMetaData } from '@/utils/MetaData'
+import { createMetaData } from '@/utils/metaData'
 
 export async function metadata() {
 	return createMetaData({

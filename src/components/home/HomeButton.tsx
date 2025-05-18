@@ -1,4 +1,4 @@
-'use client'
+'use server'
 
 const lightBlue = '#3C87E0'
 const lightyellow = '#F0CB51'
@@ -6,15 +6,11 @@ const lightred = '#E3646B'
 
 import HomePageButton from '@/svg/home/HomePageButton'
 
-const HomeButton = ({ device }: { device: string }) => {
+const HomeButton = async () => {
 	return (
-		<div
-			className={`grid gap-4 pt-2 ${
-				device === 'mobile' ? 'grid-cols-1' : 'grid-cols-2'
-			}`}
-		>
+		<div className="grid gap-4 pt-2 grid-cols-1 md:grid-cols-2 xl:scale-150 xl:origin-top">
 			{/* Row 1 */}
-			<div className="relative flex flex-row justify-center w-auto h-36">
+			<div className="relative flex flex-row justify-center xl:justify-end w-auto h-36">
 				<div className="absolute place-items-end -z-10">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +49,7 @@ const HomeButton = ({ device }: { device: string }) => {
 			</div>
 
 			{/* Row 2 */}
-			<div className="relative flex flex-row justify-center w-auto h-36">
+			<div className="relative flex flex-row justify-center xl:justify-start w-auto h-36">
 				<div className="absolute place-items-end -z-10">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

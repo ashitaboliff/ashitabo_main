@@ -68,8 +68,8 @@ const Page = () => {
 		})
 
 		// 花吹雪のSVG要素に対してGSAPアニメーションを設定
-		gsap.utils.toArray('.petal').forEach((el: any) => {
-			gsap.to(el, {
+		const petalAnimations = gsap.utils.toArray('.petal').map((el: any) => {
+			return gsap.to(el, {
 				y: '100vh',
 				duration: Math.random() * 7 + 3, // 3〜10秒程度の流れ
 				ease: 'linear',
@@ -81,6 +81,18 @@ const Page = () => {
 				},
 			})
 		})
+
+		// Cleanup function
+		const currentContainerRef = containerRef.current
+		const currentCenterImgRef = centerImgRef.current
+		const currentTextRef = textRef.current
+		return () => {
+			if (currentContainerRef) gsap.killTweensOf(currentContainerRef)
+			if (currentCenterImgRef) gsap.killTweensOf(currentCenterImgRef)
+			if (currentTextRef) gsap.killTweensOf(currentTextRef)
+			gsap.killTweensOf('.corner-image')
+			petalAnimations.forEach((anim) => anim.kill())
+		}
 	}, [])
 
 	return (
@@ -131,10 +143,12 @@ const Page = () => {
 			</div>
 
 			{/* 画面中央の画像（回転） */}
-			<img
+			<Image
 				ref={centerImgRef}
-				src="/shikishi/hata2.png"
+				src="/shikishi/hata1.png"
 				alt="center"
+				width={300}
+				height={300}
 				style={{
 					position: 'absolute',
 					top: '50%',
