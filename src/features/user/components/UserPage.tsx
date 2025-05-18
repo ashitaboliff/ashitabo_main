@@ -78,14 +78,11 @@ const UserPage = ({
 
 	const getCurrentJSTDateString = (): string => {
 		const now = new Date()
-		console.log('Current Date:', now.toISOString())
-		const jstOffset = 9 * 60 // JST is UTC+9
-		const localOffset = now.getTimezoneOffset()
-		console.log('Local Offset:', localOffset)
-		const utc = now.getTime() + localOffset * 60000
-		const jstTime = new Date(utc + jstOffset * 60000)
-		console.log('JST Date:', jstTime.toISOString())
-		return jstTime.toISOString()
+		const jstTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }))
+		const year = jstTime.getFullYear()
+		const month = (jstTime.getMonth() + 1).toString().padStart(2, '0')
+		const day = jstTime.getDate().toString().padStart(2, '0')
+		return `${year}-${month}-${day}`
 	}
 
 	useEffect(() => {
@@ -96,7 +93,7 @@ const UserPage = ({
 			10,
 		)
 
-		if (storedDate?.split('T')[0] === today.split('T')[0]) {
+		if (storedDate === today) {
 			setGachaPlayCountToday(storedCount)
 		} else {
 			// 日付が変わっていたらリセット
@@ -131,7 +128,7 @@ const UserPage = ({
 			10,
 		)
 
-		if (storedDate?.split('T')[0] === today.split('T')[0]) {
+		if (storedDate === today) {
 			currentCount = storedCount
 		} else {
 			currentCount = 0 // 日付が変わっていたらリセット
