@@ -69,7 +69,7 @@ const Layout = ({ className }: { className: string }) => {
 						<Link href="/user">
 							{user ? (
 								loading ? (
-									<div className="skeleton w-10 h-10"></div>
+									<div className="skeleton w-10 h-10 rounded-full"></div>
 								) : (
 									<Image
 										src={user.image as string}

@@ -113,7 +113,7 @@ const AuthPadLock = () => {
 			<div className="card bg-white shadow-lg w-96 h-[30rem] my-6">
 				<figure>
 					<Image
-						src={getGitImageUrl("activity/activity-2.jpg")}
+						src={getGitImageUrl("home/activity/activity-2.jpg")}
 						alt="padlock"
 						width={384}
 						height={250}

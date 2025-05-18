@@ -620,7 +620,6 @@ export const GachaPickup = ({
 			if (result.status === 201 && onGachaSuccess) {
 				onGachaSuccess() // 成功時にコールバックを実行
 			}
-			console.log(result)
 		})()
 	}, [gachaData, version, userId, onGachaSuccess])
 

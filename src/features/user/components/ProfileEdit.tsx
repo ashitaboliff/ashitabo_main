@@ -167,6 +167,10 @@ const ProfileEdit = ({ profile }: { profile: Profile }) => {
 				const res = await putProfileAction(userId, data)
 				if (res.status === 200) {
 					setPopupOpen(true)
+					// セッションを更新してProfileの変更を反映
+					// ダミーデータを渡して update トリガーを確実に発火させる
+					await session.update({ triggerUpdate: Date.now() }) 
+					router.refresh(); // セッション更新後にページをリフレッシュ
 				} else {
 					setIsError(res)
 				}
