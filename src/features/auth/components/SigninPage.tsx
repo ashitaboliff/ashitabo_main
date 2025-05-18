@@ -33,7 +33,7 @@ const SigninPage = () => {
 					</div>
 				</div>
 			</div>
-			<div className="text-seconday-main text-center">
+			<div className="text-error text-center">
 				<p>※ 利用登録にはあしたぼの部室パスワードが必要です</p>
 			</div>
 		</div>

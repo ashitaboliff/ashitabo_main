@@ -28,8 +28,8 @@ export const Tabs = ({ children }: TabsProps) => {
 								key={index}
 								className={`py-2 px-4 text-lg ${
 									isActive
-										? 'border-b-2 text-blue-500'
-										: 'text-gray-500 hover:text-blue-500'
+										? 'border-b-2 text-accent'
+										: 'text-base-content hover:text-accent'
 								}`}
 								onClick={() => handleTabClick(index)}
 							>

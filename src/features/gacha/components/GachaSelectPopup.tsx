@@ -21,6 +21,13 @@ export type GachaSelectPopupRef =
 	  }
 	| undefined
 
+interface GachaSelectPopupProps {
+	open: boolean
+	onClose: () => void
+	onGachaSuccess?: () => void
+	userId?: string
+}
+
 const packs = Object.entries(gachaConfigs)
 	.filter(([, config]) => config.packImage)
 	.map(([version, config]) => ({
@@ -28,22 +35,26 @@ const packs = Object.entries(gachaConfigs)
 		packImage: config.packImage as string,
 	}))
 
-const ImageCarousel = () => {
+interface ImageCarouselProps {
+	onGachaSuccess?: () => void
+	userId?: string
+}
+
+const ImageCarousel = ({ onGachaSuccess, userId }: ImageCarouselProps) => {
+	// Propsを受け取る
 	const [currentIndex, setCurrentIndex] = useState<number>(packs.length - 1)
 	const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
 	const [gachaVersion, setGachaVersion] = useState<string>('version1')
-	const [packViewed, setPackViewed] = useState<boolean>(false) // Initial state is false
+	const [packViewed, setPackViewed] = useState<boolean>(false)
 	const ref = useRef<GachaPickupPopupRef>(undefined)
 
 	useEffect(() => {
-		// When currentIndex changes, immediately set packViewed to false
-		// then set it to true after a delay to allow for transition/loading effect.
 		setPackViewed(false)
 		const timer = setTimeout(() => {
 			setPackViewed(true)
-		}, 300) // Adjusted delay to 300ms, can be tuned
+		}, 300)
 
-		return () => clearTimeout(timer) // Cleanup timer on unmount or if currentIndex changes again
+		return () => clearTimeout(timer)
 	}, [currentIndex])
 
 	const updateIndex = (direction: 'next' | 'prev') => {
@@ -141,46 +152,43 @@ const ImageCarousel = () => {
 					open={isPopupOpen}
 					onClose={() => setIsPopupOpen(false)}
 					version={gachaVersion}
-					createType="user"
+					userId={userId}
+					onGachaSuccess={onGachaSuccess}
 				/>
 			)}
 		</div>
 	)
 }
 
-const GachaSelectPopup = forwardRef<
-	GachaSelectPopupRef,
-	{
-		open: boolean
-		onClose: () => void
-	}
->(({ open, onClose }, ref) => {
-	useImperativeHandle(ref, () => ({
-		show: () => {
-			onClose()
-		},
-		close: () => {
-			onClose()
-		},
-	}))
+const GachaSelectPopup = forwardRef<GachaSelectPopupRef, GachaSelectPopupProps>(
+	({ open, onClose, onGachaSuccess, userId }, ref) => {
+		useImperativeHandle(ref, () => ({
+			show: () => {
+				onClose()
+			},
+			close: () => {
+				onClose()
+			},
+		}))
 
-	return (
-		<div className={clsx('modal', open && 'modal-open')} onClick={onClose}>
-			<div
-				className={clsx(
-					'modal-box bg-base-100 rounded-lg shadow-lg py-4 px-1 flex flex-col gap-y-2 justify-center',
-					'max-w-xl',
-				)}
-				onClick={(e) => e.stopPropagation()}
-			>
-				<ImageCarousel />
-				<button className="btn btn-outline mx-2" onClick={onClose}>
-					閉じる
-				</button>
+		return (
+			<div className={clsx('modal', open && 'modal-open')} onClick={onClose}>
+				<div
+					className={clsx(
+						'modal-box bg-base-100 rounded-lg shadow-lg py-4 px-1 flex flex-col gap-y-2 justify-center',
+						'max-w-xl',
+					)}
+					onClick={(e) => e.stopPropagation()}
+				>
+					<ImageCarousel onGachaSuccess={onGachaSuccess} userId={userId} />
+					<button className="btn btn-outline mx-2" onClick={onClose}>
+						閉じる
+					</button>
+				</div>
 			</div>
-		</div>
-	)
-})
+		)
+	},
+)
 
 GachaSelectPopup.displayName = 'GachaSelectPopup'
 

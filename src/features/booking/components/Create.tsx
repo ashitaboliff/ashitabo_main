@@ -57,7 +57,6 @@ export default function CreatePage({
 	const addCalendarPopupRef = useRef<PopupRef>()
 	const [showPassword, setShowPassword] = useState(false)
 
-	// useSearchParams を削除し、props からの値を使用
 	const bookingDate = initialDateParam ? new Date(initialDateParam) : new Date()
 	const bookingTime = initialTimeParam || '0'
 
@@ -144,7 +143,7 @@ export default function CreatePage({
 						register={register('name')}
 						placeholder="責任者名"
 						errorMessage={errors.name?.message}
-						autocomplete="username"
+						autocomplete="off"
 					/>
 					<PasswordInputField
 						label="パスワード"
@@ -191,7 +190,11 @@ export default function CreatePage({
 					<p>バンド名: {watch('registName')}</p>
 					<p>責任者: {watch('name')}</p>
 					{noticePopupOpen && (
-						<GachaPickup createType="booking" delay={1} version="version2" />
+						<GachaPickup
+							delay={1}
+							version="version2"
+							userId={session.user.id}
+						/>
 					)}
 					<div className="flex flex-col justify-center gap-y-2 mt-4">
 						<div className="flex flex-row justify-center space-x-2">
@@ -213,6 +216,7 @@ export default function CreatePage({
 								})} ${BookingTime[Number(bookingTime)]}`}
 								isFullButton
 								isOnlyLine
+								className="btn btn-outline"
 							/>
 						</div>
 						<button

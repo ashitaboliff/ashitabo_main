@@ -13,7 +13,6 @@ import clsx from 'clsx'
 import Gacha, { GachaItem } from '@/features/gacha/components/GachaList'
 import { RarityType, GachaCreateType } from '@/features/gacha/types'
 import { createUserGachaResultAction } from '@/features/gacha/components/actions'
-import { getSession } from '@/app/actions'
 import { ApiResponse } from '@/utils/types/responseTypes'
 
 export type GachaPickupPopupRef =
@@ -254,7 +253,7 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 					<img
 						src={frontImage}
 						alt="Card Front"
-						className="w-full h-full object-cover"
+						className="w-full h-auto object-cover"
 						onLoad={handleImageLoad}
 						decoding="auto"
 					/>
@@ -264,7 +263,7 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 					<img
 						src={backImage}
 						alt="Card Back"
-						className="w-full h-full object-cover"
+						className="w-full h-auto object-cover"
 						onLoad={handleImageLoad}
 						decoding="auto"
 					/>
@@ -319,13 +318,15 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 }
 
 export const GachaPickup = ({
-	createType,
 	version,
 	delay,
+	userId,
+	onGachaSuccess, // onGachaSuccess を props で受け取る
 }: {
-	createType: GachaCreateType
 	version: string
 	delay?: number
+	userId?: string // userId の型定義
+	onGachaSuccess?: () => void // onGachaSuccess の型定義
 }) => {
 	const gacha = new Gacha(version)
 	const [gachaData] = useState<{ data: GachaItem; name: RarityType }>(() =>
@@ -335,21 +336,22 @@ export const GachaPickup = ({
 	const hasCalled = useRef(false)
 
 	useEffect(() => {
-		if (hasCalled.current) return
+		if (hasCalled.current || !userId) return
 		hasCalled.current = true
 		;(async () => {
-			const session = await getSession()
-			setRes(
-				await createUserGachaResultAction({
-					userId: session?.user.id,
-					gachaVersion: version, // version was missing in original deps
-					gachaRarity: gachaData.name,
-					gachaSrc: gachaData.data.src,
-					createType,
-				}),
-			)
+			const result = await createUserGachaResultAction({
+				userId: userId,
+				gachaVersion: version,
+				gachaRarity: gachaData.name,
+				gachaSrc: gachaData.data.src,
+			})
+			setRes(result)
+			if (result.status === 201 && onGachaSuccess) {
+				onGachaSuccess() // 成功時にコールバックを実行
+			}
+			console.log(result)
 		})()
-	}, [gachaData, createType, version]) // Added version to dependency array
+	}, [gachaData, version, userId, onGachaSuccess])
 
 	if (!res) {
 		return (
@@ -380,12 +382,13 @@ export const GachaPickup = ({
 const GachaPickupPopup = forwardRef<
 	GachaPickupPopupRef,
 	{
-		createType: GachaCreateType
 		version: string
 		open: boolean
 		onClose: () => void
+		userId?: string // userId を props で受け取る
+		onGachaSuccess?: () => void // onGachaSuccess を props で受け取る
 	}
->(({ open, onClose, createType, version }, ref) => {
+>(({ open, onClose, version, userId, onGachaSuccess }, ref) => {
 	useImperativeHandle(ref, () => ({
 		show: () => onClose(),
 		close: () => onClose(),
@@ -401,7 +404,12 @@ const GachaPickupPopup = forwardRef<
 				onClick={(e) => e.stopPropagation()}
 			>
 				<div className="text-center mb-4 text-xl font-bold">ガチャ結果</div>
-				<GachaPickup createType={createType} version={version} delay={1} />
+				<GachaPickup
+					version={version}
+					delay={1}
+					userId={userId} // userId を渡す
+					onGachaSuccess={onGachaSuccess} // onGachaSuccess を渡す
+				/>
 				<button className="btn btn-outline" onClick={onClose}>
 					閉じる
 				</button>

@@ -2,7 +2,7 @@
 
 import { ApiResponse, StatusCode } from '@/utils/types/responseTypes'
 import { cookies } from 'next/headers'
-import { revalidatePath, revalidateTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 import { addHours } from 'date-fns'
 import {
 	getGachaByUserId,
@@ -91,52 +91,24 @@ export async function createUserGachaResultAction({
 	gachaRarity,
 	gachaVersion,
 	gachaSrc,
-	createType,
 }: {
 	userId: string | undefined
 	gachaRarity: RarityType
 	gachaVersion: string
 	gachaSrc: string
-	createType: GachaCreateType
 }): Promise<ApiResponse<string>> {
 	try {
 		if (!userId) {
 			return { status: StatusCode.BAD_REQUEST, response: 'User not found' }
 		}
 
-		if (createType === 'user') {
-			const cookieStore = await cookies()
-			let gachaCount = Number(cookieStore.get('gachaCount')?.value) || 0
-			const gachaCheckRes = await checkGachaCookieAction()
-			if (gachaCheckRes.status !== StatusCode.OK) {
-				return {
-					status: StatusCode.BAD_REQUEST,
-					response: gachaCheckRes.response,
-				}
-			} else {
-				gachaCount += 1
-				cookieStore.set('gachaCount', gachaCount.toString(), {
-					maxAge: 60 * 60 * 24,
-				})
-				cookieStore.set('gachaDate', new Date().toISOString(), {
-					maxAge: 86400,
-				})
+		await createUserGachaResult({
+			userId,
+			gachaRarity,
+			gachaVersion,
+			gachaSrc,
+		})
 
-				await createUserGachaResult({
-					userId,
-					gachaRarity,
-					gachaVersion,
-					gachaSrc,
-				})
-			}
-		} else {
-			await createUserGachaResult({
-				userId,
-				gachaRarity,
-				gachaVersion,
-				gachaSrc,
-			})
-		}
 		revalidateTag(`gacha-${gachaSrc}-${userId}`)
 		revalidateTag(`gacha-${userId}`)
 		return { status: StatusCode.CREATED, response: 'success' }
@@ -146,34 +118,4 @@ export async function createUserGachaResultAction({
 			response: String(error),
 		}
 	}
-}
-
-export const checkGachaCookieAction = async () => {
-	const cookieStore = await cookies()
-	const gachaCookie = cookieStore.get('gachaDate')
-	const gachaDate =
-		gachaCookie && gachaCookie.value
-			? addHours(new Date(gachaCookie.value), 9)
-			: undefined
-	let gachaCount = Number(cookieStore.get('gachaCount')?.value) || 0
-
-	if (gachaDate) {
-		const today = addHours(new Date(), 9)
-		if (
-			gachaDate.getDate() === today.getDate() &&
-			gachaDate.getMonth() === today.getMonth() &&
-			gachaDate.getFullYear() === today.getFullYear() &&
-			gachaCount === 3
-		) {
-			return {
-				status: StatusCode.BAD_REQUEST,
-				response:
-					'本日は既にガチャを3回引いているため、これ以上引くことはできません。',
-			}
-		} else if (gachaDate.getDate() !== today.getDate()) {
-			cookieStore.set('gachaCount', '0', { maxAge: 60 * 60 * 24 })
-			return { status: StatusCode.OK, response: 'success' }
-		}
-	}
-	return { status: StatusCode.OK, response: 'success' }
 }
