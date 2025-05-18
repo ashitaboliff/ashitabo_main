@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
-import prisma from '@/lib/prisma' // 共有Prismaクライアントを使用
+import prisma from '@/lib/prisma'
 import authConfig from '@/features/auth/lib/auth.config'
 import type { User as PrismaUser } from '@prisma/client'
 import type {
@@ -23,67 +23,73 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	},
 	trustHost: true,
 	callbacks: {
-		async jwt({ token, user }) {
-			// 初回サインイン時（userオブジェクトが存在する場合）にDBから情報を取得しトークンに格納
+		async jwt({ token, user, trigger, session: updateSessionData }) {
+			// 初回サインイン時 (user オブジェクトが存在し、token.dbUser がまだない場合)
 			if (user?.id && !token.dbUser) {
-				// dbUserがまだトークンにない場合のみDBアクセス
-				token.sub = user.id // token.subにDBのUser IDを確実に設定
-				const dbUser = await prisma.user.findUnique({
-					where: { id: user.id },
-				})
+				token.sub = user.id;
+				const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
 				if (dbUser) {
-					token.dbUser = dbUser
-					// Profile情報を取得。Profileはuser_idで紐づいていると想定
-					const dbProfile = await prisma.profile.findUnique({
-						where: { user_id: user.id }, // Profileスキーマのuser_idフィールドを参照
-					})
-					token.dbProfile = dbProfile || null // Profileが存在しない場合はnull
+					token.dbUser = dbUser;
+					const dbProfile = await prisma.profile.findUnique({ where: { user_id: user.id } });
+					token.dbProfile = dbProfile || null;
 				}
 			}
-			return token
+		
+			// セッション更新トリガー時 (useSession().update() が呼ばれた時)
+			// この時、token.sub と token.dbUser は既に存在しているはず
+			if (trigger === 'update' && token.sub && typeof token.sub === 'string' && token.dbUser) {
+				const refreshedDbProfile = await prisma.profile.findUnique({
+					where: { user_id: token.sub },
+				});
+				token.dbProfile = refreshedDbProfile || null;
+				
+				// dbUserも念のため更新
+				const refreshedDbUser = await prisma.user.findUnique({ where: { id: token.sub } });
+				if (refreshedDbUser) token.dbUser = refreshedDbUser;
+			}
+			return token;
 		},
 		async session({ session, token }) {
+			// token.sub, token.dbUser, token.dbProfile を session.user にマッピングする
 			if (session.user) {
-				if (token.sub) {
-					session.user.id = token.sub // セッションのユーザーIDを設定 (DBのUser.id)
+				if (token.sub && typeof token.sub === 'string') {
+					session.user.id = token.sub;
 				}
 
 				if (token.dbUser) {
-					const dbUserData = token.dbUser as PrismaUser
-					session.user.dbUser = dbUserData
-
-					// next-auth.d.tsで定義された標準的なフィールドをdbUserから設定
-					session.user.name = dbUserData.name ?? session.user.name
-					session.user.email = dbUserData.email ?? session.user.email
-					session.user.image = dbUserData.image ?? session.user.image
-
-					// next-auth.d.tsで定義されたカスタムフィールドを設定
-					session.user.user_id = dbUserData.id // user_idもDBのUser.idと仮定
+					const dbUserData = token.dbUser as PrismaUser;
+					session.user.dbUser = dbUserData;
+					session.user.name = dbUserData.name ?? session.user.name;
+					session.user.email = dbUserData.email ?? session.user.email;
+					session.user.image = dbUserData.image ?? session.user.image;
+					session.user.user_id = dbUserData.id;
 				}
 
-				if (token.dbProfile !== undefined) {
-					const dbProfileData = token.dbProfile as UserProfile | null
-					session.user.dbProfile = dbProfileData
+				// dbProfile の undefined チェックをより明示的に
+				if (Object.prototype.hasOwnProperty.call(token, 'dbProfile')) {
+					const dbProfileData = token.dbProfile as UserProfile | null;
+					session.user.dbProfile = dbProfileData;
 
 					if (dbProfileData) {
-						session.user.is_profile = true
-						session.user.full_name = dbProfileData.name ?? ''
-						session.user.part = dbProfileData.part as Part[]
-						session.user.role = dbProfileData.role as AccountRole
+						session.user.is_profile = true;
+						session.user.full_name = dbProfileData.name ?? '';
+						session.user.part = dbProfileData.part as Part[];
+						session.user.role = dbProfileData.role as AccountRole;
 					} else {
-						session.user.is_profile = false
-						session.user.full_name = session.user.dbUser?.name ?? ''
-						session.user.part = []
-						session.user.role = 'USER' as AccountRole
+						session.user.is_profile = false;
+						session.user.full_name = session.user.dbUser?.name ?? '';
+						session.user.part = [];
+						session.user.role = 'USER' as AccountRole;
 					}
 				} else {
-					session.user.is_profile = false
-					session.user.full_name = session.user.dbUser?.name ?? ''
-					session.user.part = []
-					session.user.role = 'USER' as AccountRole
+                    // token に dbProfile プロパティ自体が存在しない場合 (初回ログイン直後など、まだjwtにセットされていないケースを考慮)
+					session.user.is_profile = false;
+					session.user.full_name = session.user.dbUser?.name ?? '';
+					session.user.part = [];
+					session.user.role = 'USER' as AccountRole;
 				}
 			}
-			return session
+			return session;
 		},
 	},
 	cookies: {

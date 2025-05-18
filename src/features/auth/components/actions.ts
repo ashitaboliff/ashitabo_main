@@ -11,7 +11,7 @@ import {
 import { signIn } from '@/features/auth/lib/authOption'
 import { cookies } from 'next/headers'
 import { Profile, User } from '@/features/user/types'
-import { revalidateTag } from 'next/cache'
+import { revalidateTag, revalidatePath } from 'next/cache'
 
 const oneDay = 60 * 60 * 24
 
@@ -115,19 +115,27 @@ export async function putProfileAction(
 ): Promise<ApiResponse<string>> {
 	try {
 		const user = await getUser(user_id)
-		if (!user)
+		if (!user) {
 			return {
 				status: StatusCode.NOT_FOUND,
 				response: 'このidのユーザは存在しません',
 			}
+		}
+
 		const profile = await getProfile(user_id)
-		if (!profile)
+		if (!profile) {
 			return {
 				status: StatusCode.BAD_REQUEST,
 				response: 'このユーザはプロフィールが設定されていません',
 			}
+		}
+
 		await updateProfile(user_id, body)
-		revalidateTag('users')
+
+		revalidateTag('users');
+		// 関連するページのキャッシュを無効化
+		revalidatePath('/user');
+		revalidatePath('/user/edit');
 		return { status: StatusCode.OK, response: 'success' }
 	} catch (error) {
 		return {

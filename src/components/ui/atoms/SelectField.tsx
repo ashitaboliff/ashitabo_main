@@ -46,32 +46,32 @@ const SelectField = ({
 
 		const newValue = watchValue.includes(key)
 			? watchValue.filter((item) => item !== key)
-			: [...watchValue, key]
-
-		setValue(name, newValue)
+			: [...watchValue, key];
+		
+		setValue(name, newValue);
 	}
 
 	const toggleDropdown = () => setIsOpen((prev) => !prev)
 
 	// メニューの外側をクリックしたときにメニューを閉じる
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				dropdownRef.current &&
-				!dropdownRef.current.contains(event.target as Node)
-			) {
-				setIsOpen(false)
-			}
-		}
+	// useEffect(() => {
+	// 	const handleClickOutside = (event: MouseEvent) => {
+	// 		if (
+	// 			dropdownRef.current &&
+	// 			!dropdownRef.current.contains(event.target as Node)
+	// 		) {
+	// 			setIsOpen(false)
+	// 		}
+	// 	}
 
-		if (isOpen) {
-			document.addEventListener('mousedown', handleClickOutside)
-		} else {
-			document.removeEventListener('mousedown', handleClickOutside)
-		}
+	// 	if (isOpen) {
+	// 		document.addEventListener('mousedown', handleClickOutside)
+	// 	} else {
+	// 		document.removeEventListener('mousedown', handleClickOutside)
+	// 	}
 
-		return () => document.removeEventListener('mousedown', handleClickOutside)
-	}, [isOpen])
+	// 	return () => document.removeEventListener('mousedown', handleClickOutside)
+	// }, [isOpen])
 
 	return (
 		<div className="form-control w-full max-w-xs" ref={dropdownRef}>
@@ -88,13 +88,14 @@ const SelectField = ({
 							? '選択してください'
 							: watchValue.map((key) => options[key]).join(', ')}
 					</div>
-					{isOpen && (
-						<div className="dropdown-content bg-white flex flex-col rounded-box z-[20] w-52 p-2 shadow relative">
-							<div className="flex flex-col space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4">
-								{Object.entries(options).map(([key, value]) => (
+					{/* isOpen && の条件を削除し、常にレンダリングする */}
+					<div tabIndex={0} className="dropdown-content menu bg-white rounded-box z-[20] w-52 p-2 shadow relative"> {/* Removed flex flex-col here as menu itself is often flex column */}
+						<ul className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4"> {/* Changed div to ul, removed flex flex-col */}
+							{Object.entries(options).map(([key, value]) => (
+								<li key={`li-${key}`}>
 									<label
 										key={`label-${key}`}
-										className="flex items-center space-x-2 cursor-pointer"
+										className="flex items-center space-x-2 cursor-pointer p-1 hover:bg-base-200 rounded-md" // Added some padding/hover for li items
 									>
 										<input
 											key={`input-${key}`}
@@ -107,13 +108,13 @@ const SelectField = ({
 											{value}
 										</span>
 									</label>
-								))}
-							</div>
-							{options && Object.keys(options).length > 8 && (
-								<div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+								</li>
+							))}
+						</ul>
+						{options && Object.keys(options).length > 8 && (
+							<div className="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
 							)}
 						</div>
-					)}
 				</div>
 			) : (
 				<select
