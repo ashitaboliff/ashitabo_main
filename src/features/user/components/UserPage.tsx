@@ -257,7 +257,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src={getGitImageUrl('/gacha/preset/COMMON.png')}
+							src={getGitImageUrl('gacha/preset/COMMON.png')}
 							width={72}
 							height={104}
 							alt="COMMON"
@@ -276,7 +276,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src={getGitImageUrl('/gacha/preset/RARE.png')}
+							src={getGitImageUrl('gacha/preset/RARE.png')}
 							width={72}
 							height={104}
 							alt="RARE"
@@ -295,7 +295,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src={getGitImageUrl('/gacha/preset/SURER_RARE.png')}
+							src={getGitImageUrl('gacha/preset/SURER_RARE.png')}
 							width={72}
 							height={104}
 							alt="SURER RARE"
@@ -314,7 +314,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src={getGitImageUrl('/gacha/preset/SSR.png')}
+							src={getGitImageUrl('gacha/preset/SSR.png')}
 							width={72}
 							height={104}
 							alt="SSR"
@@ -333,7 +333,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src={getGitImageUrl('/gacha/preset/ULTRA_RARE.png')}
+							src={getGitImageUrl('gacha/preset/ULTRA_RARE.png')}
 							width={72}
 							height={104}
 							alt="ULTRA RARE"
