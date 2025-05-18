@@ -10,12 +10,12 @@ import { RoleMap, Role, PartMap } from '@/features/user/types'
 import { ErrorType } from '@/utils/types/responseTypes'
 import { generateFiscalYearObject, generateAcademicYear } from '@/utils'
 import Loading from '@/components/ui/atoms/Loading'
-import InfoMessage from '@/components/ui/atoms/InfoMessage'
 import TextInputField from '@/components/ui/atoms/TextInputField'
 import SelectField from '@/components/ui/atoms/SelectField'
 import Popup, { PopupRef } from '@/components/ui/molecules/Popup'
 import { createProfileAction } from './actions'
 import { sessionCheck } from '@/app/actions'
+import { signOutUser } from '@/features/user/actions'
 
 const academicYearLastTwoDigits = generateAcademicYear() % 100
 
@@ -273,9 +273,18 @@ const SigninSetting = () => {
 					</>
 				)}
 
-				<button type="submit" className="btn btn-primary">
-					保存
-				</button>
+				<div className="flex flex-row sm:flex-col items-center space-x-2">
+					<button type="submit" className="btn btn-primary">
+						保存
+					</button>
+					<button
+						type="button"
+						className="btn btn-outline"
+						onClick={() => signOutUser()}
+					>
+						サインアウト
+					</button>
+				</div>
 			</form>
 			{error && (
 				<p className="text-sm text-error text-center">
