@@ -49,24 +49,26 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug)
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const slug = (await params).slug
+  const post = await getPost(slug)
   if (!post) {
     return createMetaData({
       title: '記事が見つかりません',
       description: '指定されたブログ記事は見つかりませんでした。',
-      url: `/blogs/${params.slug}`,
+      url: `/blogs/${slug}`,
     })
   }
   return createMetaData({
     title: post.frontmatter.title,
     description: post.frontmatter.description,
-    url: `/blogs/${params.slug}`,
+    url: `/blogs/${slug}`,
   })
 }
 
-const BlogPostPage = async ({ params }: { params: { slug: string } }) => {
-  const post = await getPost(params.slug)
+const BlogPostPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const slug = (await params).slug
+  const post = await getPost(slug)
 
   if (!post) {
     // Handle post not found, e.g., by redirecting or showing a 404 component
