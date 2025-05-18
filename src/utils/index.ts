@@ -63,3 +63,8 @@ export const generateAcademicYear = () => {
 
 	return academicYearLastTwoDigits
 }
+
+export const getGitImageUrl = (imageName: string): string => {
+	const baseUrl = 'https://raw.githubusercontent.com/ashitaboliff/ashitabo-image/main'
+	return `${baseUrl}/${imageName}`
+}

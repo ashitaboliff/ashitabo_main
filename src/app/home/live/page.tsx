@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import { createMetaData } from '@/utils/metaData'
+import { getGitImageUrl } from '@/utils'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,28 +31,28 @@ const Page = async () => {
 				</div>
 				<div className="grid grid-cols-2 gap-4 mt-4">
 					<Image
-						src="/home/live/1-1.jpg"
+						src={getGitImageUrl("/home/live/1-1.jpg")}
 						alt="新歓ライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/1-2.jpg"
+						src={getGitImageUrl("/home/live/1-2.jpg")}
 						alt="新歓ライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/1-3.jpg"
+						src={getGitImageUrl("/home/live/1-3.jpg")}
 						alt="新歓ライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/1-4.jpg"
+						src={getGitImageUrl("/home/live/1-4.jpg")}
 						alt="新歓ライブ"
 						width={400}
 						height={300}
@@ -68,42 +69,42 @@ const Page = async () => {
 				</div>
 				<div className="grid grid-cols-3 gap-4 mt-4">
 					<Image
-						src="/home/live/2-1.jpg"
+						src={getGitImageUrl("/home/live/2-1.jpg")}
 						alt="さつきライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/2-2.jpg"
+						src={getGitImageUrl("/home/live/2-2.jpg")}
 						alt="さつきライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/2-4.jpg"
+						src={getGitImageUrl("/home/live/2-4.jpg")}
 						alt="さつきライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/2-5.jpg"
+						src={getGitImageUrl("/home/live/2-5.jpg")}
 						alt="さつきライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/2-6.jpg"
+						src={getGitImageUrl("/home/live/2-6.jpg")}
 						alt="さつきライブ"
 						width={400}
 						height={300}
 						className="rounded-lg shadow"
 					/>
 					<Image
-						src="/home/live/2-7.jpg"
+						src={getGitImageUrl("/home/live/2-7.jpg")}
 						alt="さつきライブ"
 						width={400}
 						height={300}
@@ -117,28 +118,28 @@ const Page = async () => {
 					さつきライブが終わり、新入生と上回生の交流も深まったタイミングで行われるライブです！
 					<div className="grid grid-cols-2 gap-4 mt-4">
 						<Image
-							src="/home/live/3-1.jpg"
+							src={getGitImageUrl("/home/live/3-1.jpg")}
 							alt="あしたぼライブ"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/3-2.jpg"
+							src={getGitImageUrl("/home/live/3-2.jpg")}
 							alt="あしたぼライブ"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/3-3.jpg"
+							src={getGitImageUrl("/home/live/3-3.jpg")}
 							alt="あしたぼライブ"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/3-4.jpg"
+							src={getGitImageUrl("/home/live/3-4.jpg")}
 							alt="あしたぼライブ"
 							width={400}
 							height={300}
@@ -155,28 +156,28 @@ const Page = async () => {
 					ステージに出られるバンドは役員が決めた連度の高いバンドのみです！出られるように頑張りましょう！
 					<div className="grid grid-cols-2 gap-4 mt-4">
 						<Image
-							src="/home/live/4-5.jpg"
+							src={getGitImageUrl("/home/live/4-5.jpg")}
 							alt="光芒祭"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/4-2.jpg"
+							src={getGitImageUrl("/home/live/4-2.jpg")}
 							alt="光芒祭"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/4-3.jpg"
+							src={getGitImageUrl("/home/live/4-3.jpg")}
 							alt="光芒祭"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/4-4.jpg"
+							src={getGitImageUrl("/home/live/4-4.jpg")}
 							alt="光芒祭"
 							width={400}
 							height={300}
@@ -191,28 +192,28 @@ const Page = async () => {
 					光芒祭に出られなかったバンドが出られるチャンスです！
 					<div className="grid grid-cols-2 gap-4 mt-4">
 						<Image
-							src="/home/live/5-1.jpg"
+							src={getGitImageUrl("/home/live/5-1.jpg")}
 							alt="光芒祭アフター"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/5-2.jpg"
+							src={getGitImageUrl("/home/live/5-2.jpg")}
 							alt="光芒祭アフター"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/5-3.jpg"
+							src={getGitImageUrl("/home/live/5-3.jpg")}
 							alt="光芒祭アフター"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/5-4.jpg"
+							src={getGitImageUrl("/home/live/5-4.jpg")}
 							alt="光芒祭アフター"
 							width={400}
 							height={300}
@@ -227,42 +228,42 @@ const Page = async () => {
 					打ち上げではクリスマスに合わせてプレゼント交換や役員交代などのイベントも開催されます！
 					<div className="grid grid-cols-3 gap-4 mt-4">
 						<Image
-							src="/home/live/6-1.jpg"
+							src={getGitImageUrl("/home/live/6-1.jpg")}
 							alt="うたかん"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/6-2.jpg"
+							src={getGitImageUrl("/home/live/6-2.jpg")}
 							alt="うたかん"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/6-3.jpg"
+							src={getGitImageUrl("/home/live/6-3.jpg")}
 							alt="うたかん"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/6-4.jpg"
+							src={getGitImageUrl("/home/live/6-4.jpg")}
 							alt="うたかん"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/6-5.jpg"
+							src={getGitImageUrl("/home/live/6-5.jpg")}
 							alt="うたかん"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/6-6.jpg"
+							src={getGitImageUrl("/home/live/6-6.jpg")}
 							alt="うたかん"
 							width={400}
 							height={300}
@@ -277,56 +278,56 @@ const Page = async () => {
 					卒業生のいるバンドのみが出演でき、卒業生の思い出を共有するようなライブです！
 					<div className="grid grid-cols-2 gap-4 mt-4">
 						<Image
-							src="/home/live/7-1.jpg"
+							src={getGitImageUrl("/home/live/7-1.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/7-2.jpg"
+							src={getGitImageUrl("/home/live/7-2.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/7-3.jpg"
+							src={getGitImageUrl("/home/live/7-3.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/7-4.jpg"
+							src={getGitImageUrl("/home/live/7-4.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/7-5.jpg"
+							src={getGitImageUrl("/home/live/7-5.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/7-6.jpg"
+							src={getGitImageUrl("/home/live/7-6.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/7-7.jpg"
+							src={getGitImageUrl("/home/live/7-7.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}
 							className="rounded-lg shadow"
 						/>
 						<Image
-							src="/home/live/7-8.jpg"
+							src={getGitImageUrl("/home/live/7-8.jpg")}
 							alt="ラスコン"
 							width={400}
 							height={300}

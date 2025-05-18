@@ -1,9 +1,11 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
 
 @plugin "daisyui" {
 	themes:
 		light --default /* , dark --prefersdark */ /* ダークテーマは後で有効化するか、カスタムダークテーマを定義 */
 };
+
 
 @plugin "daisyui/theme" {
 	name: 'light';
@@ -171,6 +173,57 @@
   line-height: var(--line-height-sm-custom);
 }
 */
+
+/* Gacha Animation Effects */
+.light-ray-effect {
+	position: absolute;
+	width: 3px; /* 太さを調整 */
+	height: 200px; /* 長さを調整 */
+	background: linear-gradient(
+		to bottom,
+		rgba(255, 255, 180, 0.9) 0%, /* 明るい黄色 */
+		rgba(255, 255, 180, 0) 100%
+	);
+	transform-origin: top center; /* 回転の中心を先端に */
+	opacity: 0;
+	pointer-events: none;
+}
+
+.shockwave-effect {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100px; /* 初期サイズ */
+	height: 100px; /* 初期サイズ */
+	border-radius: 50%;
+	border-style: solid;
+	border-color: rgba(255, 223, 186, 0.7); /* 衝撃波の色 */
+	transform: translate(-50%, -50%); /* 中央揃え */
+	opacity: 0;
+	pointer-events: none;
+}
+
+.particle-effect {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	opacity: 0; /* 初期状態は非表示 */
+}
+
+.ultra-particle {
+	width: 8px; /* サイズ調整 */
+	height: 8px;
+	background-color: rgba(255, 255, 180, 0.8); /* 光の色 */
+	box-shadow: 0 0 10px 2px rgba(255, 255, 180, 0.5); /* 発光効果 */
+}
+
+.secret-particle {
+	width: 10px; /* サイズ調整 */
+	height: 10px;
+	/* backgroundColorはJSで動的に設定 */
+	box-shadow: 0 0 12px 3px currentColor; /* 現在の色で発光 */
+}
+
 
 @layer components {
 	.btn.btn-outline.btn-base {

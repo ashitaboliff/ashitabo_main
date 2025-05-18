@@ -14,6 +14,7 @@ import Gacha, { GachaItem } from '@/features/gacha/components/GachaList'
 import { RarityType, GachaCreateType } from '@/features/gacha/types'
 import { createUserGachaResultAction } from '@/features/gacha/components/actions'
 import { ApiResponse } from '@/utils/types/responseTypes'
+import { getGitImageUrl } from '@/utils'
 
 export type GachaPickupPopupRef =
 	| {
@@ -34,15 +35,50 @@ interface SparkleProps {
 	color: string
 	style?: React.CSSProperties
 	className?: string
+	rarity: RarityType // レアリティに応じてアニメーションを変更するため追加
 }
-const Sparkle = ({ size, color, style = {}, className }: SparkleProps) => {
-	// すべて固定：形はfpstar、回転は0°
-	const combinedStyle = { ...style, transform: 'rotate(0deg)' }
+const Sparkle = ({
+	size,
+	color,
+	style = {},
+	className,
+	rarity,
+}: SparkleProps) => {
+	const sparkleRef = useRef<SVGSVGElement>(null)
+
+	useEffect(() => {
+		if (!sparkleRef.current) return
+		let sparkleAnimSpeed = 0.8
+		let sparkleScale = 1.5
+		if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
+			sparkleAnimSpeed = 0.5
+			sparkleScale = 2.0
+		} else if (rarity === 'SS_RARE') {
+			sparkleAnimSpeed = 0.6
+			sparkleScale = 1.8
+		}
+
+		const tween = gsap.to(sparkleRef.current, {
+			opacity: gsap.utils.random(0.3, 0.8),
+			scale: gsap.utils.random(sparkleScale * 0.8, sparkleScale * 1.2),
+			rotation: gsap.utils.random(-30, 30),
+			duration: sparkleAnimSpeed,
+			yoyo: true,
+			repeat: -1,
+			ease: 'power1.inOut',
+			delay: gsap.utils.random(0, 0.5), // 個々の星にランダムな遅延を追加
+		})
+		return () => {
+			tween.kill()
+		}
+	}, [rarity])
+
 	return (
 		<svg
+			ref={sparkleRef}
 			width={size}
 			height={size}
-			style={combinedStyle}
+			style={style}
 			className={className}
 			viewBox="0 0 100 100"
 		>
@@ -70,8 +106,10 @@ const Sparkle = ({ size, color, style = {}, className }: SparkleProps) => {
  */
 export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	const cardRef = useRef<HTMLDivElement>(null)
+	const effectContainerRef = useRef<HTMLDivElement>(null) // エフェクト用コンテナ
 	const [imagesLoaded, setImagesLoaded] = useState<number>(0)
-	const backImage = '/gacha/backimage.png'
+	const backImage = getGitImageUrl('gacha/backimage.png')
+	const frontImageUrl = getGitImageUrl(frontImage)
 
 	// 画像が読み込まれたらカウントアップ
 	const handleImageLoad = () => {
@@ -79,98 +117,355 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 	}
 
 	useEffect(() => {
-		if (!cardRef.current || imagesLoaded < 2) return
+		if (!cardRef.current || imagesLoaded < 2 || !effectContainerRef.current)
+			return
 
 		let timeoutId: NodeJS.Timeout | null = null
-		const tweens: gsap.core.Tween[] = []
+		const masterTimeline = gsap.timeline() // メインのタイムライン
 
-		if (delay) {
-			timeoutId = setTimeout(() => {
-				if (cardRef.current) {
-					tweens.push(
-						gsap.to(cardRef.current, {
-							opacity: 1,
-							duration: 0.5,
-						}),
-					)
-				}
-			}, delay)
-		} else {
-			// If no delay, ensure opacity is 1 immediately if it's meant to be visible
-			if (cardRef.current) {
-				gsap.set(cardRef.current, { opacity: 1 })
-			}
+		const initialDelay = delay || 0
+
+		// 初期表示 (SECRET_RARE以外の場合)
+		if (rarity !== 'SECRET_RARE') {
+			masterTimeline.to(cardRef.current, { opacity: 1, duration: 0.5 }, initialDelay)
 		}
 
 		// カード本体のアニメーション（レアリティに応じた処理）
-		if (cardRef.current) {
-			// Ensure cardRef.current exists before animating
-			if (rarity === 'COMMON') {
-				tweens.push(
-					gsap.to(cardRef.current, {
-						scale: 1.1,
-						duration: 0.2,
+		const cardElement = cardRef.current
+		const effectsContainer = effectContainerRef.current
+
+		// アニメーション終了後にクリーンアップ
+		const cleanupEffects = () => {
+			gsap.killTweensOf(cardElement)
+			gsap.killTweensOf('.sparkle-star')
+			gsap.killTweensOf('.light-ray-effect')
+			gsap.killTweensOf('.particle-effect')
+			if (effectsContainer) {
+				effectsContainer.innerHTML = '' // 動的に追加した要素を削除
+			}
+		}
+
+		if (rarity === 'COMMON') {
+			masterTimeline.to(
+				cardElement,
+				{
+					scale: 1.05,
+					duration: 0.3,
+					yoyo: true,
+					repeat: 1,
+					ease: 'power1.inOut',
+				},
+				'>',
+			)
+			masterTimeline.fromTo(
+				cardElement,
+				{ boxShadow: '0 0 0px 0px rgba(200,200,200,0)' },
+				{
+					boxShadow: '0 0 15px 5px rgba(200,200,200,0.7)',
+					duration: 0.2,
+					yoyo: true,
+					repeat: 1,
+				},
+				'<',
+			)
+		} else if (rarity === 'RARE') {
+			masterTimeline.to(
+				cardElement,
+				{ rotationY: 360, duration: 1.5, ease: 'power2.inOut' },
+				'>',
+			)
+			masterTimeline.fromTo(
+				cardElement.querySelectorAll<HTMLDivElement>('.backface-hidden'), // Apply to front/back divs
+				{ 
+					boxShadow: '0 0 0px 0px rgba(100,100,255,0)',
+					borderRadius: '1.7rem',
+				},
+				{
+					boxShadow: '0 0 20px 8px rgba(100,100,255,0.7)',
+					duration: 0.4,
+					yoyo: true,
+					repeat: 3,
+					delay: 0.5,
+					borderRadius: '1.7rem',
+				},
+				'<0.5',
+			)
+		} else if (rarity === 'SUPER_RARE') {
+			masterTimeline
+				.to(
+					cardElement,
+					{ x: '-=5', yoyo: true, repeat: 5, duration: 0.05 },
+					'>',
+				)
+				.to(
+					cardElement,
+					{ x: '+=5', yoyo: true, repeat: 5, duration: 0.05 },
+					'<',
+				) // 揺れ
+				.to(
+					cardElement,
+					{ rotationY: 360, duration: 1, ease: 'power3.inOut' },
+					'+=0.1',
+				) // 回転
+				.fromTo(
+					cardElement.querySelectorAll<HTMLDivElement>('.backface-hidden'), // Apply to front/back divs
+					{ 
+						boxShadow: '0 0 0px 0px rgba(255,215,0,0)',
+						borderRadius: '1.7rem', 
+					},
+					{
+						boxShadow: '0 0 30px 12px rgba(255,215,0,0.8)',
+						duration: 0.5,
+						yoyo: true,
+						repeat: 3,
+						borderRadius: '1.7rem', // Assuming card images have this border-radius
+					},
+					'-=0.5',
+				) // 金色のグロー
+		} else if (rarity === 'SS_RARE') {
+			masterTimeline
+				.to(cardElement, { scale: 1.1, duration: 0.2, ease: 'power1.in' }, '>')
+				.to(
+					cardElement,
+					{ x: '-=8', yoyo: true, repeat: 7, duration: 0.04 },
+					'<0.1',
+				)
+				.to(
+					cardElement,
+					{ x: '+=8', yoyo: true, repeat: 7, duration: 0.04 },
+					'<',
+				) // ズームと揺れ
+				.to(
+					cardElement,
+					{ rotationY: 720, rotationX: 360, duration: 1.5, ease: 'expo.inOut' },
+					'+=0.1',
+				) // 多軸回転
+				.to(cardElement, { scale: 1.0, duration: 0.3, ease: 'power1.out' }) // スケール戻し
+
+			// 光線エフェクト
+			for (let i = 0; i < 8; i++) {
+				const ray = document.createElement('div')
+				ray.className = 'light-ray-effect' // CSSでスタイル定義
+				effectsContainer.appendChild(ray)
+				masterTimeline.fromTo(
+					ray,
+					{
+						opacity: 0,
+						scaleY: 0,
+						rotation: gsap.utils.random(0, 360),
+						x: '50%', // 中央基点
+						y: '50%', // 中央基点
+						transformOrigin: '0% 0%', // 回転軸を先端に
+					},
+					{
+						opacity: 1,
+						scaleY: 1,
+						duration: 0.5,
+						ease: 'power2.out',
+						stagger: 0.1,
+						onComplete: () => ray.remove(),
+					},
+					'-=1.0',
+				)
+			}
+		} else if (rarity === 'ULTRA_RARE') {
+			masterTimeline.fromTo(
+				cardElement,
+				{ scale: 0.2, opacity: 0, duration: 0.5, ease: 'power3.out' }, // Corrected opacity from 2 to 0
+				{ scale: 1, duration: 0.3, opacity: 1 , ease: 'power1.in' },
+				'>+0.1',
+			)
+
+
+			// 衝撃波 (専用のdivを生成)
+			// const shockwave = document.createElement('div')
+			// shockwave.className = 'shockwave-effect' // CSSでスタイル定義
+			// effectsContainer.appendChild(shockwave)
+			// masterTimeline.fromTo(
+			// 	shockwave,
+			// 	{ scale: 0.5, opacity: 0, borderWidth: '0px' },
+			// 	{
+			// 		scale: 2.5,
+			// 		opacity: 1,
+			// 		borderWidth: '50px', // 枠線の太さをアニメーション
+			// 		borderColor: 'rgba(255,223,186,0.7)',
+			// 		duration: 0.7,
+			// 		ease: 'expo.out',
+			// 		onComplete: () => shockwave.remove(),
+			// 	},
+			// 	'-=0.3',
+			// )
+
+			masterTimeline
+				.to(
+					cardElement,
+					{ rotationY: 1080, duration: 2, ease: 'expo.inOut' },
+					'>',
+				)
+				.to(
+					cardElement,
+					{
+						boxShadow: '0 0 60px 30px rgba(255,255,150,1)',
+						yoyo: true,
+						repeat: 3,
+						duration: 0.3,
+						borderRadius: '2rem',
+					},
+					'-=1.5',
+				) // 高速回転と強い発光
+
+			// 光の粒子エフェクト
+			for (let i = 0; i < 30; i++) {
+				const particle = document.createElement('div')
+				particle.className = 'particle-effect ultra-particle' // CSSでスタイル定義
+				effectsContainer.appendChild(particle)
+				masterTimeline.fromTo(
+					particle,
+					{
+						x: '50%',
+						y: '50%',
+						opacity: 1,
+						scale: gsap.utils.random(0.5, 1.2),
+					},
+					{
+						x: `random(-200, 200)%`, // ランダムな方向に飛散
+						y: `random(-200, 200)%`,
+						opacity: 0,
+						scale: 0,
+						duration: gsap.utils.random(0.8, 1.5),
+						ease: 'power3.out',
+						onComplete: () => particle.remove(),
+					},
+					'-=1.8',
+				)
+			}
+		} else if (rarity === 'SECRET_RARE') {
+			// SECRET_RAREでは、まずカードを非表示・縮小状態にセット
+			masterTimeline.set(cardElement, { opacity: 0, scale: 0.5 });
+
+			const parentElement = cardElement.parentElement?.parentElement; // GachaPickupPopupのmodal-box想定
+
+			if (parentElement) {
+				masterTimeline.fromTo(
+					parentElement,
+					{ backgroundColor: 'rgba(255,255,255,0)' }, // fromVars
+					{ // toVars
+						backgroundColor: 'rgba(255,255,255,1)',
+						duration: 0.1,
 						yoyo: true,
 						repeat: 1,
-						ease: 'none',
-					}),
-				)
-			} else if (rarity === 'RARE' || rarity === 'SUPER_RARE') {
-				tweens.push(
-					gsap.to(cardRef.current, {
-						rotationY: 360,
-						duration: 2,
+						onStart: () => {
+							if (parentElement) parentElement.style.zIndex = '1000';
+						}, // 一時的に最前面に
+						onComplete: () => {
+							if (parentElement) parentElement.style.zIndex = '';
+						}, // zIndexを戻す
+					},
+					initialDelay // フラッシュをまず開始
+				);
+				'>';
+			}
+
+			if (parentElement) {
+				masterTimeline.to( // カード登場 (フラッシュ後)
+					cardElement,
+					1, // duration
+					{ // vars
+						opacity: 1, // 0から1へ
+						scale: 1,   // 0.5から1へ
+						ease: 'power4.out',
+					},
+					'>' // position
+				);
+			} else {
+				masterTimeline.to( // カード登場 (initialDelayで開始)
+					cardElement,
+					1, // duration
+					{ // vars
+						opacity: 1, // 0から1へ
+						scale: 1,   // 0.5から1へ
+						ease: 'power4.out',
+					},
+					initialDelay // position
+				);
+			}
+
+			masterTimeline.to( // ズーム (スケールを1.2にしてから元に戻すyoyoエフェクト)
+					cardElement,
+					{
+						scale: 1.2,
+						duration: 0.5,
 						ease: 'power1.inOut',
-					}),
+						yoyo: true, 
+						repeat: 1,  
+					},
+					'>'
 				)
-			} else if (rarity === 'SS_RARE') {
-				tweens.push(
-					gsap.to(cardRef.current, {
-						rotationY: 360,
-						duration: 2,
-						ease: 'expo.inOut',
-					}),
-				)
-			} else if (rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE') {
-				tweens.push(
-					gsap.to(cardRef.current, {
-						rotationY: 360,
-						duration: 2,
-						ease: 'expo.inOut',
-					}),
-				)
-				tweens.push(
-					gsap.to(cardRef.current, {
-						scale: 1.1,
-						duration: 1.1,
+				.to(cardElement, { // 荘厳な回転 (前のスケールアニメーション完了後)
+					rotationY: 360,
+					duration: 4,
+					ease: 'power1.inOut',
+					repeat: -1, 
+				}, '>') 
+				.to( // 脈動するオーラ (回転と同時に開始)
+					cardElement,
+					{
+						boxShadow:
+							'0 0 60px 30px rgba(0,0,0,0.8)', 
 						yoyo: true,
-						repeat: 1,
-						ease: 'back.out',
-					}),
+						repeat: -1,
+						duration: 1.5,
+						ease: 'sine.inOut',
+						borderRadius: '2rem',
+					},
+					'<' 
+				);
+
+			const colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff8800', '#00ff88']
+			for (let i = 0; i < 50; i++) {
+				const particle = document.createElement('div')
+				particle.className = 'particle-effect secret-particle' // CSSでスタイル定義
+				particle.style.backgroundColor =
+					colors[Math.floor(Math.random() * colors.length)]
+				effectsContainer.appendChild(particle)
+				masterTimeline.fromTo(
+					particle,
+					{
+						x: '50%',
+						y: '50%',
+						opacity: 1,
+						scale: gsap.utils.random(0.8, 1.5),
+					},
+					{
+						x: `random(-250, 250)%`,
+						y: `random(-250, 250)%`,
+						rotation: 'random(0, 360)',
+						opacity: 0,
+						scale: 0,
+						duration: gsap.utils.random(1.5, 2.5),
+						ease: 'power2.out',
+						onComplete: () => particle.remove(),
+					},
+					'-=3.5',
 				)
 			}
 		}
 
-		// ※ 星のアニメーション自体は gsap で共通に実施（固定パラメータ）
-		const sparkleTween = gsap.to('.sparkle-star', {
-			opacity: 0.5,
-			scale: 1.5,
-			duration: 0.8,
-			yoyo: true,
-			repeat: -1,
-			ease: 'power1.inOut',
-		})
-		tweens.push(sparkleTween)
+		// 星の共通アニメーションはSparkleコンポーネント内で処理
 
-		const currentCardRef = cardRef.current
+		// タイムアウト処理
+		if (delay) {
+			timeoutId = setTimeout(() => {
+				// masterTimeline.play() は不要、GSAPタイムラインは自動再生
+			}, delay)
+		}
+
 		return () => {
 			if (timeoutId) {
 				clearTimeout(timeoutId)
 			}
-			tweens.forEach((tween) => tween.kill())
-			// Ensure to kill tweens on specific elements if they are not covered by the array
-			if (currentCardRef) gsap.killTweensOf(currentCardRef)
-			gsap.killTweensOf('.sparkle-star')
+			masterTimeline.kill() // メインタイムラインをkill
+			cleanupEffects() // エフェクト要素のクリーンアップ
 		}
 	}, [rarity, imagesLoaded, delay])
 
@@ -182,61 +477,28 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 
 	// 固定の40個の星の表示位置（中央を避け、カードなど他の要素と重ならないよう端部に配置）
 	const fixedStarPositions = useMemo(() => {
-		const topPositions = [
-			{ top: '9%', left: '5%' },
-			{ top: '5%', left: '10%' },
-			{ top: '11%', left: '15%' },
-			{ top: '5%', left: '20%' },
-			{ top: '8%', left: '25%' },
-			{ top: '5%', right: '5%' },
-			{ top: '13%', right: '10%' },
-			{ top: '8%', right: '15%' },
-			{ top: '2%', right: '20%' },
-			{ top: '5%', right: '25%' },
-		]
-		const bottomPositions = [
-			{ bottom: '4%', left: '5%' },
-			{ bottom: '4%', left: '10%' },
-			{ bottom: '5%', left: '15%' },
-			{ bottom: '5%', left: '20%' },
-			{ bottom: '2%', left: '25%' },
-			{ bottom: '8%', right: '5%' },
-			{ bottom: '9%', right: '10%' },
-			{ bottom: '5%', right: '15%' },
-			{ bottom: '12%', right: '20%' },
-			{ bottom: '8%', right: '25%' },
-		]
-		const leftPositions = [
-			{ left: '8%', top: '5%' },
-			{ left: '4%', top: '10%' },
-			{ left: '6%', top: '15%' },
-			{ left: '5%', top: '20%' },
-			{ left: '5%', top: '25%' },
-			{ left: '7%', bottom: '5%' },
-			{ left: '5%', bottom: '10%' },
-			{ left: '16%', bottom: '15%' },
-			{ left: '5%', bottom: '20%' },
-			{ left: '5%', bottom: '25%' },
-		]
-		const rightPositions = [
-			{ right: '5%', top: '5%' },
-			{ right: '5%', top: '10%' },
-			{ right: '10%', top: '15%' },
-			{ right: '4%', top: '20%' },
-			{ right: '5%', top: '25%' },
-			{ right: '4%', bottom: '5%' },
-			{ right: '5%', bottom: '10%' },
-			{ right: '7%', bottom: '15%' },
-			{ right: '3%', bottom: '20%' },
-			{ right: '11%', bottom: '25%' },
-		]
-		return [
-			...topPositions,
-			...bottomPositions,
-			...leftPositions,
-			...rightPositions,
-		]
-	}, [])
+		const positions = []
+		const numStars =
+			rarity === 'ULTRA_RARE' || rarity === 'SECRET_RARE'
+				? 60
+				: rarity === 'SS_RARE'
+					? 50
+					: 40
+		for (let i = 0; i < numStars; i++) {
+			// よりランダムかつ広範囲に星を配置
+			const side = Math.floor(Math.random() * 4) // 0: top, 1: bottom, 2: left, 3: right
+			let pos: React.CSSProperties = {}
+			const offset = `${Math.random() * 25}%` // 端からの距離
+			const mainPos = `${Math.random() * 100}%` // 主軸上の位置
+
+			if (side === 0) pos = { top: offset, left: mainPos }
+			else if (side === 1) pos = { bottom: offset, left: mainPos }
+			else if (side === 2) pos = { left: offset, top: mainPos }
+			else pos = { right: offset, top: mainPos }
+			positions.push(pos)
+		}
+		return positions
+	}, [rarity])
 
 	// 各星のサイズは、基準サイズから -10, 0, +10, 0 を順に繰り返し適用
 	const sizeVariations = [-10, 0, 10, 0]
@@ -246,24 +508,32 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 			className="relative w-[18.75rem] h-[25rem]"
 			style={{ perspective: '1000px' }}
 		>
+			{/* エフェクト用コンテナ */}
+			<div
+				ref={effectContainerRef}
+				className="absolute inset-0 pointer-events-none z-10 overflow-hidden" // overflow-hiddenを追加
+			/>
 			{/* カード本体 */}
-			<div ref={cardRef} className="w-full h-full transform-style-3d relative">
+			<div
+				ref={cardRef}
+				className="w-full h-full transform-style-3d relative opacity-0" // 初期opacityを0に
+			>
 				{/* 表面 */}
-				<div className="absolute w-full h-full backface-hidden">
+				<div className="absolute w-full h-full backface-hidden rounded-lg overflow-hidden">
 					<img
-						src={frontImage}
+						src={frontImageUrl}
 						alt="Card Front"
-						className="w-full h-auto object-cover"
+						className="w-full h-full object-cover" // h-auto to h-full
 						onLoad={handleImageLoad}
 						decoding="auto"
 					/>
 				</div>
 				{/* 裏面（rotateY-180で配置） */}
-				<div className="absolute w-full h-full backface-hidden rotateY-180">
+				<div className="absolute w-full h-full backface-hidden rotateY-180 rounded-lg overflow-hidden">
 					<img
 						src={backImage}
 						alt="Card Back"
-						className="w-full h-auto object-cover"
+						className="w-full h-full object-cover" // h-auto to h-full
 						onLoad={handleImageLoad}
 						decoding="auto"
 					/>
@@ -274,7 +544,7 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 			{['SUPER_RARE', 'SS_RARE', 'ULTRA_RARE', 'SECRET_RARE'].includes(
 				rarity,
 			) && (
-				<div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+				<div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
 					{/* SECRET以外はグラデーション定義を追加（globals.css等で別途定義しても可） */}
 					{rarity !== 'SECRET_RARE' && (
 						<svg width="0" height="0">
@@ -306,8 +576,9 @@ export const CardAnimation = ({ frontImage, rarity, delay }: CardProps) => {
 								key={index}
 								size={currentSize}
 								color={starColor}
-								style={{ position: 'absolute', ...pos }}
+								style={{ position: 'absolute', ...pos, opacity: 0 }} // 初期opacityを0に
 								className="sparkle-star"
+								rarity={rarity}
 							/>
 						)
 					})}
