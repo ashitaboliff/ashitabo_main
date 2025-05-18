@@ -11,6 +11,7 @@ import Loading from '@/components/ui/atoms/Loading'
 import { padLockAction } from './actions'
 import { ErrorType } from '@/utils/types/responseTypes'
 import AuthErrorPage from '@/features/auth/components/AuthErrorPage'
+import { getGitImageUrl } from '@/utils'
 
 const PasswordSchema = yup.object().shape({
 	digit1: yup
@@ -112,7 +113,7 @@ const AuthPadLock = () => {
 			<div className="card bg-white shadow-lg w-96 h-[30rem] my-6">
 				<figure>
 					<Image
-						src="/activity/activity-2.jpg"
+						src={getGitImageUrl("/activity/activity-2.jpg")}
 						alt="padlock"
 						width={384}
 						height={250}

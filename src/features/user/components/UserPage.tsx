@@ -17,6 +17,7 @@ import GachaSelectPopup, {
 } from '@/features/gacha/components/GachaSelectPopup'
 import BookingLogs from '@/features/user/components/BookingLogs'
 import GachaLogs from '@/features/user/components/GachaLogs'
+import { getGitImageUrl } from '@/utils'
 
 import { GiCardRandom } from 'react-icons/gi'
 import { MdOutlineEditCalendar } from 'react-icons/md'
@@ -256,7 +257,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src="/gacha/preset/Common.png"
+							src={getGitImageUrl('/gacha/preset/COMMON.png')}
 							width={72}
 							height={104}
 							alt="COMMON"
@@ -275,7 +276,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src="/gacha/preset/Rare.png"
+							src={getGitImageUrl('/gacha/preset/RARE.png')}
 							width={72}
 							height={104}
 							alt="RARE"
@@ -294,7 +295,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src="/gacha/preset/SR.png"
+							src={getGitImageUrl('/gacha/preset/SURER_RARE.png')}
 							width={72}
 							height={104}
 							alt="SURER RARE"
@@ -313,7 +314,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src="/gacha/preset/SSR.png"
+							src={getGitImageUrl('/gacha/preset/SSR.png')}
 							width={72}
 							height={104}
 							alt="SSR"
@@ -332,7 +333,7 @@ const UserPage = ({
 					</div>
 					<div className="flex flex-row my-2 w-full">
 						<Image
-							src="/gacha/preset/UR.png"
+							src={getGitImageUrl('/gacha/preset/ULTRA_RARE.png')}
 							width={72}
 							height={104}
 							alt="ULTRA RARE"
