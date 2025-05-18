@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next-nprogress-bar' // Added useRouter
 import { Session } from 'next-auth'
 import { GachaSort, GachaData } from '@/features/gacha/types'
@@ -32,7 +33,6 @@ const UserGachaLogs = ({
 	initialSort,
 }: UserGachaLogsProps) => {
 	const router = useRouter() // Added useRouter
-	// const [isLoading, setIsLoading] = useState<boolean>(false) // isLoading can be removed or handled by Suspense in parent
 	const [isPopupLoading, setIsPopupLoading] = useState<boolean>(true) // For individual gacha preview
 	const [currentPage, setCurrentPage] = useState<number>(initialCurrentPage)
 	const [logsPerPage, setLogsPerPage] = useState(initialLogsPerPage)
@@ -136,20 +136,11 @@ const UserGachaLogs = ({
 						onChange={() => handleSortChange('notrare')}
 					/>
 				</div>
-				{/*isLoading ? ( // isLoading state is removed, parent should handle loading state e.g. with Suspense
-					<div
-						className={`grid ${logsPerPage % 3 === 0 ? 'grid-cols-3' : 'grid-cols-5'} gap-2`}
-					>
-						{Array.from({ length: logsPerPage }).map((_, index) => (
-							<div key={index} className="skeleton w-full aspect-gacha" />
-						))}
-					</div>
-				) : ( */}
 				<div
 					className={`grid ${logsPerPage % 3 === 0 ? 'grid-cols-3' : 'grid-cols-5'} gap-2`}
 				>
 					{gachas.map((gacha) => (
-						<img
+						<Image
 							key={gacha.id}
 							src={getGitImageUrl(gacha.gachaSrc)}
 							alt="Gacha Preview"
@@ -158,10 +149,11 @@ const UserGachaLogs = ({
 							onClick={() => {
 								fetchGachaByGachaSrc(gacha.gachaSrc)
 							}}
+							width={500}
+							height={500}
 						/>
 					))}
 				</div>
-				{/*)}*/}
 				<Pagination
 					currentPage={currentPage}
 					totalPages={pageMax}

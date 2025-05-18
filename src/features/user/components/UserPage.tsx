@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
 import { useRouter } from 'next-nprogress-bar'
 import { Session } from 'next-auth'
 import { signOutUser } from '@/features/user/actions'
@@ -17,6 +17,7 @@ import GachaSelectPopup, {
 } from '@/features/gacha/components/GachaSelectPopup'
 import BookingLogs from '@/features/user/components/BookingLogs'
 import GachaLogs from '@/features/user/components/GachaLogs'
+import GachaLogsSkeleton from './GachaLogsSkeleton' // Add this line
 import { getGitImageUrl } from '@/utils'
 
 import { GiCardRandom } from 'react-icons/gi'
@@ -75,15 +76,27 @@ const UserPage = ({
 	const [gachaMessage, setGachaMessage] = useState<string>('')
 	const MAX_GACHA_PLAYS_PER_DAY = 3
 
+	const getCurrentJSTDateString = (): string => {
+		const now = new Date()
+		console.log('Current Date:', now.toISOString())
+		const jstOffset = 9 * 60 // JST is UTC+9
+		const localOffset = now.getTimezoneOffset()
+		console.log('Local Offset:', localOffset)
+		const utc = now.getTime() + localOffset * 60000
+		const jstTime = new Date(utc + jstOffset * 60000)
+		console.log('JST Date:', jstTime.toISOString())
+		return jstTime.toISOString()
+	}
+
 	useEffect(() => {
-		const today = new Date().toISOString().split('T')[0]
+		const today = getCurrentJSTDateString()
 		const storedDate = localStorage.getItem('gachaLastPlayedDate')
 		const storedCount = parseInt(
 			localStorage.getItem('gachaPlayCountToday') || '0',
 			10,
 		)
 
-		if (storedDate === today) {
+		if (storedDate?.split('T')[0] === today.split('T')[0]) {
 			setGachaPlayCountToday(storedCount)
 		} else {
 			// 日付が変わっていたらリセット
@@ -106,8 +119,8 @@ const UserPage = ({
 		}
 	}, [canPlayGacha, gachaPlayCountToday])
 
-	const handlePlayGacha = async () => {
-		const today = new Date().toISOString().split('T')[0]
+	const handlePlayGacha = () => {
+		const today = getCurrentJSTDateString()
 		let currentCount = gachaPlayCountToday
 		let currentDateString = lastGachaDateString
 
@@ -118,7 +131,7 @@ const UserPage = ({
 			10,
 		)
 
-		if (storedDate === today) {
+		if (storedDate?.split('T')[0] === today.split('T')[0]) {
 			currentCount = storedCount
 		} else {
 			currentCount = 0 // 日付が変わっていたらリセット
@@ -135,7 +148,7 @@ const UserPage = ({
 	}
 
 	const onGachaPlayedSuccessfully = () => {
-		const today = new Date().toISOString().split('T')[0]
+		const today = getCurrentJSTDateString()
 		const newCount = gachaPlayCountToday + 1
 		localStorage.setItem('gachaPlayCountToday', newCount.toString())
 		localStorage.setItem('gachaLastPlayedDate', today)
@@ -213,14 +226,22 @@ const UserPage = ({
 								</div>
 							)}
 						</div>
-						<GachaLogs
-							session={session}
-							initialGachas={initialGachas}
-							initialPageMax={initialGachaPageMax}
-							initialCurrentPage={initialGachaCurrentPage}
-							initialLogsPerPage={initialGachaLogsPerPage}
-							initialSort={initialGachaSort}
-						/>
+						<Suspense
+							fallback={
+								<GachaLogsSkeleton
+									logsPerPage={initialGachaLogsPerPage}
+								/>
+							}
+						>
+							<GachaLogs
+								session={session}
+								initialGachas={initialGachas}
+								initialPageMax={initialGachaPageMax}
+								initialCurrentPage={initialGachaCurrentPage}
+								initialLogsPerPage={initialGachaLogsPerPage}
+								initialSort={initialGachaSort}
+							/>
+						</Suspense>
 					</Tab>
 				</Tabs>
 			</div>
