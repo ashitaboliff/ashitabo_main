@@ -96,7 +96,7 @@ export async function createProfileAction(
 		if (profile)
 			return {
 				status: StatusCode.BAD_REQUEST,
-				response: 'このユーザは既にプロフィールが設定されています',
+				response: 'このユーザは既にプロフィールが設定されています。このエラーが何度も出る場合、ログアウトして再度ログインしてください',
 			}
 		await createProfile(user_id, body)
 		revalidateTag('users')
